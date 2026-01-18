@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>SDN Rawabuntu 03 - Dashboard Premium</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tambahan khusus untuk dashboard */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-sm);
+            backdrop-filter: blur(10px);
+        }
+        
+        .user-info i {
+            color: #fbbf24;
+        }
+        
+        .welcome-message {
+            background: linear-gradient(135deg, #4a6de5 0%, #667eea 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .welcome-message h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .menu-card i {
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(74, 109, 229, 0.1);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-card:nth-child(1) i { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .menu-card:nth-child(2) i { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .menu-card:nth-child(3) i { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .menu-card:nth-child(4) i { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .menu-card:nth-child(5) i { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        
+        .menu-card:hover i {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(10deg) scale(1.1);
+        }
+        
+        .admin-menu-title {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        #adminMenus {
+            grid-column: 1 / -1;
+        }
+        
+        /* TOMBOL LOGOUT BARU */
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        .top-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .top-bar-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .logout-btn {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .user-info {
+                justify-content: center;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="login-section" class="container-center hidden">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="background: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%); width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-graduation-cap" style="font-size: 2.5rem; color: white;"></i>
+                </div>
+                <h2 style="color: var(--primary); margin-bottom: 0.5rem;">SDN Rawabuntu 03</h2>
+                <p style="color: #64748b; font-size: 0.95rem;">Sistem Absensi dan Penilaian Digital</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="email" placeholder="email@sekolah.sch.id" required class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required class="form-group">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-right-to-bracket"></i> MASUK SISTEM
+                </button>
+            </form>
+            <p id="errorMsg" style="color: var(--danger); text-align: center; margin-top: 1rem; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <div id="dashboard-section" class="hidden">
+        <header class="top-bar">
+            <a href="#"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <h3><i class="fa-solid fa-school" style="margin-right: 10px;"></i> SDN Rawabuntu 03</h3>
+            <div class="top-bar-container">
+                <div class="user-info">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span id="userName">Memuat...</span>
+                </div>
+                <!-- TOMBOL LOGOUT DITAMBAHKAN DI SINI -->
+                <button id="btnLogout" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="welcome-message">
+                <h2><i class="fa-solid fa-hand-wave"></i> Selamat Datang!</h2>
+                <p>Sistem Manajemen Sekolah Digital - Semua dalam satu platform</p>
+            </div>
+
+            <div id="notifBox" class="card hidden" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 5px solid #f59e0b;">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <div>
+                        <strong id="nJudul" style="color: #92400e;"></strong>
+                        <p id="nIsi" style="margin:10px 0; color: #854d0e;"></p>
+                        <small id="nWaktu" style="color: #b45309;"></small>
+                    </div>
+                    <button onclick="document.getElementById('notifBox').classList.add('hidden')" style="border:none; background:none; cursor:pointer; font-size:20px; color: #92400e;">&times;</button>
+                </div>
+            </div>
+
+            <div class="grid-menu">
+                <a href="scanner.html" class="menu-card">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Scan QR</span>
+                </a>
+                <a href="absensi.html" class="menu-card">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Absensi</span>
+                </a>
+                <a href="penilaian.html" class="menu-card">
+                    <i class="fa-solid fa-star"></i>
+                    <span>Penilaian</span>
+                </a>
+                <a href="#" id="linkLaporan" class="menu-card">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="kasus.html" class="menu-card">
+                    <i class="fa-solid fa-gavel"></i>
+                    <span>Kasus Siswa</span>
+                </a>
+
+                <h4 class="admin-menu-title">Menu Administrator</h4>
+                
+                <div id="adminMenus" style="display:contents;" class="hidden">
+                    <a href="kelola-siswa.html" class="menu-card admin-card">
+                        <i class="fa-solid fa-users-gear"></i>
+                        <span>Kelola Siswa</span>
+                    </a>
+                    <a href="pemberitahuan.html" class="menu-card admin-card">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Notifikasi</span>
+                    </a>
+                    <a href="statistik.html" class="menu-card admin-card">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Statistik</span>
+                    </a>
+                    <a href="rekap_absen_admin.html" class="menu-card admin-card">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Rekap Absen</span>
+                    </a>
+                    <a href="rekap_nilai_admin.html" class="menu-card admin-card">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>Rekap Nilai</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // LOGIKA ASLI TIDAK DIUBAH
+        import { auth, db, ref, get, child, onAuthStateChanged, signInWithEmailAndPassword, signOut, onValue, query, limitToLast } from './config_firebase.js';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await get(child(ref(db), `users/${user.uid}`));
+                if (snap.exists()) {
+                    const uData = snap.val();
+                    document.getElementById('login-section').classList.add('hidden');
+                    document.getElementById('dashboard-section').classList.remove('hidden');
+                    document.getElementById('userName').innerText = uData.nama + " | " + uData.role;
+                    
+                    const linkLap = document.getElementById('linkLaporan');
+                    if(uData.role === 'ADMIN') {
+                        document.getElementById('adminMenus').classList.remove('hidden');
+                        linkLap.href = "laporan_admin.html";
+                    } else {
+                        linkLap.href = "laporan_guru.html";
+                    }
+
+                    const qNotif = query(ref(db, 'pemberitahuan'), limitToLast(1));
+                    onValue(qNotif, (s) => {
+                        if (s.exists()) {
+                            s.forEach(c => {
+                                const n = c.val();
+                                if(n.target === 'ALL' || n.target === uData.role) {
+                                    document.getElementById('notifBox').classList.remove('hidden');
+                                    document.getElementById('nJudul').innerText = "📢 " + n.judul;
+                                    document.getElementById('nIsi').innerText = n.isi;
+                                    document.getElementById('nWaktu').innerText = new Date(n.timestamp).toLocaleString('id-ID');
+                                }
+                            });
+                        }
+                    });
+                }
+            } else {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('dashboard-section').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('loginForm').onsubmit = (e) => {
+            e.preventDefault();
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .catch(err => alert("Login Gagal: " + err.message));
+        };
+
+        // EVENT LISTENER UNTUK TOMBOL LOGOUT
+        document.getElementById('btnLogout').onclick = () => {
+            if(confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+                signOut(auth).then(() => {
+                    location.reload();
+                }).catch(err => {
+                    alert("Gagal logout: " + err.message);
+                });
+            }
+        };
+    </script>
+</body>
+</html>

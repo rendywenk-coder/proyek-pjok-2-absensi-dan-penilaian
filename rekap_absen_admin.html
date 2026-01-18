@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Absensi Admin - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .filter-group { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input[type="date"], select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; background: white; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        th { background: #1e293b; color: white; padding: 10px; border: 1px solid #334155; }
+        td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
+        .text-left { text-align: left; padding-left: 10px; }
+        .btn-download { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3>Rekap Absensi Global</h3>
+    </header>
+
+    <div class="container">
+        <div class="filter-group">
+            <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                <div style="flex:1;">
+                    <label><b>Dari Tanggal:</b></label>
+                    <input type="date" id="tglMulai">
+                </div>
+                <div style="flex:1;">
+                    <label><b>Sampai Tanggal:</b></label>
+                    <input type="date" id="tglSelesai">
+                </div>
+            </div>
+            <label><b>Pilih User (Guru):</b></label>
+            <select id="pilihUser"><option value="SEMUA">-- Tampilkan Semua Guru --</option></select>
+            <br><br>
+            <label><b>Pilih Kelas:</b></label>
+            <select id="pilihKelas"><option value="SEMUA">-- Tampilkan Semua Kelas --</option></select>
+            
+            <button onclick="prosesRekap()" class="btn-primary" style="width:100%; margin-top:20px;">TAMPILKAN DATA</button>
+            <button onclick="unduhExcel()" class="btn-download" id="btnExport" style="display:none;"><i class="fa-solid fa-file-excel"></i> UNDUH EXCEL</button>
+        </div>
+        <div id="areaTabel" class="table-responsive"></div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, get, child, onAuthStateChanged } from './config_firebase.js';
+
+        const klsList = ["1A","1B","1C","1D","2A","2B","2C","2D","2E","3A","3B","3C","3D","3E","4A","4B","4C","4D","4E","4F","5A","5B","5C","5D","5E","6A","6B","6C","6D","6E"];
+        let kamusSiswa = {}; // Untuk menyimpan data {id_absen: nama_siswa}
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // 1. Isi Kelas
+                const selKls = document.getElementById('pilihKelas');
+                klsList.forEach(k => { selKls.innerHTML += `<option value="${k}">Kelas ${k}</option>`; });
+
+                // 2. Isi Guru
+                try {
+                    const snapUser = await get(ref(db, 'users'));
+                    const selUser = document.getElementById('pilihUser');
+                    if(snapUser.exists()){
+                        snapUser.forEach(u => {
+                            const d = u.val();
+                            if(d.role !== 'ADMIN') selUser.innerHTML += `<option value="${d.nama}">${d.nama} (${d.role})</option>`;
+                        });
+                    }
+
+                    // 3. Ambil Master Data Siswa untuk memetakan ID ke Nama
+                    const snapSiswa = await get(ref(db, 'siswa'));
+                    if(snapSiswa.exists()){
+                        snapSiswa.forEach(klsSnap => {
+                            klsSnap.forEach(mhsSnap => {
+                                const s = mhsSnap.val();
+                                kamusSiswa[mhsSnap.key] = s.nama; // Simpan nama berdasarkan no_absen/key
+                            });
+                        });
+                    }
+                } catch (e) { console.error(e); }
+            } else { window.location.href = "index.html"; }
+        });
+
+        window.prosesRekap = async function() {
+            const tglAwal = document.getElementById('tglMulai').value;
+            const tglAkhir = document.getElementById('tglSelesai').value;
+            const klsPilihan = document.getElementById('pilihKelas').value;
+
+            if(!tglAwal || !tglAkhir) return alert("Pilih tanggal!");
+
+            const area = document.getElementById('areaTabel');
+            area.innerHTML = "<p style='text-align:center;'>Memproses data...</p>";
+            
+            const snap = await get(ref(db, 'absensi'));
+            
+            let rekap = {};
+            if(snap.exists()){
+                const data = snap.val();
+                Object.keys(data).forEach(tgl => {
+                    if(tgl >= tglAwal && tgl <= tglAkhir){
+                        Object.keys(data[tgl]).forEach(kls => {
+                            if(klsPilihan === "SEMUA" || kls === klsPilihan){
+                                Object.keys(data[tgl][kls]).forEach(id => {
+                                    if(!rekap[id]) {
+                                        // Ambil nama dari kamus, jika tidak ada pakai ID
+                                        const namaSiswa = kamusSiswa[id] || "ID: " + id;
+                                        rekap[id] = { id: id, nama: namaSiswa, kls: kls, H:0, S:0, I:0, A:0 };
+                                    }
+                                    const st = data[tgl][kls][id].status;
+                                    if(st === "Hadir") rekap[id].H++;
+                                    else if(st === "Sakit") rekap[id].S++;
+                                    else if(st === "Ijin") rekap[id].I++;
+                                    else if(st === "Alfa") rekap[id].A++;
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            let tr = "";
+            const sortedData = Object.values(rekap).sort((a, b) => a.kls.localeCompare(b.kls) || a.nama.localeCompare(b.nama));
+            
+            sortedData.forEach(s => {
+                tr += `<tr>
+                    <td class="text-left">${s.nama}</td>
+                    <td>${s.kls}</td>
+                    <td>${s.H}</td><td>${s.S}</td><td>${s.I}</td><td>${s.A}</td>
+                </tr>`;
+            });
+
+            if(tr === "") {
+                area.innerHTML = "<p style='text-align:center;'>Data tidak ditemukan.</p>";
+            } else {
+                area.innerHTML = `
+                <table id="tbl">
+                    <thead>
+                        <tr>
+                            <th>Nama Siswa</th><th>Kelas</th><th>H</th><th>S</th><th>I</th><th>A</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tr}</tbody>
+                </table>`;
+                document.getElementById('btnExport').style.display = "block";
+            }
+        }
+
+        window.unduhExcel = function() {
+            const table = document.getElementById("tbl");
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Rekap Absensi"});
+            XLSX.writeFile(wb, "Rekap_Absensi_Nama.xlsx");
+        }
+    </script>
+</body>
+</html>

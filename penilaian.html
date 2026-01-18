@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Penilaian Premium - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tambahan khusus untuk penilaian */
+        .grading-header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .grading-header h3 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .subject-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .table-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        
+        table {
+            min-width: 1000px;
+        }
+        
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 1rem 0.75rem;
+            font-size: 0.85rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 0.75rem;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        
+        .student-name-cell {
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            min-width: 180px;
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+            border-right: 2px solid #f1f5f9;
+        }
+        
+        .student-number-cell {
+            font-weight: 700;
+            color: #4a6de5;
+            background: #f1f5f9;
+        }
+        
+        .input-nilai {
+            width: 65px;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .input-nilai:focus {
+            border-color: #4a6de5;
+            box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .input-nilai:hover {
+            border-color: #94a3b8;
+        }
+        
+        .attendance-cell {
+            font-weight: 700;
+            padding: 0.5rem;
+            border-radius: 6px;
+            min-width: 35px;
+        }
+        
+        .attendance-cell.sakit { background: #fffbeb; color: #92400e; }
+        .attendance-cell.ijin { background: #eff6ff; color: #1e40af; }
+        .attendance-cell.alfa { background: #fef2f2; color: #991b1b; }
+        
+        .final-grade-cell {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            padding: 0.75rem;
+            min-width: 70px;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.2);
+        }
+        
+        .final-grade-cell.low {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+        
+        .final-grade-cell.medium {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        
+        .final-grade-cell.high {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid #4a6de5;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            color: #1e293b;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4a6de5;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 109, 229, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .scroll-indicator.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-indicator:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(74, 109, 229, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-responsive {
+                margin-left: -1rem;
+                margin-right: -1rem;
+                width: calc(100% + 2rem);
+            }
+            
+            .student-name-cell {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3 id="displayNamaGuru"><i class="fa-solid fa-star"></i> Penilaian Siswa</h3>
+    </header>
+
+    <div class="container">
+        <div class="grading-header">
+            <h3><i class="fa-solid fa-chart-line"></i> Sistem Penilaian Digital</h3>
+            <p>Input dan kelola nilai siswa dengan mudah. Data tersimpan otomatis.</p>
+            <div class="subject-badge">
+                <i class="fa-solid fa-book-open"></i>
+                <span id="subjectDisplay">Memuat mata pelajaran...</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="header-section">
+                <div style="flex: 1;">
+                    <div class="filter-grid">
+                        <div>
+                            <label><b><i class="fa-solid fa-chalkboard"></i> Pilih Kelas:</b></label>
+                            <select id="pilihKelas" class="btn-absen" style="width:100%;" onchange="muatDataPenilaian()">
+                                <option value="">-- Pilih Kelas --</option>
+                                <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option>
+                                <option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                                <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option>
+                                <option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option>
+                                <option value="2E">Kelas 2E</option>
+                                <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option>
+                                <option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option>
+                                <option value="3E">Kelas 3E</option>
+                                <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option>
+                                <option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option>
+                                <option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                                <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option>
+                                <option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option>
+                                <option value="5E">Kelas 5E</option>
+                                <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option>
+                                <option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option>
+                                <option value="6E">Kelas 6E</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label><b><i class="fa-solid fa-calendar-alt"></i> Semester:</b></label>
+                            <select id="pilihSemester" class="btn-absen" style="width:100%;" onchange="muatDataPenilaian()">
+                                <option value="S1">Semester 1</option>
+                                <option value="S2">Semester 2</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="min-width: 200px;">
+                    <div style="background: #f1f5f9; padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                        <div style="font-size: 0.9rem; color: #64748b;">Total Siswa</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #4a6de5;" id="totalStudents">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div>
+                        <i class="fa-solid fa-table"></i>
+                        <span style="margin-left: 10px;">Tabel Nilai Siswa</span>
+                    </div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span> Klik nilai untuk mengedit</span>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr id="headTabel"></tr>
+                        </thead>
+                        <tbody id="bodyTabel">
+                            <tr>
+                                <td colspan="12" style="text-align: center; padding: 3rem; color: #94a3b8;">
+                                    <i class="fa-solid fa-chalkboard-teacher" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                    <h4 style="color: #64748b;">Pilih kelas untuk melihat data penilaian</h4>
+                                    <p style="font-size: 0.9rem;">Silakan pilih kelas dari dropdown di atas</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="stats-cards" id="statsCards" style="display: none;">
+                <div class="stat-card">
+                    <i class="fa-solid fa-calculator" style="color: #4a6de5; font-size: 1.5rem;"></i>
+                    <div class="value" id="avgGrade">0</div>
+                    <div class="label">Rata-rata Nilai</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chart-bar" style="color: #10b981; font-size: 1.5rem;"></i>
+                    <div class="value" id="highestGrade">0</div>
+                    <div class="label">Nilai Tertinggi</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chart-line" style="color: #f59e0b; font-size: 1.5rem;"></i>
+                    <div class="value" id="lowestGrade">0</div>
+                    <div class="label">Nilai Terendah</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-user-check" style="color: #ef4444; font-size: 1.5rem;"></i>
+                    <div class="value" id="totalAlfa">0</div>
+                    <div class="label">Total Alfa</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-indicator" id="scrollToTop">
+        <i class="fa-solid fa-arrow-up"></i>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, onValue, update, get, child, onAuthStateChanged, serverTimestamp } from './config_firebase.js';
+
+        let userEmail = "";
+        let currentStats = { total: 0, avg: 0, highest: 0, lowest: 100, totalAlfa: 0 };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return location.href = 'index.html';
+            userEmail = user.email.toLowerCase();
+            const snap = await get(child(ref(db), `users/${user.uid}`));
+            if(snap.exists()) {
+                document.getElementById('displayNamaGuru').innerText = "Penilaian: " + snap.val().nama;
+                
+                // Set subject display
+                let subject = "Akademik";
+                if(userEmail.includes("pjok")) subject = "PJOK";
+                else if(userEmail.includes("pai")) subject = "PAI";
+                document.getElementById('subjectDisplay').innerText = subject;
+            }
+        });
+
+        window.muatDataPenilaian = function() {
+            const kls = document.getElementById('pilihKelas').value;
+            const sem = document.getElementById('pilihSemester').value;
+            if(!kls) return;
+
+            // Update table header
+            const head = document.getElementById('headTabel');
+            const sumatifLabel = (sem==='S1')?'STS':'SAS';
+            head.innerHTML = `
+                <th style="width: 50px;">No</th>
+                <th style="min-width: 180px; text-align: left;">Nama Siswa</th>
+                <th>S1</th>
+                <th>S2</th>
+                <th>S3</th>
+                <th>S4</th>
+                <th style="background: #eff6ff;">${sumatifLabel}</th>
+                <th style="background: #fffbeb;">S</th>
+                <th style="background: #eff6ff;">I</th>
+                <th style="background: #fef2f2;">A</th>
+                <th style="background: #dcfce7; min-width: 70px;">NA</th>
+            `;
+
+            let folder = userEmail.includes("pjok") ? "pjok" : (userEmail.includes("pai") ? "pai" : "akademik");
+
+            onValue(ref(db, `siswa/${kls}`), (snapSiswa) => {
+                onValue(ref(db, `nilai/${folder}/${kls}`), (snapNilai) => {
+                    const data = snapNilai.val() || {};
+                    const body = document.getElementById('bodyTabel');
+                    body.innerHTML = "";
+                    
+                    // Reset stats
+                    currentStats = { total: 0, avg: 0, highest: 0, lowest: 100, totalAlfa: 0 };
+                    let totalGrades = 0;
+                    let sumGrades = 0;
+                    
+                    snapSiswa.forEach(childSiswa => {
+                        currentStats.total++;
+                        const id = childSiswa.key;
+                        const s = childSiswa.val();
+                        const n = data[id] && data[id][sem] ? data[id][sem] : {};
+
+                        const s1 = parseFloat(n.s1 || 0); const s2 = parseFloat(n.s2 || 0);
+                        const s3 = parseFloat(n.s3 || 0); const s4 = parseFloat(n.s4 || 0);
+                        const sts = parseFloat(n.sts || 0); const alfa = parseInt(n.alfa || 0);
+                        
+                        currentStats.totalAlfa += alfa;
+
+                        // Calculate final grade
+                        let na = ((s1+s2+s3+s4)/4 * 0.65) + (sts * 0.35);
+                        if(alfa > 0) na = na - (na * 0.05);
+                        if(na < 0) na = 0;
+                        
+                        const finalGrade = Math.round(na);
+                        
+                        // Update stats
+                        if(!isNaN(finalGrade) && finalGrade > 0) {
+                            totalGrades++;
+                            sumGrades += finalGrade;
+                            if(finalGrade > currentStats.highest) currentStats.highest = finalGrade;
+                            if(finalGrade < currentStats.lowest) currentStats.lowest = finalGrade;
+                        }
+                        
+                        // Determine grade class
+                        let gradeClass = "medium";
+                        if(finalGrade >= 85) gradeClass = "high";
+                        else if(finalGrade < 70) gradeClass = "low";
+
+                        body.innerHTML += `
+                            <tr>
+                                <td class="student-number-cell">${id}</td>
+                                <td class="student-name-cell">${s.nama}</td>
+                                <td><input type="number" min="0" max="100" class="input-nilai" value="${n.s1||''}" onchange="updNil('${kls}','${id}','s1',this.value)"></td>
+                                <td><input type="number" min="0" max="100" class="input-nilai" value="${n.s2||''}" onchange="updNil('${kls}','${id}','s2',this.value)"></td>
+                                <td><input type="number" min="0" max="100" class="input-nilai" value="${n.s3||''}" onchange="updNil('${kls}','${id}','s3',this.value)"></td>
+                                <td><input type="number" min="0" max="100" class="input-nilai" value="${n.s4||''}" onchange="updNil('${kls}','${id}','s4',this.value)"></td>
+                                <td><input type="number" min="0" max="100" class="input-nilai" value="${n.sts||''}" onchange="updNil('${kls}','${id}','sts',this.value)"></td>
+                                <td class="attendance-cell sakit">${n.sakit || 0}</td>
+                                <td class="attendance-cell ijin">${n.ijin || 0}</td>
+                                <td class="attendance-cell alfa">${n.alfa || 0}</td>
+                                <td class="final-grade-cell ${gradeClass}">${finalGrade}</td>
+                            </tr>`;
+                    });
+                    
+                    // Update stats
+                    document.getElementById('totalStudents').innerText = currentStats.total;
+                    document.getElementById('statsCards').style.display = 'grid';
+                    
+                    if(totalGrades > 0) {
+                        currentStats.avg = Math.round(sumGrades / totalGrades);
+                    }
+                    
+                    document.getElementById('avgGrade').innerText = currentStats.avg;
+                    document.getElementById('highestGrade').innerText = currentStats.highest;
+                    document.getElementById('lowestGrade').innerText = currentStats.lowest === 100 ? 0 : currentStats.lowest;
+                    document.getElementById('totalAlfa').innerText = currentStats.totalAlfa;
+                });
+            });
+        }
+
+        window.updNil = function(kls, id, f, v) {
+            const sem = document.getElementById('pilihSemester').value;
+            let folder = userEmail.includes("pjok") ? "pjok" : (userEmail.includes("pai") ? "pai" : "akademik");
+            update(ref(db), { [`nilai/${folder}/${kls}/${id}/${sem}/${f}`]: v });
+            
+            // Update stats after a delay
+            setTimeout(() => muatDataPenilaian(), 500);
+        }
+
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

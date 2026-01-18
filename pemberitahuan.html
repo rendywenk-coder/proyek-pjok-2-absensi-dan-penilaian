@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Kirim Notifikasi - Admin | SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tambahan khusus untuk halaman notifikasi */
+        .notification-guide {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .notification-guide h4 {
+            color: #0369a1;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification-guide ul {
+            margin-left: 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        .notification-guide li {
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        
+        .notification-guide li strong {
+            color: #0ea5e9;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .form-header i {
+            background: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .form-header h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .target-info {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            margin: 1.5rem 0;
+            border: 2px dashed #cbd5e1;
+        }
+        
+        .target-info h5 {
+            color: #475569;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .target-item {
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .target-item:hover {
+            border-color: #4a6de5;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .target-item i {
+            color: #4a6de5;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .target-item .role {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .target-item .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .character-counter {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+        
+        .character-counter.warning {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        
+        .character-counter.danger {
+            color: #ef4444;
+            font-weight: 700;
+        }
+        
+        .preview-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-top: 2rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .preview-section h5 {
+            color: #475569;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .preview-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .preview-card h6 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-card p {
+            color: #334155;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-card small {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        
+        .btn-send {
+            background: linear-gradient(135deg, #10b981 0%, #0da271 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-top: 2rem;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-send:hover {
+            background: linear-gradient(135deg, #0da271 0%, #0b8a5c 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-send:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Loading state untuk auth check */
+        .auth-loading {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .auth-loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #4a6de5;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .auth-error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 2rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .auth-error i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .target-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3><i class="fa-solid fa-bullhorn"></i> Kirim Notifikasi Admin</h3>
+    </header>
+
+    <div class="container">
+        <!-- LOADING STATE SAAT CHECK AUTH -->
+        <div id="authLoading" class="auth-loading">
+            <i class="fa-solid fa-spinner"></i>
+            <h4>Memeriksa autentikasi...</h4>
+            <p>Mohon tunggu sebentar</p>
+        </div>
+        
+        <!-- ERROR STATE JIKA BUKAN ADMIN -->
+        <div id="authError" class="auth-error hidden">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h4>Akses Ditolak</h4>
+            <p id="authErrorMsg">Anda tidak memiliki izin untuk mengakses halaman ini.</p>
+            <button onclick="location.href='index.html'" class="btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-home"></i> Kembali ke Dashboard
+            </button>
+        </div>
+        
+        <!-- KONTEN UTAMA (HANYA TAMPIL JIKA ADMIN) -->
+        <div id="mainContent" class="hidden">
+            <!-- PANDUAN PENGGUNAAN -->
+            <div class="notification-guide">
+                <h4><i class="fa-solid fa-circle-info"></i> Panduan Pengiriman Notifikasi</h4>
+                <p>Gunakan fitur ini untuk mengirim pengumuman resmi kepada seluruh guru atau kelompok guru tertentu.</p>
+                <ul>
+                    <li><strong>ALL</strong> - Notifikasi akan dikirim ke SEMUA guru di sistem</li>
+                    <li><strong>GURU_KELAS</strong> - Hanya untuk guru kelas/wali kelas</li>
+                    <li><strong>GURU_PJOK</strong> - Hanya untuk guru mata pelajaran PJOK</li>
+                    <li><strong>GURU_PAI</strong> - Hanya untuk guru mata pelajaran PAI</li>
+                </ul>
+                <p style="margin-top: 0.75rem; color: #475569; font-size: 0.9rem;">
+                    <i class="fa-solid fa-lightbulb"></i> <strong>Tips:</strong> Notifikasi akan muncul langsung di dashboard penerima dan tetap tersimpan di database.
+                </p>
+            </div>
+
+            <!-- FORM PENGIRIMAN NOTIFIKASI -->
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <h3>Form Pengiriman Notifikasi</h3>
+                    <p style="color: #64748b;">Isi form di bawah untuk mengirim pengumuman resmi</p>
+                </div>
+
+                <!-- INFORMASI TARGET -->
+                <div class="target-info">
+                    <h5><i class="fa-solid fa-bullseye"></i> Target Penerima Notifikasi</h5>
+                    <p style="color: #475569; margin-bottom: 1rem; font-size: 0.95rem;">
+                        Pilih siapa yang akan menerima notifikasi ini. Pastikan target sesuai dengan jabatan guru di data user.
+                    </p>
+                    
+                    <div class="target-grid">
+                        <div class="target-item">
+                            <i class="fa-solid fa-users"></i>
+                            <div class="role">ALL</div>
+                            <div class="desc">Semua Guru</div>
+                        </div>
+                        <div class="target-item">
+                            <i class="fa-solid fa-chalkboard-teacher"></i>
+                            <div class="role">GURU_KELAS</div>
+                            <div class="desc">Guru Kelas/Wali</div>
+                        </div>
+                        <div class="target-item">
+                            <i class="fa-solid fa-running"></i>
+                            <div class="role">GURU_PJOK</div>
+                            <div class="desc">Guru PJOK</div>
+                        </div>
+                        <div class="target-item">
+                            <i class="fa-solid fa-mosque"></i>
+                            <div class="role">GURU_PAI</div>
+                            <div class="desc">Guru PAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM INPUT -->
+                <div class="form-group">
+                    <label><b><i class="fa-solid fa-heading"></i> Judul Pengumuman:</b></label>
+                    <input type="text" id="jdl" placeholder="Contoh: Rapat Rutin Bulanan, Pengumuman Libur, dll" class="btn-absen" style="width:100%;" maxlength="100">
+                    <div class="character-counter" id="titleCounter">0/100 karakter</div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label><b><i class="fa-solid fa-file-lines"></i> Isi Pesan Detail:</b></label>
+                    <textarea id="isi" placeholder="Tulis isi pengumuman lengkap di sini. Gunakan bahasa yang jelas dan informatif." class="btn-absen" style="width:100%; height: 180px;" maxlength="500"></textarea>
+                    <div class="character-counter" id="messageCounter">0/500 karakter</div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label><b><i class="fa-solid fa-filter"></i> Target Penerima (Pilih Salah Satu):</b></label>
+                    <select id="tgt" class="btn-absen" style="width:100%;">
+                        <option value="ALL">📢 Kirim ke SEMUA GURU</option>
+                        <option value="GURU_KELAS">👨‍🏫 Khusus GURU KELAS/Wali</option>
+                        <option value="GURU_PJOK">🏃 Khusus GURU PJOK</option>
+                        <option value="GURU_PAI">🕌 Khusus GURU PAI</option>
+                    </select>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> 
+                        <strong>Penting:</strong> Pastikan target sesuai dengan Jabatan di data User. Notifikasi hanya akan muncul untuk user dengan role yang sesuai.
+                    </p>
+                </div>
+
+                <!-- PREVIEW NOTIFIKASI -->
+                <div class="preview-section" id="previewSection">
+                    <h5><i class="fa-solid fa-eye"></i> Pratinjau Notifikasi</h5>
+                    <p style="color: #64748b; margin-bottom: 1rem; font-size: 0.95rem;">
+                        Berikut tampilan notifikasi yang akan dilihat oleh penerima:
+                    </p>
+                    <div class="preview-card" id="previewCard">
+                        <h6 id="previewTitle">[Judul Notifikasi]</h6>
+                        <p id="previewMessage">[Isi pesan akan muncul di sini...]</p>
+                        <small><i class="fa-solid fa-clock"></i> Akan dikirim segera setelah Anda klik tombol "Kirim"</small>
+                    </div>
+                </div>
+
+                <!-- TOMBOL KIRIM -->
+                <button onclick="kirimNotifikasi()" class="btn-send" id="btnKirim">
+                    <i class="fa-solid fa-paper-plane"></i> KIRIM NOTIFIKASI SEKARANG
+                </button>
+            </div>
+            
+            <!-- INFO STATUS -->
+            <div class="card" style="margin-top: 1.5rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b;">
+                <h5 style="color: #92400e; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-database"></i> Informasi Penyimpanan
+                </h5>
+                <div style="color: #854d0e; font-size: 0.95rem;">
+                    <p><strong>Lokasi Database:</strong> Notifikasi disimpan di Firebase Realtime Database → path: <code>pemberitahuan</code></p>
+                    <p><strong>Format Data:</strong> Setiap notifikasi memiliki timestamp, judul, isi, target, dan ID pengirim</p>
+                    <p><strong>Akses:</strong> Hanya user dengan role ADMIN yang dapat mengirim notifikasi</p>
+                    <p style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(245, 158, 11, 0.3);">
+                        <i class="fa-solid fa-check-circle"></i> Notifikasi yang sudah dikirim tidak dapat dihapus/diedit
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, push, set, get, child, onAuthStateChanged } from './config_firebase.js';
+
+        // Fungsi untuk update karakter counter
+        function updateCharacterCounters() {
+            const title = document.getElementById('jdl').value;
+            const message = document.getElementById('isi').value;
+            
+            const titleCounter = document.getElementById('titleCounter');
+            const messageCounter = document.getElementById('messageCounter');
+            
+            // Update counter judul
+            titleCounter.textContent = `${title.length}/100 karakter`;
+            if (title.length > 80) {
+                titleCounter.classList.add('warning');
+                titleCounter.classList.remove('danger');
+            } else if (title.length > 90) {
+                titleCounter.classList.remove('warning');
+                titleCounter.classList.add('danger');
+            } else {
+                titleCounter.classList.remove('warning', 'danger');
+            }
+            
+            // Update counter pesan
+            messageCounter.textContent = `${message.length}/500 karakter`;
+            if (message.length > 400) {
+                messageCounter.classList.add('warning');
+                messageCounter.classList.remove('danger');
+            } else if (message.length > 450) {
+                messageCounter.classList.remove('warning');
+                messageCounter.classList.add('danger');
+            } else {
+                messageCounter.classList.remove('warning', 'danger');
+            }
+            
+            // Update preview
+            updatePreview();
+        }
+        
+        // Fungsi untuk update pratinjau
+        function updatePreview() {
+            const title = document.getElementById('jdl').value || '[Judul Notifikasi]';
+            const message = document.getElementById('isi').value || '[Isi pesan akan muncul di sini...]';
+            
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewMessage').textContent = message;
+            
+            // Tampilkan/sembunyikan preview section
+            const previewSection = document.getElementById('previewSection');
+            if (title.trim() || message.trim()) {
+                previewSection.style.display = 'block';
+            } else {
+                previewSection.style.display = 'none';
+            }
+        }
+        
+        // Event listeners untuk update real-time
+        document.getElementById('jdl').addEventListener('input', updateCharacterCounters);
+        document.getElementById('isi').addEventListener('input', updateCharacterCounters);
+        document.getElementById('tgt').addEventListener('change', updatePreview);
+        
+        // Inisialisasi preview
+        updatePreview();
+
+        // LOGIKA ASLI DIPERTAHANKAN, DITAMBAHKAN AUTH CHECK YANG BENAR
+        window.kirimNotifikasi = () => {
+            const judul = document.getElementById('jdl').value;
+            const isi = document.getElementById('isi').value;
+            const target = document.getElementById('tgt').value;
+            const btnKirim = document.getElementById('btnKirim');
+
+            // Validasi
+            if(!judul.trim()) {
+                alert("Judul pengumuman wajib diisi!");
+                document.getElementById('jdl').focus();
+                return;
+            }
+            
+            if(!isi.trim()) {
+                alert("Isi pesan wajib diisi!");
+                document.getElementById('isi').focus();
+                return;
+            }
+
+            // Konfirmasi pengiriman
+            const targetNames = {
+                'ALL': 'SEMUA GURU',
+                'GURU_KELAS': 'GURU KELAS/WALI',
+                'GURU_PJOK': 'GURU PJOK',
+                'GURU_PAI': 'GURU PAI'
+            };
+            
+            if(!confirm(`Anda akan mengirim notifikasi ke: ${targetNames[target]}\n\nJudul: ${judul}\n\nLanjutkan?`)) {
+                return;
+            }
+
+            // Disable tombol dan tampilkan loading
+            btnKirim.disabled = true;
+            btnKirim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
+
+            const data = {
+                judul: judul,
+                isi: isi,
+                target: target,
+                timestamp: Date.now(),
+                senderId: auth.currentUser ? auth.currentUser.uid : 'system'
+            };
+
+            const newRef = push(ref(db, 'pemberitahuan'));
+            
+            set(newRef, data).then(() => {
+                alert("✅ Notifikasi berhasil dikirim!");
+                
+                // Reset form
+                document.getElementById('jdl').value = '';
+                document.getElementById('isi').value = '';
+                updateCharacterCounters();
+                updatePreview();
+                
+                // Redirect ke dashboard setelah 1.5 detik
+                setTimeout(() => {
+                    location.href = "index.html";
+                }, 1500);
+                
+            }).catch(e => {
+                console.error("Error sending notification:", e);
+                alert("❌ Gagal mengirim notifikasi: " + e.message);
+                btnKirim.disabled = false;
+                btnKirim.innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM NOTIFIKASI SEKARANG';
+            });
+        };
+
+        // CEK AUTH STATE DENGAN BENAR
+        onAuthStateChanged(auth, async (user) => {
+            const authLoading = document.getElementById('authLoading');
+            const authError = document.getElementById('authError');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (user) {
+                // Cek apakah user adalah ADMIN
+                try {
+                    const userRef = ref(db, `users/${user.uid}`);
+                    const snapshot = await get(userRef);
+                    
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        
+                        if (userData.role === 'ADMIN') {
+                            // User adalah ADMIN, tampilkan konten
+                            authLoading.classList.add('hidden');
+                            mainContent.classList.remove('hidden');
+                            
+                            // Enable event listeners setelah konten ditampilkan
+                            document.getElementById('jdl').addEventListener('input', updateCharacterCounters);
+                            document.getElementById('isi').addEventListener('input', updateCharacterCounters);
+                            document.getElementById('tgt').addEventListener('change', updatePreview);
+                            
+                        } else {
+                            // User bukan ADMIN
+                            authLoading.classList.add('hidden');
+                            document.getElementById('authErrorMsg').textContent = 
+                                "Hanya user dengan role ADMIN yang dapat mengakses halaman ini.";
+                            authError.classList.remove('hidden');
+                        }
+                    } else {
+                        // Data user tidak ditemukan
+                        authLoading.classList.add('hidden');
+                        document.getElementById('authErrorMsg').textContent = 
+                            "Data user tidak ditemukan di database.";
+                        authError.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error("Error checking user role:", error);
+                    authLoading.classList.add('hidden');
+                    document.getElementById('authErrorMsg').textContent = 
+                        "Terjadi kesalahan saat memeriksa autentikasi: " + error.message;
+                    authError.classList.remove('hidden');
+                }
+            } else {
+                // User belum login
+                authLoading.classList.add('hidden');
+                document.getElementById('authErrorMsg').textContent = 
+                    "Silakan login terlebih dahulu untuk mengakses halaman ini.";
+                authError.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

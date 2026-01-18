@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>E-Absensi Premium - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tambahan khusus untuk absensi */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-info div {
+            text-align: center;
+        }
+        
+        .header-info .date {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .header-info .total {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .filter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .absensi-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 1.25rem;
+            background: linear-gradient(to right, #ffffff 0%, #fafbfc 100%);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #4a6de5;
+            transition: all 0.3s ease;
+        }
+        
+        .absensi-row:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .student-number {
+            background: #4a6de5;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 10px rgba(74, 109, 229, 0.3);
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-stat {
+            min-width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        
+        .btn-stat.active {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border: 2px solid white;
+        }
+        
+        .btn-stat.Hadir { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+        .btn-stat.Sakit { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+        .btn-stat.Ijin { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+        .btn-stat.Alfa { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+        
+        .btn-stat.Hadir.active { 
+            background: linear-gradient(135deg, #10b981 0%, #0da271 100%); 
+            color: white; 
+        }
+        .btn-stat.Sakit.active { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+            color: white; 
+        }
+        .btn-stat.Ijin.active { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            color: white; 
+        }
+        .btn-stat.Alfa.active { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+            color: white; 
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid;
+        }
+        
+        .summary-card.hadir { border-color: #10b981; }
+        .summary-card.sakit { border-color: #f59e0b; }
+        .summary-card.ijin { border-color: #3b82f6; }
+        .summary-card.alfa { border-color: #ef4444; }
+        
+        .summary-card .count {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .absensi-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .student-info {
+                justify-content: center;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3 id="displayNamaGuru"><i class="fa-solid fa-clipboard-check"></i> Absensi Siswa</h3>
+    </header>
+
+    <div class="container">
+        <div class="header-info">
+            <div>
+                <div class="date" id="statusTgl">Memuat tanggal...</div>
+                <div class="total" id="totalSiswa">0 siswa</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 2.5rem;">
+                    <i class="fa-solid fa-user-check" style="opacity: 0.8;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="filter-section">
+                <div>
+                    <label><b><i class="fa-solid fa-chalkboard"></i> Pilih Kelas:</b></label>
+                    <select id="pilihKelas" class="btn-absen" style="width:100%;" onchange="muatSiswa()">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option>
+                        <option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                        <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option>
+                        <option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option>
+                        <option value="2E">Kelas 2E</option>
+                        <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option>
+                        <option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option>
+                        <option value="3E">Kelas 3E</option>
+                        <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option>
+                        <option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option>
+                        <option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                        <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option>
+                        <option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option>
+                        <option value="5E">Kelas 5E</option>
+                        <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option>
+                        <option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option>
+                        <option value="6E">Kelas 6E</option>
+                    </select>
+                </div>
+                <div>
+                    <label><b><i class="fa-solid fa-calendar-alt"></i> Semester:</b></label>
+                    <select id="pilihSemester" class="btn-absen" style="width:100%;">
+                        <option value="S1">Semester 1</option>
+                        <option value="S2">Semester 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="areaSiswa" style="min-height: 300px;">
+                <div style="text-align: center; padding: 3rem; color: #94a3b8;">
+                    <i class="fa-solid fa-chalkboard-teacher" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h4 style="color: #64748b;">Pilih kelas untuk memulai absensi</h4>
+                    <p style="font-size: 0.9rem;">Silakan pilih kelas dari dropdown di atas</p>
+                </div>
+            </div>
+            
+            <div class="summary-cards" id="summaryCards" style="display: none;">
+                <div class="summary-card hadir">
+                    <div><i class="fa-solid fa-user-check"></i></div>
+                    <div class="count" id="countHadir">0</div>
+                    <div>Hadir</div>
+                </div>
+                <div class="summary-card sakit">
+                    <div><i class="fa-solid fa-head-side-cough"></i></div>
+                    <div class="count" id="countSakit">0</div>
+                    <div>Sakit</div>
+                </div>
+                <div class="summary-card ijin">
+                    <div><i class="fa-solid fa-envelope"></i></div>
+                    <div class="count" id="countIjin">0</div>
+                    <div>Ijin</div>
+                </div>
+                <div class="summary-card alfa">
+                    <div><i class="fa-solid fa-user-times"></i></div>
+                    <div class="count" id="countAlfa">0</div>
+                    <div>Alfa</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, onValue, update, get, child, onAuthStateChanged, serverTimestamp } from './config_firebase.js';
+
+        let userEmail = "";
+        const tglHariIni = new Date().toISOString().split('T')[0];
+        document.getElementById('statusTgl').innerText = "Absensi: " + new Date().toLocaleDateString('id-ID', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return location.href = 'index.html';
+            userEmail = user.email.toLowerCase();
+            const snap = await get(child(ref(db), `users/${user.uid}`));
+            if(snap.exists()) document.getElementById('displayNamaGuru').innerText = "Absensi: " + snap.val().nama;
+        });
+
+        window.muatSiswa = function() {
+            const kls = document.getElementById('pilihKelas').value;
+            if(!kls) return;
+            const container = document.getElementById('areaSiswa');
+            
+            // Reset summary
+            document.getElementById('summaryCards').style.display = 'none';
+            
+            onValue(ref(db, `siswa/${kls}`), (snapSiswa) => {
+                onValue(ref(db, `absensi/${tglHariIni}/${kls}`), (snapAbsen) => {
+                    const dataAbsen = snapAbsen.val() || {};
+                    container.innerHTML = "";
+                    
+                    let total = 0;
+                    let countHadir = 0, countSakit = 0, countIjin = 0, countAlfa = 0;
+                    
+                    snapSiswa.forEach(childSiswa => {
+                        total++;
+                        const id = childSiswa.key;
+                        const s = childSiswa.val();
+                        const stat = dataAbsen[id] ? dataAbsen[id].status : "";
+                        
+                        // Count status
+                        if(stat === 'Hadir') countHadir++;
+                        else if(stat === 'Sakit') countSakit++;
+                        else if(stat === 'Ijin') countIjin++;
+                        else if(stat === 'Alfa') countAlfa++;
+                        
+                        container.innerHTML += `
+                            <div class="absensi-row">
+                                <div class="student-info">
+                                    <div class="student-number">${id}</div>
+                                    <div class="student-name">${s.nama}</div>
+                                </div>
+                                <div class="btn-group">
+                                    <button onclick="simpanAbsen('${kls}','${id}','Hadir')" class="btn-stat Hadir ${stat==='Hadir'?'active':''}" title="Hadir">H</button>
+                                    <button onclick="simpanAbsen('${kls}','${id}','Sakit')" class="btn-stat Sakit ${stat==='Sakit'?'active':''}" title="Sakit">S</button>
+                                    <button onclick="simpanAbsen('${kls}','${id}','Ijin')" class="btn-stat Ijin ${stat==='Ijin'?'active':''}" title="Ijin">I</button>
+                                    <button onclick="simpanAbsen('${kls}','${id}','Alfa')" class="btn-stat Alfa ${stat==='Alfa'?'active':''}" title="Alfa">A</button>
+                                </div>
+                            </div>`;
+                    });
+                    
+                    // Update summary
+                    document.getElementById('totalSiswa').innerText = total + ' siswa';
+                    document.getElementById('countHadir').innerText = countHadir;
+                    document.getElementById('countSakit').innerText = countSakit;
+                    document.getElementById('countIjin').innerText = countIjin;
+                    document.getElementById('countAlfa').innerText = countAlfa;
+                    
+                    if(total > 0) {
+                        document.getElementById('summaryCards').style.display = 'grid';
+                    }
+                });
+            });
+        }
+
+        window.simpanAbsen = async function(kls, id, statusBaru) {
+            const sem = document.getElementById('pilihSemester').value;
+            let folder = userEmail.includes("pjok") ? "pjok" : (userEmail.includes("pai") ? "pai" : "akademik");
+            
+            const pathAbsenHarian = `absensi/${tglHariIni}/${kls}/${id}`;
+            const pathNilaiSiswa = `nilai/${folder}/${kls}/${id}/${sem}`;
+
+            // Ambil status absen hari ini
+            const snapHariIni = await get(ref(db, pathAbsenHarian));
+            const statusLama = snapHariIni.exists() ? snapHariIni.val().status : "";
+            
+            if (statusLama === statusBaru) return;
+
+            // Ambil data nilai akumulasi semester
+            const snapNilai = await get(ref(db, pathNilaiSiswa));
+            const n = snapNilai.val() || {};
+
+            const updates = {};
+            
+            // LOGIKA KOREKSI (PENTING):
+            if (statusLama === "Sakit") n.sakit = Math.max(0, (parseInt(n.sakit || 0) - 1));
+            if (statusLama === "Ijin") n.ijin = Math.max(0, (parseInt(n.ijin || 0) - 1));
+            if (statusLama === "Alfa") n.alfa = Math.max(0, (parseInt(n.alfa || 0) - 1));
+
+            if (statusBaru === "Sakit") n.sakit = (parseInt(n.sakit || 0) + 1);
+            if (statusBaru === "Ijin") n.ijin = (parseInt(n.ijin || 0) + 1);
+            if (statusBaru === "Alfa") n.alfa = (parseInt(n.alfa || 0) + 1);
+
+            updates[`${pathNilaiSiswa}/sakit`] = n.sakit || 0;
+            updates[`${pathNilaiSiswa}/ijin`] = n.ijin || 0;
+            updates[`${pathNilaiSiswa}/alfa`] = n.alfa || 0;
+
+            updates[pathAbsenHarian] = { 
+                status: statusBaru, 
+                waktu: new Date().toLocaleTimeString('id-ID'),
+                sync_time: serverTimestamp()
+            };
+
+            try {
+                await update(ref(db), updates);
+                // Refresh summary
+                setTimeout(() => muatSiswa(), 300);
+            } catch (e) { 
+                alert("Gagal Sinkron: " + e.message); 
+            }
+        }
+    </script>
+</body>
+</html>

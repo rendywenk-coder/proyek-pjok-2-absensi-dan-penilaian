@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Scanner Absensi - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        #reader { width: 100%; max-width: 500px; margin: 0 auto; border-radius: 15px; overflow: hidden; border: 4px solid var(--accent) !important; }
+        #result-box { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; text-align: center; animation: slideUp 0.3s ease; }
+        .scan-success { background: #dcfce7; border: 2px solid #22c55e; color: #166534; }
+        .scan-error { background: #fee2e2; border: 2px solid #ef4444; color: #991b1b; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3>E-Scanner Absensi</h3>
+    </header>
+
+    <div class="container">
+        <div class="card" style="text-align: center;">
+            <div style="margin-bottom: 15px;">
+                <p><b>Panduan:</b> Arahkan kamera ke QR Code Siswa untuk absensi otomatis.</p>
+                <select id="pilihKelasScan" class="btn-absen" style="width: auto; padding: 5px 20px;">
+                    <option value="1A">Kelas 1A</option><option value="1B">1B</option>
+                    <option value="2A">Kelas 2A</option><option value="3A">3A</option>
+                    <option value="4A">Kelas 4A</option><option value="5A">5A</option>
+                    <option value="6A">Kelas 6A</option>
+                </select>
+            </div>
+
+            <div id="reader"></div>
+
+            <div id="result-box">
+                <i class="fa-solid fa-circle-check" id="resIcon"></i>
+                <h4 id="resName">Memproses...</h4>
+                <p id="resDetail"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, get, child, update, onAuthStateChanged, serverTimestamp } from './config_firebase.js';
+
+        let userRole = "";
+        let isScanning = true;
+
+        // 1. CEK AUTH
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return location.href = 'index.html';
+            const snap = await get(child(ref(db), `users/${user.uid}`));
+            userRole = snap.val().role;
+            startScanner();
+        });
+
+        // 2. JALANKAN SCANNER
+        function startScanner() {
+            const html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
+        }
+
+        // 3. LOGIKA SAAT QR TERBACA
+        async function onScanSuccess(decodedText) {
+            if (!isScanning) return;
+            isScanning = false; // Kunci agar tidak scan berkali-kali
+
+            const kls = document.getElementById('pilihKelasScan').value;
+            const tgl = new Date().toISOString().split('T')[0];
+            const idSiswa = decodedText.trim(); // Asumsi isi QR adalah Nomor Urut Siswa (01, 02, dst)
+
+            const resBox = document.getElementById('result-box');
+            const resName = document.getElementById('resName');
+            const resDetail = document.getElementById('resDetail');
+
+            resBox.style.display = "block";
+            resBox.className = "scan-success";
+            resName.innerText = "Mengecek Database...";
+
+            try {
+                // Cek apakah siswa ada di kelas tersebut
+                const sSnap = await get(child(ref(db), `siswa/${kls}/${idSiswa}`));
+                
+                if (sSnap.exists()) {
+                    const sData = sSnap.val();
+                    const updates = {};
+                    
+                    // Rules Node 3: Absensi Harian
+                    updates[`absensi/${tgl}/${kls}/${idSiswa}`] = {
+                        status: "Hadir",
+                        waktu: new Date().toLocaleTimeString('id-ID'),
+                        timestamp: serverTimestamp(),
+                        metode: "QR-SCANNER"
+                    };
+
+                    // Rules Node 4: Integrasi Penilaian (Sesuai Role Guru)
+                    const pathNilai = userRole === 'GURU_PJOK' ? 'pjok' : (userRole === 'GURU_PAI' ? 'pai' : 'akademik');
+                    updates[`nilai/${pathNilai}/${kls}/${idSiswa}/status_absen`] = "Hadir";
+                    updates[`nilai/${pathNilai}/${kls}/${idSiswa}/kehadiran_terakhir`] = tgl;
+
+                    await update(ref(db), updates);
+
+                    // Tampilan Berhasil
+                    resName.innerText = sData.nama;
+                    resDetail.innerText = "BERHASIL ABSEN HADIR";
+                    
+                    // Bunyi Beep (Opsional)
+                    const audio = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3');
+                    audio.play();
+
+                } else {
+                    resBox.className = "scan-error";
+                    resName.innerText = "Siswa Tidak Ditemukan";
+                    resDetail.innerText = "ID " + idSiswa + " bukan murid Kelas " + kls;
+                }
+            } catch (e) {
+                resBox.className = "scan-error";
+                resName.innerText = "Gagal Sistem";
+                resDetail.innerText = e.message;
+            }
+
+            // Buka kembali scanner setelah 3 detik
+            setTimeout(() => {
+                resBox.style.display = "none";
+                isScanning = true;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Laporan Guru - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tambahan khusus untuk laporan guru */
+        .upload-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .upload-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-header i {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .upload-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: #f1f5f9;
+            border: none;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+        }
+        
+        .tab-btn.active {
+            background: #0ea5e9;
+            color: white;
+            position: relative;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #0ea5e9;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .upload-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .upload-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-card:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .upload-card h5 {
+            color: #0369a1;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-card p {
+            color: #475569;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-upload {
+            background: linear-gradient(135deg, #10b981 0%, #0da271 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-upload:hover {
+            background: linear-gradient(135deg, #0da271 0%, #0b8a5c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-upload:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Status berkas */
+        .status-list {
+            margin-top: 2rem;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .card-laporan {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid #3b82f6;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .card-laporan:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .card-laporan.PENDING {
+            border-left-color: #f59e0b;
+            background: linear-gradient(to right, #ffffff 0%, #fffbeb 100%);
+        }
+        
+        .card-laporan.DITERIMA {
+            border-left-color: #10b981;
+            background: linear-gradient(to right, #ffffff 0%, #f0fdf4 100%);
+        }
+        
+        .card-laporan.PERBAIKI {
+            border-left-color: #ef4444;
+            background: linear-gradient(to right, #ffffff 0%, #fef2f2 100%);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .PENDING { background: #fef3c7; color: #92400e; }
+        .DITERIMA { background: #dcfce7; color: #166534; }
+        .PERBAIKI { background: #fee2e2; color: #991b1b; }
+        
+        .msg-admin {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+            border: 1px dashed #cbd5e1;
+            font-size: 0.9rem;
+        }
+        
+        .msg-admin strong {
+            color: #475569;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Tombol edit untuk perbaikan */
+        .btn-edit {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Informasi guru */
+        .guru-info {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .guru-info h5 {
+            color: #92400e;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .guru-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .guru-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .guru-data {
+            flex: 1;
+        }
+        
+        .guru-data .nama {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+        
+        .guru-data .role {
+            color: #4a6de5;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .guru-data .email {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Form edit */
+        .edit-form {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+            border: 2px dashed #cbd5e1;
+            display: none;
+        }
+        
+        .edit-form.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .upload-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-section {
+                padding: 1.5rem;
+            }
+            
+            .upload-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3><i class="fa-solid fa-file-upload"></i> Laporan & Upload Berkas</h3>
+    </header>
+
+    <div class="container">
+        <!-- INFORMASI GURU -->
+        <div class="guru-info">
+            <h5><i class="fa-solid fa-user-tie"></i> Identitas Pengguna</h5>
+            <p style="color: #854d0e; margin-bottom: 0.5rem;">
+                Informasi akun Anda akan digunakan untuk semua pengiriman berkas:
+            </p>
+            <div class="guru-detail">
+                <div class="guru-avatar" id="guruAvatar">G</div>
+                <div class="guru-data">
+                    <div class="nama" id="guruNama">Memuat...</div>
+                    <div class="role" id="guruRole">Memuat...</div>
+                    <div class="email" id="guruEmail">Memuat...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PETUNJUK UPLOAD -->
+        <div class="card" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+            <h5 style="color: #0369a1; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-circle-info"></i> Panduan Upload Berkas
+            </h5>
+            <div style="color: #475569; font-size: 0.95rem;">
+                <p><strong>Proses Upload:</strong></p>
+                <ol style="margin-left: 1.5rem; margin-bottom: 0.75rem;">
+                    <li>Upload file ke <strong>Google Drive</strong> atau <strong>Cloud Storage</strong> lainnya</li>
+                    <li>Atur permission menjadi <strong>"Anyone with the link can view"</strong></li>
+                    <li>Salin link file dan tempel di form di bawah</li>
+                    <li>Admin akan meninjau dan memberikan status <strong>DITERIMA/PERBAIKI</strong></li>
+                    <li>Jika perlu perbaikan, gunakan tombol <strong>EDIT</strong> untuk memperbaiki</li>
+                </ol>
+                <p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(14, 165, 233, 0.3);">
+                    <i class="fa-solid fa-lightbulb"></i> <strong>Tips:</strong> Gunakan format penamaan: <code>JENIS_KELAS_SEMESTER_TAHUN.ext</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- SECTION UPLOAD BERKAS -->
+        <div class="upload-section">
+            <div class="upload-header">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h3>Upload Berkas Digital</h3>
+                <p style="color: #64748b;">Pilih jenis berkas yang ingin diupload</p>
+            </div>
+
+            <!-- TAB NAVIGATION -->
+            <div class="upload-tabs">
+                <button class="tab-btn active" onclick="switchTab('tabSoal')">
+                    <i class="fa-solid fa-file-pen"></i> Upload Soal
+                </button>
+                <button class="tab-btn" onclick="switchTab('tabBerkas')">
+                    <i class="fa-solid fa-folder-open"></i> Berkas Lainnya
+                </button>
+            </div>
+
+            <!-- TAB 1: UPLOAD SOAL -->
+            <div id="tabSoal" class="tab-content active">
+                <div class="upload-options">
+                    <div class="upload-card">
+                        <h5><i class="fa-solid fa-file-pen"></i> Upload Soal Ujian</h5>
+                        <p>Upload soal STS (Semester 1) atau PAS/SAS (Semester 2) via Google Drive</p>
+                        
+                        <div class="form-group">
+                            <label><b>Jenis Soal:</b></label>
+                            <select id="jenisSoal" class="btn-absen" style="width:100%;">
+                                <option value="">-- Pilih Jenis Soal --</option>
+                                <option value="STS">Soal Tengah Semester (STS) - Semester 1</option>
+                                <option value="PAS">Penilaian Akhir Semester (PAS) - Semester 2</option>
+                                <option value="SAS">Sumatif Akhir Semester (SAS) - Semester 2</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Kelas:</b></label>
+                            <select id="kelasSoal" class="btn-absen" style="width:100%;">
+                                <option value="">-- Pilih Kelas --</option>
+                                <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option>
+                                <option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                                <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option>
+                                <option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option>
+                                <option value="2E">Kelas 2E</option>
+                                <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option>
+                                <option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option>
+                                <option value="3E">Kelas 3E</option>
+                                <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option>
+                                <option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option>
+                                <option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                                <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option>
+                                <option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option>
+                                <option value="5E">Kelas 5E</option>
+                                <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option>
+                                <option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option>
+                                <option value="6E">Kelas 6E</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Mata Pelajaran:</b></label>
+                            <select id="mapelSoal" class="btn-absen" style="width:100%;">
+                                <option value="">-- Pilih Mapel --</option>
+                                <option value="AKADEMIK">Akademik (Guru Kelas)</option>
+                                <option value="PJOK">Pendidikan Jasmani Olahraga & Kesehatan (PJOK)</option>
+                                <option value="PAI">Pendidikan Agama Islam (PAI)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Link Google Drive:</b></label>
+                            <input type="url" id="linkSoal" class="btn-absen" style="width:100%;" 
+                                   placeholder="https://drive.google.com/file/d/...">
+                            <small style="color: #64748b; display: block; margin-top: 0.25rem;">
+                                <i class="fa-solid fa-info-circle"></i> Pastikan link dalam mode "Anyone with the link can view"
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Catatan (Opsional):</b></label>
+                            <textarea id="catatanSoal" class="btn-absen" style="width:100%; height: 80px;" 
+                                      placeholder="Tambahkan catatan untuk admin jika diperlukan..."></textarea>
+                        </div>
+                        
+                        <button onclick="uploadSoal()" class="btn-upload" id="btnUploadSoal">
+                            <i class="fa-solid fa-paper-plane"></i> KIRIM SOAL KE ADMIN
+                        </button>
+                    </div>
+                    
+                    <div class="upload-card">
+                        <h5><i class="fa-solid fa-circle-info"></i> Informasi Upload Soal</h5>
+                        <p><strong>Format Penamaan File:</strong></p>
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); margin: 1rem 0; font-family: monospace; font-size: 0.9rem;">
+                            SOAL_[JENIS]_[MAPEL]_[KELAS]_[SEMESTER]_[TAHUN].pdf<br>
+                            Contoh: SOAL_STS_AKADEMIK_5A_S1_2024.pdf
+                        </div>
+                        
+                        <p><strong>Persyaratan:</strong></p>
+                        <ul style="color: #475569; font-size: 0.9rem; margin-left: 1.5rem;">
+                            <li>Format file: PDF, DOC, DOCX</li>
+                            <li>Maksimal ukuran: 10MB</li>
+                            <li>Disertai kunci jawaban (jika ada)</li>
+                            <li>Rubrik penilaian (jika diperlukan)</li>
+                        </ul>
+                        
+                        <p style="margin-top: 1rem; color: #ef4444; font-size: 0.9rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 
+                            <strong>Perhatian:</strong> Soal yang sudah dikirim tidak bisa dihapus. Gunakan tombol EDIT jika perlu perbaikan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: BERKAS LAINNYA -->
+            <div id="tabBerkas" class="tab-content">
+                <div class="upload-options">
+                    <div class="upload-card">
+                        <h5><i class="fa-solid fa-folder-open"></i> Upload Berkas Lainnya</h5>
+                        <p>Upload RPP, Leger Nilai, atau berkas administratif lainnya</p>
+                        
+                        <div class="form-group">
+                            <label><b>Judul Laporan:</b></label>
+                            <input type="text" id="judul" class="btn-absen" style="width:100%;" placeholder="Contoh: RPP PJOK Semester 1 2024">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Kategori:</b></label>
+                            <select id="kategori" class="btn-absen" style="width:100%;">
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="RPP">RPP / Perangkat Ajar</option>
+                                <option value="LEGER">Leger Nilai</option>
+                                <option value="ADMIN">Berkas Administratif</option>
+                                <option value="LAINNYA">Lainnya</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Link Google Drive:</b></label>
+                            <input type="url" id="link" class="btn-absen" style="width:100%;" 
+                                   placeholder="https://drive.google.com/file/d/...">
+                            <small style="color: #64748b; display: block; margin-top: 0.25rem;">
+                                <i class="fa-solid fa-info-circle"></i> Pastikan link dalam mode "Anyone with the link can view"
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><b>Deskripsi (Opsional):</b></label>
+                            <textarea id="deskripsi" class="btn-absen" style="width:100%; height: 100px;" 
+                                      placeholder="Jelaskan isi berkas secara singkat..."></textarea>
+                        </div>
+                        
+                        <button onclick="kirimKeAdmin()" id="btnKirim" class="btn-upload">
+                            <i class="fa-solid fa-paper-plane"></i> KIRIM KE ADMIN
+                        </button>
+                    </div>
+                    
+                    <div class="upload-card">
+                        <h5><i class="fa-solid fa-folder-tree"></i> Struktur Folder Rekomendasi</h5>
+                        <p>Untuk menjaga kerapian, gunakan struktur folder berikut di Google Drive:</p>
+                        
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); margin: 1rem 0; font-family: monospace; font-size: 0.85rem; line-height: 1.6;">
+                            Google Drive/<br>
+                            ├── SDN_Rawabuntu_03/<br>
+                            │   ├── [NAMA_ANDA]/<br>
+                            │   │   ├── RPP/<br>
+                            │   │   ├── SOAL/<br>
+                            │   │   ├── LEGER/<br>
+                            │   │   └── ADMIN/<br>
+                            │   └── SHARED/<br>
+                            │       └── (berkas bersama)
+                        </div>
+                        
+                        <p style="color: #475569; font-size: 0.9rem;">
+                            <i class="fa-solid fa-lightbulb"></i> 
+                            <strong>Sinkronisasi:</strong> Berkas Anda akan otomatis dikaitkan dengan akun Anda berdasarkan data authentication.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS BERKAS SAYA -->
+        <div class="status-list">
+            <div class="status-header">
+                <h4><i class="fa-solid fa-history"></i> Status Berkas Saya</h4>
+                <div>
+                    <button onclick="muatBerkas()" class="btn-absen" style="width: auto; margin-right: 0.5rem;">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <select id="filterStatus" class="btn-absen" style="width: auto;" onchange="filterBerkas()">
+                        <option value="ALL">Semua Status</option>
+                        <option value="PENDING">Menunggu</option>
+                        <option value="DITERIMA">Diterima</option>
+                        <option value="PERBAIKI">Perlu Perbaikan</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="listBerkas">
+                <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+                    <i class="fa-solid fa-file-circle-question" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h5 style="color: #64748b;">Belum ada berkas</h5>
+                    <p>Upload berkas pertama Anda untuk melihat status di sini</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, push, set, onValue, get, child, onAuthStateChanged, update } from './config_firebase.js';
+
+        let guru = null;
+        let semuaBerkas = [];
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await get(child(ref(db), `users/${user.uid}`));
+                if (snap.exists()) {
+                    guru = snap.val();
+                    guru.uid = user.uid;
+                    guru.email = user.email;
+                    
+                    // Update UI dengan data guru
+                    document.getElementById('guruNama').textContent = guru.nama;
+                    document.getElementById('guruRole').textContent = guru.role;
+                    document.getElementById('guruEmail').textContent = guru.email;
+                    
+                    // Set avatar initial
+                    const avatar = document.getElementById('guruAvatar');
+                    avatar.textContent = guru.nama.charAt(0).toUpperCase();
+                    
+                    // Update header
+                    document.querySelector('h3').innerHTML = `<i class="fa-solid fa-file-upload"></i> Laporan - ${guru.nama}`;
+                    
+                    // Auto-select mapel berdasarkan role
+                    const mapelSelect = document.getElementById('mapelSoal');
+                    if (guru.role.includes('PJOK')) {
+                        mapelSelect.value = 'PJOK';
+                    } else if (guru.role.includes('PAI')) {
+                        mapelSelect.value = 'PAI';
+                    } else {
+                        mapelSelect.value = 'AKADEMIK';
+                    }
+                    
+                    muatBerkas();
+                }
+            } else { 
+                location.href = 'index.html'; 
+            }
+        });
+
+        // Fungsi switch tab
+        window.switchTab = function(tabId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Add active class to selected tab
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        };
+
+        // Fungsi upload soal
+        window.uploadSoal = async function() {
+            const jenisSoal = document.getElementById('jenisSoal').value;
+            const kelasSoal = document.getElementById('kelasSoal').value;
+            const mapelSoal = document.getElementById('mapelSoal').value;
+            const linkSoal = document.getElementById('linkSoal').value;
+            const catatanSoal = document.getElementById('catatanSoal').value;
+            const btn = document.getElementById('btnUploadSoal');
+
+            // Validasi
+            if (!jenisSoal || !kelasSoal || !mapelSoal || !linkSoal) {
+                alert("Harap lengkapi semua field yang wajib diisi!");
+                return;
+            }
+            
+            if (!linkSoal.includes('drive.google.com')) {
+                if(!confirm("Link yang Anda masukkan bukan dari Google Drive. Lanjutkan?")) {
+                    return;
+                }
+            }
+
+            // Konfirmasi
+            const konfirmasi = `Anda akan mengirim soal:\n\n` +
+                              `Jenis: ${jenisSoal}\n` +
+                              `Kelas: ${kelasSoal}\n` +
+                              `Mapel: ${mapelSoal}\n\n` +
+                              `Lanjutkan?`;
+            
+            if (!confirm(konfirmasi)) {
+                return;
+            }
+
+            // Disable tombol
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
+
+            try {
+                const newRef = push(ref(db, 'laporan_berkas'));
+                const judul = `SOAL ${jenisSoal} - ${mapelSoal} - ${kelasSoal}`;
+                
+                await set(newRef, {
+                    judul: judul,
+                    link: linkSoal,
+                    jenis: 'SOAL_UJIAN',
+                    detail: {
+                        jenis_soal: jenisSoal,
+                        kelas: kelasSoal,
+                        mapel: mapelSoal,
+                        catatan: catatanSoal
+                    },
+                    guruId: guru.uid,
+                    guruNama: guru.nama,
+                    guruRole: guru.role,
+                    status: "PENDING",
+                    catatan: "",
+                    waktu: new Date().toLocaleString('id-ID'),
+                    timestamp: Date.now()
+                });
+                
+                alert("✅ Soal berhasil dikirim ke Admin!");
+                
+                // Reset form
+                document.getElementById('jenisSoal').value = '';
+                document.getElementById('kelasSoal').value = '';
+                document.getElementById('linkSoal').value = '';
+                document.getElementById('catatanSoal').value = '';
+                
+                // Refresh list
+                muatBerkas();
+                
+                // Switch to status tab
+                document.querySelector('h4').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (e) {
+                console.error("Error:", e);
+                alert("❌ Gagal mengirim soal: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> KIRIM SOAL KE ADMIN';
+            }
+        };
+
+        // LOGIKA ASLI DARI FILE LAMA
+        window.kirimKeAdmin = async function() {
+            const jdl = document.getElementById('judul').value;
+            const lnk = document.getElementById('link').value;
+            const ktg = document.getElementById('kategori').value;
+            const dsk = document.getElementById('deskripsi').value;
+            
+            if(!jdl || !lnk || !ktg) {
+                alert("Mohon isi Judul, Kategori, dan Link Google Drive!");
+                return;
+            }
+            
+            if(!lnk.includes('drive.google.com')) {
+                if(!confirm("Link yang Anda masukkan bukan dari Google Drive. Lanjutkan?")) {
+                    return;
+                }
+            }
+
+            try {
+                const newRef = push(ref(db, 'laporan_berkas'));
+                await set(newRef, {
+                    judul: jdl,
+                    link: lnk,
+                    jenis: ktg,
+                    deskripsi: dsk,
+                    guruId: guru.uid,
+                    guruNama: guru.nama,
+                    guruRole: guru.role,
+                    status: "PENDING",
+                    catatan: "",
+                    waktu: new Date().toLocaleString('id-ID'),
+                    timestamp: Date.now()
+                });
+                alert("✅ Berhasil dikirim ke Admin!");
+                
+                // Reset form
+                document.getElementById('judul').value = "";
+                document.getElementById('link').value = "";
+                document.getElementById('deskripsi').value = "";
+                
+                // Refresh list
+                muatBerkas();
+                
+            } catch (e) {
+                console.error("Error:", e);
+                alert("❌ Gagal mengirim: " + e.message);
+            }
+        };
+
+        // Fungsi untuk memuat berkas
+        window.muatBerkas = function() {
+            onValue(ref(db, 'laporan_berkas'), (snap) => {
+                const div = document.getElementById('listBerkas');
+                semuaBerkas = [];
+                
+                if (!snap.exists()) {
+                    div.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+                            <i class="fa-solid fa-file-circle-question" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h5 style="color: #64748b;">Belum ada berkas</h5>
+                            <p>Upload berkas pertama Anda untuk melihat status di sini</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                snap.forEach(c => {
+                    const d = c.val();
+                    d.id = c.key;
+                    if(d.guruId === guru.uid) {
+                        semuaBerkas.push(d);
+                    }
+                });
+                
+                filterBerkas();
+            });
+        };
+
+        // Fungsi filter berkas
+        window.filterBerkas = function() {
+            const statusFilter = document.getElementById('filterStatus').value;
+            const div = document.getElementById('listBerkas');
+            
+            let filteredBerkas = [...semuaBerkas];
+            
+            if (statusFilter !== 'ALL') {
+                filteredBerkas = filteredBerkas.filter(b => b.status === statusFilter);
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredBerkas.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            
+            if (filteredBerkas.length === 0) {
+                div.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+                        <i class="fa-solid fa-filter" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h5 style="color: #64748b;">Tidak ada berkas</h5>
+                        <p>Tidak ada berkas dengan status "${statusFilter}"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            div.innerHTML = "";
+            
+            filteredBerkas.forEach(d => {
+                const editFormId = `editForm_${d.id}`;
+                div.insertAdjacentHTML('afterbegin', `
+                    <div class="card-laporan ${d.status}">
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom: 0.75rem;">
+                            <div style="flex: 1;">
+                                <strong>${d.judul}</strong>
+                                <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
+                                    ${d.jenis} | ${d.waktu}
+                                    ${d.detail ? `<br>${d.detail.jenis_soal} - ${d.detail.mapel} - ${d.detail.kelas}` : ''}
+                                </div>
+                            </div>
+                            <span class="status-badge ${d.status}">${d.status}</span>
+                        </div>
+                        
+                        <a href="${d.link}" target="_blank" style="color: #4a6de5; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-link"></i> Buka Berkas
+                        </a>
+                        
+                        ${d.deskripsi ? `<p style="margin: 0.5rem 0; color: #475569; font-size: 0.9rem;">${d.deskripsi}</p>` : ''}
+                        
+                        ${d.catatan ? `
+                        <div class="msg-admin">
+                            <strong><i class="fa-solid fa-comment"></i> Catatan Admin:</strong>
+                            <p style="margin: 0.5rem 0 0; color: #475569;">${d.catatan}</p>
+                        </div>` : ''}
+                        
+                        ${d.status === 'PERBAIKI' ? `
+                        <button onclick="toggleEditForm('${d.id}')" class="btn-edit">
+                            <i class="fa-solid fa-pen-to-square"></i> EDIT BERKAS
+                        </button>
+                        
+                        <div id="${editFormId}" class="edit-form">
+                            <h6 style="color: #92400e; margin-bottom: 0.75rem;">
+                                <i class="fa-solid fa-pen"></i> Form Perbaikan
+                            </h6>
+                            <div class="form-group">
+                                <label>Link Google Drive Baru:</label>
+                                <input type="url" id="editLink_${d.id}" class="btn-absen" style="width:100%;" 
+                                       placeholder="Masukkan link Google Drive yang sudah diperbaiki" value="${d.link}">
+                            </div>
+                            <div class="form-group">
+                                <label>Catatan Perbaikan:</label>
+                                <textarea id="editCatatan_${d.id}" class="btn-absen" style="width:100%; height: 80px;" 
+                                          placeholder="Jelaskan perbaikan yang telah dilakukan..."></textarea>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <button onclick="updateBerkas('${d.id}')" class="btn-upload" style="flex: 1;">
+                                    <i class="fa-solid fa-check"></i> SIMPAN PERBAIKAN
+                                </button>
+                                <button onclick="toggleEditForm('${d.id}')" class="btn-absen" style="flex: 1;">
+                                    <i class="fa-solid fa-times"></i> BATAL
+                                </button>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `);
+            });
+        };
+
+        // Fungsi toggle edit form
+        window.toggleEditForm = function(id) {
+            const form = document.getElementById(`editForm_${id}`);
+            form.classList.toggle('show');
+        };
+
+        // Fungsi update berkas
+        window.updateBerkas = async function(id) {
+            const newLink = document.getElementById(`editLink_${id}`).value;
+            const catatanPerbaikan = document.getElementById(`editCatatan_${id}`).value;
+            
+            if (!newLink) {
+                alert("Harap masukkan link Google Drive baru!");
+                return;
+            }
+            
+            if (!newLink.includes('drive.google.com')) {
+                if(!confirm("Link yang Anda masukkan bukan dari Google Drive. Lanjutkan?")) {
+                    return;
+                }
+            }
+            
+            try {
+                const updates = {
+                    link: newLink,
+                    status: "PENDING", // Kembali ke status pending
+                    catatan: "", // Reset catatan admin
+                    waktu_perbaikan: new Date().toLocaleString('id-ID'),
+                    catatan_perbaikan: catatanPerbaikan
+                };
+                
+                await update(ref(db, `laporan_berkas/${id}`), updates);
+                
+                alert("✅ Perbaikan berhasil dikirim! Status kembali ke PENDING menunggu review admin.");
+                
+                // Refresh list
+                muatBerkas();
+                
+            } catch (e) {
+                console.error("Error updating:", e);
+                alert("❌ Gagal menyimpan perbaikan: " + e.message);
+            }
+        };
+    </script>
+</body>
+</html>

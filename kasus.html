@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kasus Siswa - UPTD SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .card-kasus { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .status-open { color: #ef4444; font-weight: bold; }
+        .status-solved { color: #f59e0b; font-weight: bold; }
+        .status-closed { color: #10b981; font-weight: bold; }
+        .area-solusi { background: #f0f9ff; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #3b82f6; font-size: 14px; }
+        .badge-kategori { background: #e2e8f0; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3>Layanan Kasus Siswa</h3>
+    </header>
+
+    <div class="container">
+        <div id="formLapor" class="card hidden" style="margin-bottom: 30px;">
+            <h4><i class="fa-solid fa-file-signature"></i> Buat Laporan Kasus Baru</h4>
+            <div class="form-group">
+                <label>Nama Siswa:</label>
+                <input type="text" id="namaSiswa" class="btn-absen" style="width:100%;" placeholder="Ketik Nama Lengkap Siswa...">
+            </div>
+            <div class="form-group">
+                <label>Kelas:</label>
+                <input type="text" id="kelasSiswa" class="btn-absen" style="width:100%;" placeholder="Contoh: 4A">
+            </div>
+            <div class="form-group">
+                <label>Jenis Kasus:</label>
+                <select id="jenisKasus" class="btn-absen" style="width:100%;">
+                    <option value="Kedisiplinan">Kedisiplinan</option>
+                    <option value="Akademik">Akademik</option>
+                    <option value="Bullying">Perundungan (Bullying)</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Kronologi / Deskripsi:</label>
+                <textarea id="deskripsi" class="btn-absen" style="width:100%; height: 100px;" placeholder="Jelaskan detail kejadian..."></textarea>
+            </div>
+            <button onclick="kirimKasus()" id="btnKirim" class="btn-primary" style="width:100%; font-weight:bold;">
+                <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN KE ADMIN
+            </button>
+        </div>
+
+        <h4 id="labelDaftar">Memuat Riwayat Kasus...</h4>
+        <div id="listKasus"></div>
+    </div>
+
+    <script type="module">
+        import { auth, db, ref, push, set, onValue, update, onAuthStateChanged, get, child } from './config_firebase.js';
+
+        let userAktif = null;
+
+        // 1. CEK AUTH & ROLE
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await get(child(ref(db), `users/${user.uid}`));
+                if(snap.exists()){
+                    userAktif = snap.val();
+                    userAktif.uid = user.uid;
+                    // Hanya Guru yang melapor
+                    if (userAktif.role !== 'ADMIN') {
+                        document.getElementById('formLapor').classList.remove('hidden');
+                    }
+                    muatDaftarKasus();
+                }
+            } else { location.href = 'index.html'; }
+        });
+
+        // 2. FUNGSI KIRIM LAPORAN (Guru)
+        window.kirimKasus = async function() {
+            const nama = document.getElementById('namaSiswa').value.trim();
+            const kls = document.getElementById('kelasSiswa').value.trim();
+            const dsk = document.getElementById('deskripsi').value.trim();
+            const jenis = document.getElementById('jenisKasus').value;
+
+            if (!nama || !kls || !dsk) return alert("Mohon lengkapi data siswa dan deskripsi!");
+
+            const btn = document.getElementById('btnKirim');
+            btn.disabled = true;
+            btn.innerText = "Memproses Pengiriman...";
+
+            try {
+                const kasusRef = push(ref(db, 'kasus'));
+                // DATA HARUS SINKRON DENGAN RULES (Wajib ada field-field ini)
+                await set(kasusRef, {
+                    siswaId: "S-" + Date.now(), // ID Unik
+                    namaSiswa: nama,
+                    kelas: kls,
+                    jenisKasus: jenis,
+                    deskripsi: dsk,
+                    status: "OPEN",
+                    timestamp: Date.now(),
+                    pelaporId: userAktif.uid,
+                    pelaporNama: userAktif.nama,
+                    pelaporRole: userAktif.role
+                });
+
+                alert("Alhamdulillah, Laporan terkirim ke Admin!");
+                document.getElementById('namaSiswa').value = "";
+                document.getElementById('kelasSiswa').value = "";
+                document.getElementById('deskripsi').value = "";
+            } catch (e) {
+                console.error(e);
+                alert("Gagal: Izin Ditolak! Pastikan Rules Firebase sudah di-Publish.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "KIRIM LAPORAN KE ADMIN";
+            }
+        };
+
+        // 3. TAMPILKAN DAFTAR KASUS (Realtime)
+        function muatDaftarKasus() {
+            onValue(ref(db, 'kasus'), (snapshot) => {
+                const div = document.getElementById('listKasus');
+                div.innerHTML = "";
+                document.getElementById('labelDaftar').innerText = "Riwayat Laporan Kasus";
+
+                if (!snapshot.exists()) {
+                    div.innerHTML = "<p style='text-align:center; opacity:0.5;'>Belum ada laporan masuk.</p>";
+                    return;
+                }
+
+                snapshot.forEach(child => {
+                    const k = child.val();
+                    const id = child.key;
+
+                    // Filter: Guru hanya melihat laporannya sendiri
+                    if (userAktif.role !== 'ADMIN' && k.pelaporId !== userAktif.uid) return;
+
+                    let html = `
+                        <div class="card-kasus">
+                            <div style="display:flex; justify-content:space-between; align-items:start;">
+                                <div>
+                                    <strong>${k.namaSiswa}</strong> <span class="badge-kategori">${k.kelas}</span><br>
+                                    <small style="color:var(--accent)">Kategori: ${k.jenisKasus}</small>
+                                </div>
+                                <span style="font-size:10px; color:#999;">${new Date(k.timestamp).toLocaleDateString()}</span>
+                            </div>
+                            <p style="margin:12px 0; font-size:14px; line-height:1.5;">${k.deskripsi}</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <small>Pelapor: ${k.pelaporNama}</small>
+                                <span class="status-${k.status.toLowerCase()}">${k.status}</span>
+                            </div>
+                    `;
+
+                    // Bagian Solusi (Jika Admin sudah balas)
+                    if (k.solusi) {
+                        html += `
+                            <div class="area-solusi">
+                                <strong><i class="fa-solid fa-lightbulb"></i> Solusi Admin (${k.adminNama}):</strong>
+                                <p style="margin-top:5px; color:#334155;">${k.solusi}</p>
+                            </div>
+                        `;
+                    }
+
+                    // AKSI ADMIN: Beri Solusi (Sesuai Rules Node 5 Update)
+                    if (userAktif.role === 'ADMIN' && k.status === 'OPEN') {
+                        html += `
+                            <div style="margin-top:15px; border-top: 1px solid #eee; padding-top:10px;">
+                                <textarea id="sol_${id}" class="btn-absen" style="width:100%; height:60px;" placeholder="Berikan arahan solusi..."></textarea>
+                                <button onclick="balasKasus('${id}')" class="btn-primary" style="background:#f59e0b; margin-top:5px; width:100%;">KIRIM ARAHAN</button>
+                            </div>
+                        `;
+                    }
+
+                    // AKSI ADMIN: Tutup Kasus
+                    if (userAktif.role === 'ADMIN' && k.status !== 'CLOSED') {
+                        html += `<button onclick="tutupKasus('${id}')" class="btn-danger" style="width:100%; margin-top:10px;">TANDAI SELESAI & TUTUP</button>`;
+                    }
+
+                    div.insertAdjacentHTML('afterbegin', html + "</div>");
+                });
+            });
+        }
+
+        // 4. ADMIN BERI SOLUSI (Wajib field adminId, adminNama, updatedAt)
+        window.balasKasus = (id) => {
+            const pesan = document.getElementById(`sol_${id}`).value;
+            if(!pesan) return alert("Silakan ketik solusinya!");
+            
+            update(ref(db, `kasus/${id}`), {
+                solusi: pesan,
+                status: "SOLVED",
+                adminId: userAktif.uid,
+                adminNama: userAktif.nama,
+                updatedAt: Date.now()
+            }).then(() => alert("Solusi berhasil dikirim ke Guru."));
+        };
+
+        window.tutupKasus = (id) => {
+            if(confirm("Tutup kasus ini? Kasus tidak bisa diedit lagi.")) {
+                update(ref(db, `kasus/${id}`), { status: "CLOSED" });
+            }
+        };
+    </script>
+</body>
+</html>

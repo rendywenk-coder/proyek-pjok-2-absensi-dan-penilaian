@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Data Siswa - UPTD SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3>Manajemen Data Siswa & Riwayat</h3>
+    </header>
+
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
+            
+            <div class="card">
+                <h4 id="formTitle"><i class="fa-solid fa-user-plus"></i> Tambah Siswa Baru</h4>
+                <hr>
+                
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>Pilih Kelas:</label>
+                    <select id="inputKelas" class="btn-absen" style="width:100%;">
+                        <optgroup label="Kelas 1">
+                            <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option><option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                        </optgroup>
+                        <optgroup label="Kelas 2">
+                            <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option><option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option><option value="2E">Kelas 2E</option>
+                        </optgroup>
+                        <optgroup label="Kelas 3">
+                            <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option><option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option><option value="3E">Kelas 3E</option>
+                        </optgroup>
+                        <optgroup label="Kelas 4">
+                            <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option><option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option><option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                        </optgroup>
+                        <optgroup label="Kelas 5">
+                            <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option><option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option><option value="5E">Kelas 5E</option>
+                        </optgroup>
+                        <optgroup label="Kelas 6">
+                            <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option><option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option><option value="6E">Kelas 6E</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>Nama Lengkap Siswa:</label>
+                    <input type="text" id="inputNama" class="btn-absen" style="width:100%;" placeholder="Ketik nama lengkap...">
+                </div>
+
+                <input type="hidden" id="editKey">
+
+                <button onclick="simpanSiswa()" id="btnSimpan" class="btn-primary" style="background: var(--success);">
+                    <i class="fa-solid fa-save"></i> Simpan ke Database
+                </button>
+            </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                    <h4><i class="fa-solid fa-users"></i> Daftar Siswa Aktif</h4>
+                    <select id="filterKelas" onchange="muatDaftarSiswa()" class="btn-absen" style="width:auto;">
+                        <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option><option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                        <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option><option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option><option value="2E">Kelas 2E</option>
+                        <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option><option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option><option value="3E">Kelas 3E</option>
+                        <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option><option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option><option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                        <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option><option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option><option value="5E">Kelas 5E</option>
+                        <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option><option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option><option value="6E">Kelas 6E</option>
+                    </select>
+                </div>
+                <hr>
+                <div id="containerDaftar" style="max-height: 450px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, set, get, child, remove, onValue, update, push } from './config_firebase.js';
+
+        async function catatLog(aksi, namaSiswa, kelasSiswa) {
+            const logRef = ref(db, 'log_aktivitas');
+            await push(logRef, {
+                waktu: new Date().toLocaleString('id-ID'),
+                admin: "Admin SDN RBT 03",
+                aksi: aksi,
+                nama: namaSiswa,
+                kelas: kelasSiswa
+            });
+        }
+
+        window.muatDaftarSiswa = function() {
+            const kls = document.getElementById('filterKelas').value;
+            const container = document.getElementById('containerDaftar');
+            
+            onValue(ref(db, `siswa/${kls}`), (snapshot) => {
+                container.innerHTML = "";
+                if(!snapshot.exists()) {
+                    container.innerHTML = "<p style='text-align:center; padding:20px;'>Data tidak ditemukan.</p>";
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const s = child.val();
+                    const key = child.key;
+                    container.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; align-items:center;">
+                            <span><b>${key}.</b> ${s.nama}</span>
+                            <div style="display:flex; gap:10px;">
+                                <button onclick="hapusSiswa('${kls}', '${key}', '${s.nama}')" style="color:var(--danger); border:none; background:none; cursor:pointer;">
+                                    <i class="fa-solid fa-trash-can"></i> Hapus
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        window.simpanSiswa = async function() {
+            const kls = document.getElementById('inputKelas').value;
+            const nama = document.getElementById('inputNama').value.trim();
+
+            if(!nama) return alert("Nama tidak boleh kosong!");
+
+            try {
+                const snapshot = await get(ref(db, `siswa/${kls}`));
+                let nomorBaru = "01";
+                
+                if(snapshot.exists()){
+                    const keys = Object.keys(snapshot.val());
+                    // Mengambil nomor urut terakhir dan ditambah 1
+                    const lastNum = parseInt(keys[keys.length - 1]);
+                    nomorBaru = (lastNum + 1).toString().padStart(2, '0');
+                }
+
+                await set(ref(db, `siswa/${kls}/${nomorBaru}`), {
+                    nama: nama,
+                    kelas: kls,
+                    no_absen: nomorBaru
+                });
+
+                await catatLog("TAMBAH", nama, kls);
+                alert("Siswa berhasil dimasukkan!");
+                document.getElementById('inputNama').value = "";
+                muatDaftarSiswa();
+            } catch (e) { alert("Gagal: " + e.message); }
+        }
+
+        window.hapusSiswa = function(kls, key, nama) {
+            if(confirm(`Keluarkan/Hapus ${nama} dari Kelas ${kls}?`)) {
+                remove(ref(db, `siswa/${kls}/${key}`))
+                    .then(async () => {
+                        await catatLog("HAPUS", nama, kls);
+                        alert("Data telah dihapus.");
+                    })
+                    .catch((e) => alert("Gagal: " + e.message));
+            }
+        }
+
+        window.onload = () => muatDaftarSiswa();
+    </script>
+</body>
+</html>

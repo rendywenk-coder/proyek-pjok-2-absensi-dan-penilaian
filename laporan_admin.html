@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Review Laporan - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* TAMPILAN PREMIUM UNTUK ADMIN */
+        :root {
+            --admin-primary: #1a237e;
+            --admin-secondary: #283593;
+            --admin-accent: #5c6bc0;
+            --admin-success: #43a047;
+            --admin-warning: #ffb300;
+            --admin-danger: #e53935;
+            --admin-light: #f5f7ff;
+            --admin-card-bg: #ffffff;
+            --admin-border: #e8eaf6;
+        }
+        
+        /* HEADER ADMIN PREMIUM */
+        .admin-header-premium {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .admin-header-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .admin-header-premium h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .admin-header-premium p {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* STATS CARDS PREMIUM */
+        .admin-stats-premium {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-card-premium {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .stat-card-premium:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card-premium .count {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0.5rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card-premium .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* FILTER SECTION PREMIUM */
+        .filter-section-premium {
+            background: var(--admin-card-bg);
+            padding: 1.75rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--admin-border);
+        }
+        
+        .filter-section-premium h5 {
+            color: var(--admin-primary);
+            margin-bottom: 1.25rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f0f2ff;
+        }
+        
+        .filter-grid-premium {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+        
+        /* CARD REVIEW PREMIUM */
+        .card-review-premium {
+            background: var(--admin-card-bg);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.75rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-review-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                rgba(245, 158, 11, 0.4) 0%,
+                rgba(16, 185, 129, 0.4) 50%,
+                rgba(239, 68, 68, 0.4) 100%);
+            opacity: 0.5;
+        }
+        
+        .card-review-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-review-premium.PENDING {
+            border-left-color: var(--admin-warning);
+            background: linear-gradient(to right, #ffffff 0%, #fff9e6 100%);
+        }
+        
+        .card-review-premium.DITERIMA {
+            border-left-color: var(--admin-success);
+            background: linear-gradient(to right, #ffffff 0%, #f0fff4 100%);
+        }
+        
+        .card-review-premium.PERBAIKI {
+            border-left-color: var(--admin-danger);
+            background: linear-gradient(to right, #ffffff 0%, #fff5f5 100%);
+        }
+        
+        .card-header-premium {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f2ff;
+        }
+        
+        .card-title-premium {
+            flex: 1;
+        }
+        
+        .card-title-premium h4 {
+            font-size: 1.3rem;
+            color: var(--admin-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        
+        .info-guru-premium {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: #546e7a;
+        }
+        
+        .guru-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--admin-accent) 0%, #7986cb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        /* BADGE PREMIUM */
+        .badge-premium {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .PENDING { 
+            background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%);
+            color: white;
+        }
+        .DITERIMA { 
+            background: linear-gradient(135deg, #43a047 0%, #388e3c 100%);
+            color: white;
+        }
+        .PERBAIKI { 
+            background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
+            color: white;
+        }
+        
+        /* DETAIL SECTION */
+        .detail-section {
+            background: #f8f9ff;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0;
+            border: 1px solid #e8eaf6;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        
+        .detail-item {
+            background: white;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--admin-accent);
+        }
+        
+        .detail-item i {
+            color: var(--admin-accent);
+            margin-right: 8px;
+        }
+        
+        /* ACTION BUTTONS PREMIUM */
+        .action-buttons-premium {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f2ff;
+        }
+        
+        .btn-terima-premium {
+            background: linear-gradient(135deg, #43a047 0%, #388e3c 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(67, 160, 71, 0.3);
+        }
+        
+        .btn-terima-premium:hover {
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 160, 71, 0.4);
+        }
+        
+        .btn-perbaiki-premium {
+            background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+        }
+        
+        .btn-perbaiki-premium:hover {
+            background: linear-gradient(135deg, #ffa000 0%, #ff8f00 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 179, 0, 0.4);
+        }
+        
+        .btn-edit-admin-premium {
+            background: linear-gradient(135deg, #7e57c2 0%, #673ab7 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(126, 87, 194, 0.3);
+        }
+        
+        .btn-edit-admin-premium:hover {
+            background: linear-gradient(135deg, #673ab7 0%, #5e35b1 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(126, 87, 194, 0.4);
+        }
+        
+        /* INPUT KOMEN PREMIUM */
+        .input-komen-premium {
+            width: 100%;
+            border: 2px solid #e8eaf6;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            resize: vertical;
+            background: #fafbff;
+        }
+        
+        .input-komen-premium:focus {
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.1);
+            outline: none;
+            background: white;
+        }
+        
+        /* EDIT SECTION PREMIUM */
+        .edit-section-premium {
+            background: linear-gradient(135deg, #f3f4ff 0%, #e8eaf6 100%);
+            padding: 1.75rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1.5rem;
+            border: 2px dashed #c5cae9;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .edit-section-premium.show {
+            display: block;
+        }
+        
+        .edit-header-premium {
+            color: #5c6bc0;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        /* LOADING STATE PREMIUM */
+        .loading-premium {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--admin-primary);
+        }
+        
+        .loading-premium i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--admin-accent);
+            animation: spin 1.5s linear infinite;
+        }
+        
+        .loading-premium h4 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--admin-primary);
+        }
+        
+        /* EMPTY STATE PREMIUM */
+        .empty-state-premium {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #90a4ae;
+            background: linear-gradient(135deg, #fafbff 0%, #f5f7ff 100%);
+            border-radius: var(--radius);
+            border: 2px dashed #e8eaf6;
+        }
+        
+        .empty-state-premium i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+            color: var(--admin-accent);
+        }
+        
+        .empty-state-premium h4 {
+            color: #546e7a;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+        
+        /* ERROR STATE PREMIUM */
+        .error-state-premium {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-radius: var(--radius);
+            border-left: 5px solid #e53935;
+            margin-bottom: 2rem;
+        }
+        
+        .error-state-premium i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: #e53935;
+        }
+        
+        .error-state-premium h4 {
+            color: #c62828;
+            margin-bottom: 0.75rem;
+        }
+        
+        /* TIMEOUT STATE PREMIUM */
+        .timeout-state-premium {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: var(--radius);
+            border-left: 5px solid #ffb300;
+        }
+        
+        .timeout-state-premium i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: #ffb300;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .admin-stats-premium {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filter-grid-premium {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons-premium {
+                flex-direction: column;
+            }
+            
+            .card-header-premium {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .badge-premium {
+                align-self: flex-start;
+            }
+            
+            .admin-header-premium {
+                padding: 1.5rem;
+            }
+            
+            .admin-header-premium h3 {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .admin-stats-premium {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3><i class="fa-solid fa-file-circle-check"></i> Review Berkas Guru</h3>
+    </header>
+
+    <div class="container">
+        <!-- HEADER ADMIN PREMIUM -->
+        <div class="admin-header-premium">
+            <h3><i class="fa-solid fa-user-shield"></i> Panel Administrator - Review Berkas</h3>
+            <p>Tinjau, berikan feedback, dan kelola semua berkas yang diupload oleh guru dengan mudah dan cepat</p>
+            
+            <div class="admin-stats-premium">
+                <div class="stat-card-premium" onclick="filterByStatus('ALL')">
+                    <div class="count" id="totalBerkas">0</div>
+                    <div class="label">Total Berkas</div>
+                </div>
+                <div class="stat-card-premium" onclick="filterByStatus('PENDING')">
+                    <div class="count" id="pendingCount">0</div>
+                    <div class="label">Menunggu Review</div>
+                </div>
+                <div class="stat-card-premium" onclick="filterByStatus('DITERIMA')">
+                    <div class="count" id="diterimaCount">0</div>
+                    <div class="label">Diterima</div>
+                </div>
+                <div class="stat-card-premium" onclick="filterByStatus('PERBAIKI')">
+                    <div class="count" id="perbaikiCount">0</div>
+                    <div class="label">Perlu Perbaikan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER SECTION PREMIUM -->
+        <div class="filter-section-premium">
+            <h5><i class="fa-solid fa-sliders"></i> Filter & Sortir Berkas</h5>
+            <div class="filter-grid-premium">
+                <div>
+                    <label><b><i class="fa-solid fa-filter"></i> Status:</b></label>
+                    <select id="filterStatus" class="btn-absen" style="width:100%; background: white;" onchange="filterLaporan()">
+                        <option value="ALL">Semua Status</option>
+                        <option value="PENDING">⏳ Menunggu Review</option>
+                        <option value="DITERIMA">✅ Sudah Diterima</option>
+                        <option value="PERBAIKI">✏️ Perlu Perbaikan</option>
+                    </select>
+                </div>
+                <div>
+                    <label><b><i class="fa-solid fa-tag"></i> Kategori:</b></label>
+                    <select id="filterKategori" class="btn-absen" style="width:100%; background: white;" onchange="filterLaporan()">
+                        <option value="ALL">Semua Kategori</option>
+                        <option value="RPP">📚 RPP / Perangkat Ajar</option>
+                        <option value="LEGER">📊 Leger Nilai</option>
+                        <option value="SOAL_UJIAN">📝 Soal Ujian</option>
+                        <option value="ADMIN">📁 Administratif</option>
+                        <option value="LAINNYA">📦 Lainnya</option>
+                    </select>
+                </div>
+                <div>
+                    <label><b><i class="fa-solid fa-sort"></i> Urutkan:</b></label>
+                    <select id="filterSort" class="btn-absen" style="width:100%; background: white;" onchange="filterLaporan()">
+                        <option value="newest">🔼 Terbaru (Newest)</option>
+                        <option value="oldest">🔽 Terlama (Oldest)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANDUAN REVIEW -->
+        <div class="card" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 5px solid #43a047; margin-bottom: 2rem;">
+            <div style="display: flex; align-items: flex-start; gap: 15px;">
+                <div style="background: #43a047; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div style="flex: 1;">
+                    <h5 style="color: #2e7d32; margin-bottom: 0.5rem; font-size: 1.2rem;">Panduan Review Admin</h5>
+                    <div style="color: #388e3c; font-size: 0.95rem;">
+                        <p><strong>Workflow Review:</strong></p>
+                        <ol style="margin-left: 1.5rem; margin-bottom: 0.75rem;">
+                            <li><strong>Buka berkas</strong> dengan klik tombol "Lihat/Unduh Berkas"</li>
+                            <li><strong>Periksa kelengkapan</strong> dan kesesuaian dengan standar</li>
+                            <li><strong>Berikan catatan</strong> jika ada yang perlu diperbaiki</li>
+                            <li><strong>Tentukan status:</strong> DITERIMA atau PERBAIKI</li>
+                        </ol>
+                        <p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(67, 160, 71, 0.3);">
+                            <i class="fa-solid fa-info-circle"></i> <strong>Catatan Penting:</strong> Status akan langsung dikirim ke guru dan dapat dilihat di dashboard mereka.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LIST LAPORAN -->
+        <div id="listLaporanAdmin">
+            <div class="loading-premium">
+                <i class="fa-solid fa-spinner"></i>
+                <h4>Memuat data laporan...</h4>
+                <p>Sedang mengambil data dari database</p>
+                <div style="margin-top: 2rem; width: 200px; height: 4px; background: #e8eaf6; border-radius: 2px; overflow: hidden; margin: 2rem auto 0;">
+                    <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #5c6bc0 0%, #7986cb 100%); border-radius: 2px; animation: loadingBar 1.5s infinite;"></div>
+                </div>
+                <style>
+                    @keyframes loadingBar {
+                        0% { transform: translateX(-100%); }
+                        100% { transform: translateX(250%); }
+                    }
+                </style>
+            </div>
+        </div>
+        
+        <!-- LOADING TIMEOUT -->
+        <div id="loadingTimeout" class="timeout-state-premium hidden">
+            <i class="fa-solid fa-clock"></i>
+            <h4 style="color: #ff8f00;">Memuat terlalu lama</h4>
+            <p style="color: #ff8f00; margin-bottom: 1.5rem;">Koneksi ke database sedang lambat atau terjadi gangguan.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button onclick="location.reload()" class="btn-primary" style="width: auto; padding: 0.75rem 2rem;">
+                    <i class="fa-solid fa-rotate"></i> Refresh Halaman
+                </button>
+                <button onclick="muatLaporanRealtime()" class="btn-perbaiki-premium" style="width: auto; padding: 0.75rem 2rem;">
+                    <i class="fa-solid fa-redo"></i> Coba Lagi
+                </button>
+            </div>
+        </div>
+        
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="empty-state-premium hidden">
+            <i class="fa-solid fa-file-circle-question"></i>
+            <h4>Belum ada data laporan</h4>
+            <p style="max-width: 400px; margin: 0 auto 1.5rem;">Belum ada guru yang mengupload berkas untuk direview. Data akan muncul otomatis ketika ada upload baru.</p>
+            <button onclick="muatLaporanRealtime()" class="btn-primary" style="width: auto; padding: 0.75rem 2rem;">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh Data
+            </button>
+        </div>
+        
+        <!-- ERROR STATE -->
+        <div id="errorState" class="error-state-premium hidden">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h4 id="errorTitle">Terjadi Kesalahan</h4>
+            <p id="errorMessage" style="margin-bottom: 1.5rem;">Gagal memuat data dari database</p>
+            <button onclick="muatLaporanRealtime()" class="btn-perbaiki-premium" style="width: auto; padding: 0.75rem 2rem;">
+                <i class="fa-solid fa-redo"></i> Coba Lagi
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        // LOGIKA YANG SAMA TIDAK DIUBAH
+        import { db, auth, ref, onValue, update, get, child, onAuthStateChanged } from './config_firebase.js';
+
+        let allReports = [];
+        let currentUser = null;
+        let isLoading = false;
+        let loadTimeout = null;
+
+        // Cek apakah user adalah admin
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const snap = await get(child(ref(db), `users/${user.uid}`));
+                    if(snap.exists() && snap.val().role === 'ADMIN') {
+                        currentUser = snap.val();
+                        currentUser.uid = user.uid;
+                        muatLaporanRealtime();
+                    } else {
+                        showError("Akses Ditolak", "Hanya user dengan role ADMIN yang dapat mengakses halaman ini.");
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 2000);
+                    }
+                } catch (err) {
+                    console.error("Error Auth:", err);
+                    showError("Gagal memverifikasi identitas", err.message);
+                }
+            } else { 
+                showError("Belum Login", "Silakan login terlebih dahulu untuk mengakses halaman ini.");
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2000);
+            }
+        });
+
+        function showLoading() {
+            document.getElementById('listLaporanAdmin').classList.remove('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('loadingTimeout').classList.add('hidden');
+        }
+
+        function showEmpty() {
+            document.getElementById('listLaporanAdmin').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('loadingTimeout').classList.add('hidden');
+        }
+
+        function showError(title, message) {
+            document.getElementById('listLaporanAdmin').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+            document.getElementById('loadingTimeout').classList.add('hidden');
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function showTimeout() {
+            document.getElementById('listLaporanAdmin').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('loadingTimeout').classList.remove('hidden');
+        }
+
+        function updateStats(reports) {
+            const total = reports.length;
+            const pending = reports.filter(r => r.status === 'PENDING' || !r.status).length;
+            const diterima = reports.filter(r => r.status === 'DITERIMA').length;
+            const perbaiki = reports.filter(r => r.status === 'PERBAIKI').length;
+            
+            document.getElementById('totalBerkas').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('diterimaCount').textContent = diterima;
+            document.getElementById('perbaikiCount').textContent = perbaiki;
+        }
+
+        // Fungsi filter by status dari stat card
+        window.filterByStatus = function(status) {
+            document.getElementById('filterStatus').value = status;
+            filterLaporan();
+        };
+
+        function filterLaporan() {
+            if (allReports.length === 0) return;
+            
+            const statusFilter = document.getElementById('filterStatus').value;
+            const kategoriFilter = document.getElementById('filterKategori').value;
+            const sortFilter = document.getElementById('filterSort').value;
+            
+            let filtered = [...allReports];
+            
+            // Filter by status
+            if (statusFilter !== 'ALL') {
+                filtered = filtered.filter(r => r.status === statusFilter);
+            }
+            
+            // Filter by kategori
+            if (kategoriFilter !== 'ALL') {
+                filtered = filtered.filter(r => r.jenis === kategoriFilter);
+            }
+            
+            // Sort by timestamp
+            filtered.sort((a, b) => {
+                const timeA = a.timestamp || 0;
+                const timeB = b.timestamp || 0;
+                return sortFilter === 'oldest' ? timeA - timeB : timeB - timeA;
+            });
+            
+            renderLaporan(filtered);
+        }
+
+        function renderLaporan(reports) {
+            const div = document.getElementById('listLaporanAdmin');
+            
+            if (reports.length === 0) {
+                showEmpty();
+                updateStats(allReports);
+                return;
+            }
+            
+            showLoading();
+            div.innerHTML = "";
+            
+            reports.forEach(d => {
+                const id = d.id;
+                const editSectionId = `editSection_${id}`;
+                const guruInitial = d.guruNama ? d.guruNama.charAt(0).toUpperCase() : 'G';
+                
+                // Info detail soal
+                const soalInfo = d.detail ? `
+                    <div class="detail-section">
+                        <strong style="color: #5c6bc0; display: block; margin-bottom: 0.75rem;">
+                            <i class="fa-solid fa-file-pen"></i> Detail Soal
+                        </strong>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <i class="fa-solid fa-file-pen"></i>
+                                <span><strong>Jenis:</strong> ${d.detail.jenis_soal || '-'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-chalkboard"></i>
+                                <span><strong>Mapel:</strong> ${d.detail.mapel || '-'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-users"></i>
+                                <span><strong>Kelas:</strong> ${d.detail.kelas || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+                ` : '';
+                
+                // Info perbaikan
+                const perbaikanInfo = d.catatan_perbaikan ? `
+                    <div style="background: #fff8e1; padding: 1rem; border-radius: var(--radius-sm); margin: 1rem 0; border-left: 3px solid #ffb300;">
+                        <strong style="color: #ff8f00; display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-history"></i> Catatan Perbaikan Guru
+                        </strong>
+                        <p style="color: #ff8f00; margin: 0.5rem 0;">${d.catatan_perbaikan}</p>
+                        ${d.waktu_perbaikan ? `
+                        <small style="color: #ffb300;">
+                            <i class="fa-solid fa-clock"></i> ${d.waktu_perbaikan}
+                        </small>` : ''}
+                    </div>
+                ` : '';
+                
+                const card = `
+                    <div class="card-review-premium ${d.status || 'PENDING'}">
+                        <div class="card-header-premium">
+                            <div class="card-title-premium">
+                                <h4>${d.judul || 'Tanpa Judul'}</h4>
+                                <div class="info-guru-premium">
+                                    <div class="guru-avatar-small">${guruInitial}</div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #37474f;">${d.guruNama || 'Anonim'}</div>
+                                        <div style="font-size: 0.85rem; color: #78909c;">
+                                            ${d.guruRole || ''} • ${d.jenis || '-'} • ${d.waktu || '-'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge-premium ${d.status || 'PENDING'}">${d.status || 'PENDING'}</span>
+                        </div>
+                        
+                        ${soalInfo}
+                        ${perbaikanInfo}
+                        
+                        ${d.deskripsi ? `
+                        <div style="color: #546e7a; margin: 1rem 0; padding: 1rem; background: #f8f9ff; border-radius: var(--radius-sm);">
+                            <strong style="color: #5c6bc0; display: block; margin-bottom: 0.5rem;">
+                                <i class="fa-solid fa-align-left"></i> Deskripsi
+                            </strong>
+                            <p style="margin: 0;">${d.deskripsi}</p>
+                        </div>
+                        ` : ''}
+                        
+                        <div style="background: #f3f4ff; padding: 1rem; border-radius: var(--radius-sm); margin: 1rem 0;">
+                            <a href="${d.link}" target="_blank" style="text-decoration: none; color: #5c6bc0; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-file-arrow-down" style="font-size: 1.2rem;"></i>
+                                <span>Lihat / Unduh Berkas</span>
+                            </a>
+                            <div style="font-size: 0.85rem; color: #7986cb; margin-top: 0.5rem; display: flex; align-items: center; gap: 15px;">
+                                <span><i class="fa-solid fa-clock"></i> Dikirim: ${d.waktu || '-'}</span>
+                                ${d.reviewedAt ? `<span><i class="fa-solid fa-user-check"></i> Direview: ${d.reviewedBy || 'Admin'}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <textarea id="msg_${id}" class="input-komen-premium" placeholder="Tulis catatan review untuk guru di sini...">${d.catatan || ''}</textarea>
+                        
+                        <div class="action-buttons-premium">
+                            <button onclick="prosesStatus('${id}', 'DITERIMA')" class="btn-terima-premium">
+                                <i class="fa-solid fa-check-circle"></i> TERIMA
+                            </button>
+                            <button onclick="prosesStatus('${id}', 'PERBAIKI')" class="btn-perbaiki-premium">
+                                <i class="fa-solid fa-pen-to-square"></i> PERBAIKI
+                            </button>
+                            ${d.status === 'PERBAIKI' ? `
+                            <button onclick="toggleEditSection('${id}')" class="btn-edit-admin-premium">
+                                <i class="fa-solid fa-pen-clip"></i> EDIT LINK
+                            </button>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- EDIT SECTION -->
+                        <div id="${editSectionId}" class="edit-section-premium">
+                            <div class="edit-header-premium">
+                                <i class="fa-solid fa-pen-clip"></i>
+                                Edit Link Berkas (Admin)
+                            </div>
+                            <div class="form-group">
+                                <label><b><i class="fa-solid fa-link"></i> Link Google Drive Baru:</b></label>
+                                <input type="url" id="adminLink_${id}" class="btn-absen" style="width:100%; background: white;" 
+                                       placeholder="Masukkan link Google Drive yang benar" value="${d.link}">
+                            </div>
+                            <div class="form-group">
+                                <label><b><i class="fa-solid fa-comment"></i> Catatan untuk Guru:</b></label>
+                                <textarea id="adminCatatan_${id}" class="btn-absen" style="width:100%; height: 100px; background: white;" 
+                                          placeholder="Jelaskan perubahan yang dilakukan...">${d.catatan || ''}</textarea>
+                            </div>
+                            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                                <button onclick="adminUpdateBerkas('${id}')" class="btn-terima-premium" style="flex: 1;">
+                                    <i class="fa-solid fa-check"></i> SIMPAN PERUBAHAN
+                                </button>
+                                <button onclick="toggleEditSection('${id}')" class="btn-perbaiki-premium" style="flex: 1; background: linear-gradient(135deg, #78909c 0%, #607d8b 100%);">
+                                    <i class="fa-solid fa-times"></i> BATAL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                div.insertAdjacentHTML('beforeend', card);
+            });
+            
+            updateStats(allReports);
+        }
+
+        window.muatLaporanRealtime = function() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            showLoading();
+            
+            if (loadTimeout) clearTimeout(loadTimeout);
+            loadTimeout = setTimeout(() => {
+                if (isLoading) {
+                    showTimeout();
+                    isLoading = false;
+                }
+            }, 10000);
+            
+            const dbRef = ref(db, 'laporan_berkas');
+            
+            onValue(dbRef, (snap) => {
+                isLoading = false;
+                if (loadTimeout) clearTimeout(loadTimeout);
+                
+                if(!snap.exists()) {
+                    allReports = [];
+                    showEmpty();
+                    updateStats([]);
+                    return;
+                }
+
+                allReports = [];
+                snap.forEach(childSnap => {
+                    const d = childSnap.val();
+                    d.id = childSnap.key;
+                    allReports.push(d);
+                });
+                
+                console.log(`Data loaded: ${allReports.length} reports`);
+                filterLaporan();
+                
+            }, (error) => {
+                isLoading = false;
+                if (loadTimeout) clearTimeout(loadTimeout);
+                
+                console.error("Error Database:", error);
+                showError("Gagal mengambil data", error.message);
+            }, {
+                onlyOnce: true
+            });
+        };
+
+        // Fungsi Global untuk Update Status
+        window.prosesStatus = function(id, st) {
+            const msg = document.getElementById(`msg_${id}`).value;
+            const updatePath = ref(db, `laporan_berkas/${id}`);
+            
+            const updateData = { 
+                status: st, 
+                catatan: msg,
+                reviewedBy: currentUser.nama,
+                reviewedAt: new Date().toLocaleString('id-ID'),
+                reviewedTimestamp: Date.now()
+            };
+            
+            update(updatePath, updateData).then(() => {
+                alert("✅ Status berhasil diperbarui!");
+                
+                setTimeout(() => {
+                    const snapshotRef = ref(db, 'laporan_berkas');
+                    get(snapshotRef).then((snap) => {
+                        if(snap.exists()) {
+                            allReports = [];
+                            snap.forEach(childSnap => {
+                                const d = childSnap.val();
+                                d.id = childSnap.key;
+                                allReports.push(d);
+                            });
+                            filterLaporan();
+                        }
+                    });
+                }, 500);
+                
+            }).catch((err) => {
+                alert("❌ Gagal update: " + err.message);
+            });
+        };
+
+        window.toggleEditSection = function(id) {
+            const section = document.getElementById(`editSection_${id}`);
+            section.classList.toggle('show');
+        };
+
+        window.adminUpdateBerkas = async function(id) {
+            const newLink = document.getElementById(`adminLink_${id}`).value;
+            const newCatatan = document.getElementById(`adminCatatan_${id}`).value;
+            
+            if (!newLink) {
+                alert("Harap masukkan link Google Drive baru!");
+                return;
+            }
+            
+            try {
+                const updates = {
+                    link: newLink,
+                    catatan: newCatatan,
+                    editedBy: currentUser.nama,
+                    editedAt: new Date().toLocaleString('id-ID')
+                };
+                
+                await update(ref(db, `laporan_berkas/${id}`), updates);
+                
+                alert("✅ Perubahan berhasil disimpan!");
+                
+                toggleEditSection(id);
+                
+                const snapshotRef = ref(db, 'laporan_berkas');
+                const snap = await get(snapshotRef);
+                if(snap.exists()) {
+                    allReports = [];
+                    snap.forEach(childSnap => {
+                        const d = childSnap.val();
+                        d.id = childSnap.key;
+                        allReports.push(d);
+                    });
+                    filterLaporan();
+                }
+                
+            } catch (e) {
+                console.error("Error updating:", e);
+                alert("❌ Gagal menyimpan perubahan: " + e.message);
+            }
+        };
+    </script>
+</body>
+</html>

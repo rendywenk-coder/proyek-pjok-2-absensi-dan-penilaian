@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Nilai Admin - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .filter-group { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; background: white; margin-top: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 10px; margin-top: 15px; }
+        th { background: #1e293b; color: white; padding: 8px 4px; border: 1px solid #334155; text-transform: uppercase; }
+        td { border: 1px solid #e2e8f0; padding: 6px 4px; text-align: center; color: #1e293b; }
+        
+        .nama-col { text-align: left; padding-left: 8px; width: 180px; font-weight: bold; text-transform: uppercase; }
+        .absensi-col { background: #fff1f2; width: 30px; font-weight: bold; }
+        .na-col { background: #dcfce7; color: #166534; font-weight: bold; width: 45px; }
+        .btn-download { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        <h3>Rekap Nilai Global</h3>
+    </header>
+
+    <div class="container">
+        <div class="filter-group">
+            <div style="display:flex; gap:10px; margin-bottom: 10px;">
+                <div style="flex:1;">
+                    <label><b>Pilih Semester:</b></label>
+                    <select id="pilihSemester">
+                        <option value="S1">Semester 1 (Ganjil)</option>
+                        <option value="S2">Semester 2 (Genap)</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label><b>Pilih Kelas:</b></label>
+                    <select id="pilihKelasNilai"></select>
+                </div>
+            </div>
+
+            <label><b>Kategori Mapel:</b></label>
+            <select id="kat">
+                <option value="akademik">Guru Kelas (Akademik)</option>
+                <option value="pjok">Guru PJOK</option>
+                <option value="pai">Guru PAI</option>
+            </select>
+            <br><br>
+
+            <label><b>Filter Guru:</b></label>
+            <select id="pilihUserNilai"><option value="SEMUA">-- Semua Guru --</option></select>
+            
+            <button onclick="prosesNilai()" class="btn-primary" style="width:100%; margin-top:15px; font-weight:bold;">TAMPILKAN REKAP NILAI</button>
+            <button onclick="unduhExcelNilai()" class="btn-download" id="btnExportNilai" style="display:none;"><i class="fa-solid fa-file-excel"></i> UNDUH EXCEL</button>
+        </div>
+        <div id="areaTabelNilai" class="table-responsive"></div>
+    </div>
+
+    <script type="module">
+        import { db, auth, ref, get, child, onAuthStateChanged } from './config_firebase.js';
+
+        const klsList = ["1A","1B","1C","1D","2A","2B","2C","2D","2E","3A","3B","3C","3D","3E","4A","4B","4C","4D","4E","4F","5A","5B","5C","5D","5E","6A","6B","6C","6D","6E"];
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const selKls = document.getElementById('pilihKelasNilai');
+                klsList.forEach(k => { selKls.innerHTML += `<option value="${k}">Kelas ${k}</option>`; });
+
+                try {
+                    const snapUser = await get(ref(db, 'users'));
+                    const selUser = document.getElementById('pilihUserNilai');
+                    if(snapUser.exists()) {
+                        snapUser.forEach(u => {
+                            const d = u.val();
+                            if(d.role !== 'ADMIN') selUser.innerHTML += `<option value="${d.nama}">${d.nama} (${d.role})</option>`;
+                        });
+                    }
+                } catch (e) { console.error(e); }
+            } else { window.location.href = "index.html"; }
+        });
+
+        window.prosesNilai = async function() {
+            const kategori = document.getElementById('kat').value;
+            const semester = document.getElementById('pilihSemester').value;
+            const kelas = document.getElementById('pilihKelasNilai').value;
+            const area = document.getElementById('areaTabelNilai');
+            
+            area.innerHTML = "<p style='text-align:center;'>Menarik data penilaian...</p>";
+
+            try {
+                const snapSiswa = await get(ref(db, `siswa/${kelas}`));
+                const snapNilai = await get(ref(db, `nilai/${kategori}/${kelas}`));
+                const dataNilai = snapNilai.val() || {};
+
+                if(!snapSiswa.exists()) return area.innerHTML = "Data siswa tidak ditemukan.";
+
+                // Header tabel dinamis (STS untuk S1, SAS untuk S2)
+                const sumatifLabel = (semester === "S1") ? "STS" : "SAS";
+
+                let tr = "";
+                let no = 1;
+
+                snapSiswa.forEach(sSnap => {
+                    const id = sSnap.key;
+                    const nama = sSnap.val().nama;
+                    const d = (dataNilai[id] && dataNilai[id][semester]) ? dataNilai[id][semester] : {};
+
+                    tr += `<tr>
+                        <td>${no++}</td>
+                        <td class="nama-col">${nama}</td>
+                        <td>${d.s1 || ''}</td>
+                        <td>${d.s2 || ''}</td>
+                        <td>${d.s3 || ''}</td>
+                        <td>${d.s4 || ''}</td>
+                        <td style="background:#eff6ff; font-weight:bold;">${(semester === "S1" ? d.sts : d.sas) || ''}</td>
+                        <td class="absensi-col">${d.alfa || '0'}</td>
+                        <td class="absensi-col">${d.ijin || '0'}</td>
+                        <td class="absensi-col">${d.sakit || '0'}</td>
+                        <td class="na-col">${d.na || '0'}</td>
+                    </tr>`;
+                });
+
+                area.innerHTML = `
+                <table id="tblNilai">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">No</th>
+                            <th rowspan="2">Nama Siswa</th>
+                            <th colspan="4">Sumatif / Lingkup Materi</th>
+                            <th rowspan="2">${sumatifLabel}</th>
+                            <th colspan="3">Absensi</th>
+                            <th rowspan="2">NA</th>
+                        </tr>
+                        <tr>
+                            <th>1</th><th>2</th><th>3</th><th>4</th>
+                            <th>A</th><th>I</th><th>S</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tr}</tbody>
+                </table>`;
+                document.getElementById('btnExportNilai').style.display = "block";
+            } catch (err) { area.innerHTML = "Error: " + err.message; }
+        }
+
+        window.unduhExcelNilai = function() {
+            const wb = XLSX.utils.table_to_book(document.getElementById("tblNilai"), {sheet: "Rekap Nilai"});
+            XLSX.writeFile(wb, `Rekap_Nilai_${document.getElementById('pilihKelasNilai').value}_${document.getElementById('pilihSemester').value}.xlsx`);
+        }
+    </script>
+</body>
+</html>
