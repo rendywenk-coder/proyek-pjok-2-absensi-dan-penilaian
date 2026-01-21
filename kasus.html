@@ -3,61 +3,907 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Kasus Siswa - UPTD SDN Rawabuntu 03</title>
+    <title>Manajemen Kasus Siswa - UPTD SDN Rawabuntu 03</title>
     <link rel="stylesheet" href="style_main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .card-kasus { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .status-open { color: #ef4444; font-weight: bold; }
-        .status-solved { color: #f59e0b; font-weight: bold; }
-        .status-closed { color: #10b981; font-weight: bold; }
-        .area-solusi { background: #f0f9ff; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #3b82f6; font-size: 14px; }
-        .badge-kategori { background: #e2e8f0; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --dark-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .premium-header {
+            background: var(--dark-gradient);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left i {
+            font-size: 24px;
+            color: #60a5fa;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .header-left h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-icon i {
+            color: white;
+            font-size: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .container-premium {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Premium Form Laporan */
+        .premium-form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-gradient);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-header-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-header-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .form-header-text h3 {
+            margin: 0;
+            font-size: 24px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .form-header-text p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .premium-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .premium-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group-premium {
+            margin-bottom: 0;
+        }
+
+        .form-group-premium label {
+            display: block;
+            margin-bottom: 8px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-premium {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-premium:focus {
+            outline: none;
+            border-color: #4a6de5;
+            box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.1);
+        }
+
+        .textarea-premium {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .textarea-premium:focus {
+            outline: none;
+            border-color: #4a6de5;
+            box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.1);
+        }
+
+        .form-full-width {
+            grid-column: 1 / -1;
+        }
+
+        .btn-submit-premium {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(74, 109, 229, 0.4);
+        }
+
+        .btn-submit-premium:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 109, 229, 0.5);
+        }
+
+        .btn-submit-premium:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Premium Kasus Cards */
+        .section-title {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin: 40px 0 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+            font-size: 16px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-data p {
+            margin: 10px 0;
+        }
+
+        .kasus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .kasus-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .premium-kasus-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-kasus-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .priority-high .card-accent { background: var(--danger-gradient); }
+        .priority-medium .card-accent { background: var(--warning-gradient); }
+        .priority-low .card-accent { background: var(--success-gradient); }
+
+        .card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .kasus-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .kasus-info {
+            flex: 1;
+        }
+
+        .kasus-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .kasus-title h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .kasus-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-class {
+            background: var(--info-gradient);
+            color: white;
+        }
+
+        .badge-category {
+            background: var(--purple-gradient);
+            color: white;
+            margin-left: 8px;
+        }
+
+        .kasus-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .meta-item i {
+            font-size: 14px;
+        }
+
+        .kasus-status {
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-open { background: #fee2e2; color: #dc2626; }
+        .status-discussion { background: #fef3c7; color: #d97706; }
+        .status-solved { background: #d1fae5; color: #059669; }
+        .status-closed { background: #e5e7eb; color: #374151; }
+
+        .kasus-description {
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .kasus-description strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Progress Bar Premium */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .progress-bar-premium {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill-premium {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-open { width: 33%; background: var(--danger-gradient); }
+        .progress-discussion { width: 66%; background: var(--warning-gradient); }
+        .progress-solved { width: 100%; background: var(--success-gradient); }
+
+        /* Diskusi Section Premium */
+        .discussion-section-premium {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px dashed #e5e7eb;
+        }
+
+        .discussion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .discussion-title-premium {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .discussion-count {
+            background: var(--info-gradient);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .messages-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message-premium {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 85%;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .message-premium::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: inherit;
+            border-radius: 2px;
+            transform: rotate(45deg);
+        }
+
+        .message-admin {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-admin::before {
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .message-guru {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-guru::before {
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .message-info-premium {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message-time {
+            font-size: 10px;
+        }
+
+        .no-discussion {
+            text-align: center;
+            padding: 30px 20px;
+            color: #9ca3af;
+        }
+
+        .no-discussion i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Input Diskusi Premium */
+        .input-discussion-premium {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .input-discussion-premium textarea {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-discussion-premium textarea:focus {
+            outline: none;
+            border-color: #4a6de5;
+            box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.1);
+        }
+
+        .btn-discussion-premium {
+            background: var(--purple-gradient);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .btn-discussion-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Action Buttons Premium */
+        .action-buttons-premium {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            border: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start-discussion {
+            background: var(--info-gradient);
+            color: white;
+        }
+
+        .btn-start-discussion:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-complete-case {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .btn-complete-case:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-close-case {
+            background: var(--dark-gradient);
+            color: white;
+        }
+
+        .btn-close-case:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+            flex: 1;
+        }
+
+        .status-step::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: -50%;
+            width: 100%;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .status-step:first-child::before {
+            display: none;
+        }
+
+        .status-step.active .step-icon {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: #4a6de5;
+        }
+
+        .status-step.completed .step-icon {
+            background: var(--success-gradient);
+            color: white;
+            border-color: #10b981;
+        }
+
+        .status-step.completed::before {
+            background: var(--success-gradient);
+        }
+
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 40px; }
+        .mb-4 { margin-bottom: 40px; }
     </style>
 </head>
 <body>
-    <header class="top-bar">
-        <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
-        <h3>Layanan Kasus Siswa</h3>
+    <!-- Premium Header -->
+    <header class="premium-header">
+        <div class="header-content">
+            <div class="header-left">
+                <i class="fa-solid fa-school"></i>
+                <h3>UPTD SDN Rawabuntu 03</h3>
+            </div>
+            <div class="header-right">
+                <div class="user-profile" id="userProfile">
+                    <div class="user-icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="user-info">
+                        <span id="userName" class="user-name">Memuat...</span>
+                        <span id="userRole" class="user-role">...</span>
+                    </div>
+                </div>
+                <a href="index.html" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Dashboard
+                </a>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <div id="formLapor" class="card hidden" style="margin-bottom: 30px;">
-            <h4><i class="fa-solid fa-file-signature"></i> Buat Laporan Kasus Baru</h4>
-            <div class="form-group">
-                <label>Nama Siswa:</label>
-                <input type="text" id="namaSiswa" class="btn-absen" style="width:100%;" placeholder="Ketik Nama Lengkap Siswa...">
+    <div class="container-premium">
+        <!-- Form Laporan Premium (Hanya untuk Guru) -->
+        <div id="formLapor" class="premium-form-card hidden fade-in">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-file-signature"></i>
+                </div>
+                <div class="form-header-text">
+                    <h3>Buat Laporan Kasus Baru</h3>
+                    <p>Laporkan kasus siswa untuk ditindaklanjuti oleh Admin/Kepala Sekolah</p>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Kelas:</label>
-                <input type="text" id="kelasSiswa" class="btn-absen" style="width:100%;" placeholder="Contoh: 4A">
+            
+            <div class="premium-form-grid">
+                <div class="form-group-premium">
+                    <label><i class="fa-solid fa-user-graduate"></i> Nama Siswa</label>
+                    <input type="text" id="namaSiswa" class="input-premium" placeholder="Masukkan nama lengkap siswa...">
+                </div>
+                
+                <div class="form-group-premium">
+                    <label><i class="fa-solid fa-chalkboard-user"></i> Kelas</label>
+                    <input type="text" id="kelasSiswa" class="input-premium" placeholder="Contoh: 4A, 5B, 6C">
+                </div>
+                
+                <div class="form-group-premium">
+                    <label><i class="fa-solid fa-tag"></i> Jenis Kasus</label>
+                    <select id="jenisKasus" class="input-premium">
+                        <option value="Kedisiplinan">⏰ Kedisiplinan</option>
+                        <option value="Akademik">📚 Akademik</option>
+                        <option value="Bullying">⚠️ Perundungan (Bullying)</option>
+                        <option value="Lainnya">🔍 Lainnya</option>
+                    </select>
+                </div>
+                
+                <div class="form-group-premium">
+                    <label><i class="fa-solid fa-exclamation-triangle"></i> Tingkat Prioritas</label>
+                    <select id="prioritasKasus" class="input-premium">
+                        <option value="low">🟢 Rendah</option>
+                        <option value="medium">🟡 Sedang</option>
+                        <option value="high">🔴 Tinggi</option>
+                    </select>
+                </div>
+                
+                <div class="form-group-premium form-full-width">
+                    <label><i class="fa-solid fa-clipboard-list"></i> Kronologi / Deskripsi</label>
+                    <textarea id="deskripsi" class="textarea-premium" placeholder="Jelaskan detail kejadian secara lengkap dan jelas..."></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Jenis Kasus:</label>
-                <select id="jenisKasus" class="btn-absen" style="width:100%;">
-                    <option value="Kedisiplinan">Kedisiplinan</option>
-                    <option value="Akademik">Akademik</option>
-                    <option value="Bullying">Perundungan (Bullying)</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Kronologi / Deskripsi:</label>
-                <textarea id="deskripsi" class="btn-absen" style="width:100%; height: 100px;" placeholder="Jelaskan detail kejadian..."></textarea>
-            </div>
-            <button onclick="kirimKasus()" id="btnKirim" class="btn-primary" style="width:100%; font-weight:bold;">
+            
+            <button onclick="kirimKasus()" id="btnKirim" class="btn-submit-premium">
                 <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN KE ADMIN
             </button>
         </div>
 
-        <h4 id="labelDaftar">Memuat Riwayat Kasus...</h4>
-        <div id="listKasus"></div>
+        <!-- Daftar Kasus -->
+        <h2 class="section-title">
+            <i class="fa-solid fa-gavel"></i> Riwayat Laporan Kasus
+            <small id="counterBadge" style="font-size: 14px; color: #64748b; margin-left: 10px;"></small>
+        </h2>
+        
+        <div id="listKasus">
+            <div class="no-data">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Memuat data kasus...</p>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { auth, db, ref, push, set, onValue, update, onAuthStateChanged, get, child } from './config_firebase.js';
 
         let userAktif = null;
+        let totalKasus = 0;
 
         // 1. CEK AUTH & ROLE
         onAuthStateChanged(auth, async (user) => {
@@ -66,13 +912,21 @@
                 if(snap.exists()){
                     userAktif = snap.val();
                     userAktif.uid = user.uid;
+                    
+                    // Update user info di header
+                    document.getElementById('userName').textContent = userAktif.nama;
+                    document.getElementById('userRole').textContent = userAktif.role;
+                    
                     // Hanya Guru yang melapor
                     if (userAktif.role !== 'ADMIN') {
                         document.getElementById('formLapor').classList.remove('hidden');
                     }
+                    
                     muatDaftarKasus();
                 }
-            } else { location.href = 'index.html'; }
+            } else { 
+                location.href = 'index.html'; 
+            }
         });
 
         // 2. FUNGSI KIRIM LAPORAN (Guru)
@@ -81,39 +935,50 @@
             const kls = document.getElementById('kelasSiswa').value.trim();
             const dsk = document.getElementById('deskripsi').value.trim();
             const jenis = document.getElementById('jenisKasus').value;
+            const prioritas = document.getElementById('prioritasKasus').value;
 
-            if (!nama || !kls || !dsk) return alert("Mohon lengkapi data siswa dan deskripsi!");
+            if (!nama || !kls || !dsk) {
+                alert("❌ Mohon lengkapi data siswa dan deskripsi!");
+                return;
+            }
 
             const btn = document.getElementById('btnKirim');
             btn.disabled = true;
-            btn.innerText = "Memproses Pengiriman...";
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> MENGIRIM LAPORAN...";
 
             try {
                 const kasusRef = push(ref(db, 'kasus'));
-                // DATA HARUS SINKRON DENGAN RULES (Wajib ada field-field ini)
                 await set(kasusRef, {
-                    siswaId: "S-" + Date.now(), // ID Unik
+                    siswaId: "S-" + Date.now(),
                     namaSiswa: nama,
                     kelas: kls,
                     jenisKasus: jenis,
+                    prioritas: prioritas,
                     deskripsi: dsk,
                     status: "OPEN",
                     timestamp: Date.now(),
                     pelaporId: userAktif.uid,
                     pelaporNama: userAktif.nama,
-                    pelaporRole: userAktif.role
+                    pelaporRole: userAktif.role,
+                    diskusi: [],
+                    lastUpdate: Date.now()
                 });
 
-                alert("Alhamdulillah, Laporan terkirim ke Admin!");
+                alert("✅ Alhamdulillah, Laporan terkirim ke Admin!");
+                
+                // Reset form
                 document.getElementById('namaSiswa').value = "";
                 document.getElementById('kelasSiswa').value = "";
                 document.getElementById('deskripsi').value = "";
+                document.getElementById('jenisKasus').value = "Kedisiplinan";
+                document.getElementById('prioritasKasus').value = "medium";
+                
             } catch (e) {
                 console.error(e);
-                alert("Gagal: Izin Ditolak! Pastikan Rules Firebase sudah di-Publish.");
+                alert("❌ Gagal mengirim laporan! Pastikan koneksi internet stabil.");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "KIRIM LAPORAN KE ADMIN";
+                btn.innerHTML = "<i class='fa-solid fa-paper-plane'></i> KIRIM LAPORAN KE ADMIN";
             }
         };
 
@@ -122,83 +987,338 @@
             onValue(ref(db, 'kasus'), (snapshot) => {
                 const div = document.getElementById('listKasus');
                 div.innerHTML = "";
-                document.getElementById('labelDaftar').innerText = "Riwayat Laporan Kasus";
+                totalKasus = 0;
 
                 if (!snapshot.exists()) {
-                    div.innerHTML = "<p style='text-align:center; opacity:0.5;'>Belum ada laporan masuk.</p>";
+                    div.innerHTML = `
+                        <div class="no-data fade-in">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>Belum ada laporan kasus</p>
+                            <small>Laporan kasus yang dibuat akan muncul di sini</small>
+                        </div>
+                    `;
+                    document.getElementById('counterBadge').textContent = "0 kasus";
                     return;
                 }
 
+                const kasusArray = [];
                 snapshot.forEach(child => {
-                    const k = child.val();
-                    const id = child.key;
+                    kasusArray.push({ id: child.key, data: child.val() });
+                    totalKasus++;
+                });
 
-                    // Filter: Guru hanya melihat laporannya sendiri
-                    if (userAktif.role !== 'ADMIN' && k.pelaporId !== userAktif.uid) return;
+                // Update counter
+                document.getElementById('counterBadge').textContent = `${totalKasus} kasus`;
+
+                // Urutkan berdasarkan timestamp (terbaru duluan)
+                kasusArray.sort((a, b) => b.data.timestamp - a.data.timestamp);
+
+                // Filter untuk guru (hanya kasus miliknya)
+                const filteredKasus = userAktif.role !== 'ADMIN' 
+                    ? kasusArray.filter(item => item.data.pelaporId === userAktif.uid)
+                    : kasusArray;
+
+                if (filteredKasus.length === 0) {
+                    div.innerHTML = `
+                        <div class="no-data fade-in">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>${userAktif.role !== 'ADMIN' ? 'Belum ada laporan dari Anda' : 'Belum ada laporan kasus'}</p>
+                            <small>${userAktif.role !== 'ADMIN' ? 'Buat laporan pertama Anda' : 'Tunggu guru melaporkan kasus'}</small>
+                        </div>
+                    `;
+                    return;
+                }
+
+                filteredKasus.forEach((item, index) => {
+                    const k = item.data;
+                    const id = item.id;
+                    
+                    const waktu = new Date(k.timestamp);
+                    const now = new Date();
+                    const diffHours = Math.floor((now - waktu) / (1000 * 60 * 60));
+                    
+                    let timeLabel = waktu.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    
+                    if (diffHours < 24) {
+                        timeLabel = `${diffHours} jam yang lalu`;
+                    }
+                    if (diffHours < 1) {
+                        timeLabel = 'Baru saja';
+                    }
 
                     let html = `
-                        <div class="card-kasus">
-                            <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div>
-                                    <strong>${k.namaSiswa}</strong> <span class="badge-kategori">${k.kelas}</span><br>
-                                    <small style="color:var(--accent)">Kategori: ${k.jenisKasus}</small>
+                        <div class="premium-kasus-card priority-${k.prioritas || 'medium'} fade-in" style="animation-delay: ${index * 0.1}s">
+                            <div class="card-accent"></div>
+                            
+                            <div class="kasus-header">
+                                <div class="kasus-info">
+                                    <div class="kasus-title">
+                                        <h4>${k.namaSiswa}</h4>
+                                        <span class="kasus-badge badge-class">${k.kelas}</span>
+                                        <span class="kasus-badge badge-category">${k.jenisKasus}</span>
+                                    </div>
+                                    
+                                    <div class="kasus-meta">
+                                        <span class="meta-item">
+                                            <i class="fa-solid fa-user"></i>
+                                            ${k.pelaporNama}
+                                        </span>
+                                        <span class="meta-item">
+                                            <i class="fa-solid fa-clock"></i>
+                                            ${timeLabel}
+                                        </span>
+                                        <span class="meta-item">
+                                            <i class="fa-solid fa-flag"></i>
+                                            ${k.prioritas === 'high' ? 'Tinggi' : k.prioritas === 'medium' ? 'Sedang' : 'Rendah'}
+                                        </span>
+                                    </div>
                                 </div>
-                                <span style="font-size:10px; color:#999;">${new Date(k.timestamp).toLocaleDateString()}</span>
+                                
+                                <div class="kasus-status">
+                                    <span class="status-badge status-${k.status.toLowerCase()}">
+                                        ${k.status}
+                                    </span>
+                                </div>
                             </div>
-                            <p style="margin:12px 0; font-size:14px; line-height:1.5;">${k.deskripsi}</p>
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <small>Pelapor: ${k.pelaporNama}</small>
-                                <span class="status-${k.status.toLowerCase()}">${k.status}</span>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Status Progress</span>
+                                    <span>${k.status === 'OPEN' ? '33%' : k.status === 'DISCUSSION' ? '66%' : '100%'}</span>
+                                </div>
+                                <div class="progress-bar-premium">
+                                    <div class="progress-fill-premium progress-${k.status === 'OPEN' ? 'open' : k.status === 'DISCUSSION' ? 'discussion' : 'solved'}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="kasus-description">
+                                <strong><i class="fa-solid fa-clipboard-list"></i> Kronologi Kasus:</strong>
+                                ${k.deskripsi}
                             </div>
                     `;
 
-                    // Bagian Solusi (Jika Admin sudah balas)
-                    if (k.solusi) {
+                    // Status Indicator
+                    const steps = [
+                        { id: 'open', label: 'Dibuka', icon: 'fa-folder-open', active: true },
+                        { id: 'discussion', label: 'Diskusi', icon: 'fa-comments', active: k.status === 'DISCUSSION' || k.status === 'SOLVED' || k.status === 'CLOSED' },
+                        { id: 'solved', label: 'Selesai', icon: 'fa-check-circle', active: k.status === 'SOLVED' || k.status === 'CLOSED' },
+                        { id: 'closed', label: 'Ditutup', icon: 'fa-lock', active: k.status === 'CLOSED' }
+                    ];
+
+                    html += `
+                        <div class="status-indicator">
+                            ${steps.map(step => `
+                                <div class="status-step ${step.active ? (k.status === step.id.toUpperCase() ? 'active' : 'completed') : ''}">
+                                    <div class="step-icon">
+                                        <i class="fa-solid ${step.icon}"></i>
+                                    </div>
+                                    <div class="step-label">${step.label}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    // Bagian Diskusi
+                    if (k.diskusi && k.diskusi.length > 0) {
                         html += `
-                            <div class="area-solusi">
-                                <strong><i class="fa-solid fa-lightbulb"></i> Solusi Admin (${k.adminNama}):</strong>
-                                <p style="margin-top:5px; color:#334155;">${k.solusi}</p>
+                            <div class="discussion-section-premium">
+                                <div class="discussion-header">
+                                    <div class="discussion-title-premium">
+                                        <i class="fa-solid fa-comments"></i> Percakapan
+                                        <span class="discussion-count">${k.diskusi.length}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="messages-container">
+                        `;
+                        
+                        k.diskusi.forEach(pesan => {
+                            const isAdmin = pesan.role === 'ADMIN';
+                            const waktuPesan = new Date(pesan.timestamp).toLocaleString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            
+                            html += `
+                                <div class="message-premium ${isAdmin ? 'message-admin' : 'message-guru'}">
+                                    ${pesan.pesan}
+                                    <div class="message-info-premium">
+                                        <span class="message-sender">${pesan.nama} • ${pesan.role}</span>
+                                        <span class="message-time">${waktuPesan}</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>`;
+                    } else if (k.status === 'DISCUSSION') {
+                        html += `
+                            <div class="discussion-section-premium">
+                                <div class="discussion-header">
+                                    <div class="discussion-title-premium">
+                                        <i class="fa-solid fa-comments"></i> Percakapan
+                                    </div>
+                                </div>
+                                
+                                <div class="messages-container">
+                                    <div class="no-discussion">
+                                        <i class="fa-solid fa-comment-dots"></i>
+                                        <p>Belum ada percakapan</p>
+                                        <small>Mulai diskusi dengan ${userAktif.role === 'ADMIN' ? 'Guru' : 'Admin'}</small>
+                                    </div>
+                                </div>
                             </div>
                         `;
                     }
 
-                    // AKSI ADMIN: Beri Solusi (Sesuai Rules Node 5 Update)
-                    if (userAktif.role === 'ADMIN' && k.status === 'OPEN') {
+                    // Logika untuk menampilkan input diskusi
+                    const isKasusSaya = k.pelaporId === userAktif.uid;
+                    const isAdmin = userAktif.role === 'ADMIN';
+                    const isDiscussionMode = k.status === 'DISCUSSION';
+                    const isOpenMode = k.status === 'OPEN' && isAdmin;
+                    
+                    // Input untuk diskusi
+                    if ((isDiscussionMode && (isKasusSaya || isAdmin)) || isOpenMode) {
                         html += `
-                            <div style="margin-top:15px; border-top: 1px solid #eee; padding-top:10px;">
-                                <textarea id="sol_${id}" class="btn-absen" style="width:100%; height:60px;" placeholder="Berikan arahan solusi..."></textarea>
-                                <button onclick="balasKasus('${id}')" class="btn-primary" style="background:#f59e0b; margin-top:5px; width:100%;">KIRIM ARAHAN</button>
+                            <div class="input-discussion-premium">
+                                <textarea id="pesan_${id}" placeholder="Ketik pesan ${isAdmin ? 'solusi atau pertanyaan' : 'tanggapan atau pertanyaan'}..."></textarea>
+                                <button onclick="kirimPesan('${id}')" class="btn-discussion-premium">
+                                    <i class="fa-solid fa-paper-plane"></i> Kirim
+                                </button>
                             </div>
+                        `;
+                    }
+
+                    // Action Buttons
+                    html += `<div class="action-buttons-premium">`;
+
+                    // AKSI ADMIN: Mulai Diskusi (jika masih OPEN)
+                    if (isAdmin && k.status === 'OPEN') {
+                        html += `
+                            <button onclick="mulaiDiskusi('${id}')" class="action-btn btn-start-discussion">
+                                <i class="fa-solid fa-comment-medical"></i> Mulai Diskusi
+                            </button>
+                        `;
+                    }
+
+                    // AKSI GURU: Tandai Selesai
+                    if (isKasusSaya && k.status === 'DISCUSSION') {
+                        html += `
+                            <button onclick="tandaiSelesai('${id}')" class="action-btn btn-complete-case">
+                                <i class="fa-solid fa-check-circle"></i> Tandai Selesai
+                            </button>
                         `;
                     }
 
                     // AKSI ADMIN: Tutup Kasus
-                    if (userAktif.role === 'ADMIN' && k.status !== 'CLOSED') {
-                        html += `<button onclick="tutupKasus('${id}')" class="btn-danger" style="width:100%; margin-top:10px;">TANDAI SELESAI & TUTUP</button>`;
+                    if (isAdmin && k.status === 'SOLVED') {
+                        html += `
+                            <button onclick="tutupKasus('${id}')" class="action-btn btn-close-case">
+                                <i class="fa-solid fa-lock"></i> Tutup Kasus
+                            </button>
+                        `;
                     }
 
-                    div.insertAdjacentHTML('afterbegin', html + "</div>");
+                    html += `</div></div>`;
+                    
+                    div.insertAdjacentHTML('beforeend', html);
                 });
             });
         }
 
-        // 4. ADMIN BERI SOLUSI (Wajib field adminId, adminNama, updatedAt)
-        window.balasKasus = (id) => {
-            const pesan = document.getElementById(`sol_${id}`).value;
-            if(!pesan) return alert("Silakan ketik solusinya!");
-            
-            update(ref(db, `kasus/${id}`), {
-                solusi: pesan,
-                status: "SOLVED",
-                adminId: userAktif.uid,
-                adminNama: userAktif.nama,
-                updatedAt: Date.now()
-            }).then(() => alert("Solusi berhasil dikirim ke Guru."));
+        // 4. ADMIN MULAI DISKUSI
+        window.mulaiDiskusi = (id) => {
+            if (confirm("Mulai diskusi dengan Guru? Status kasus akan berubah menjadi 'DISCUSSION'.")) {
+                update(ref(db, `kasus/${id}`), {
+                    status: "DISCUSSION",
+                    lastUpdate: Date.now(),
+                    diskusi: []
+                }).then(() => {
+                    alert("✅ Diskusi dimulai. Silakan tanyakan detail kasus kepada Guru.");
+                }).catch(error => {
+                    alert("❌ Gagal memulai diskusi: " + error.message);
+                });
+            }
         };
 
+        // 5. KIRIM PESAN DALAM DISKUSI
+        window.kirimPesan = async (id) => {
+            const input = document.getElementById(`pesan_${id}`);
+            const pesan = input.value.trim();
+            
+            if (!pesan) {
+                alert("❌ Silakan ketik pesan terlebih dahulu!");
+                return;
+            }
+            
+            try {
+                // Ambil data kasus saat ini
+                const snap = await get(ref(db, `kasus/${id}`));
+                if (!snap.exists()) return;
+                
+                const kasus = snap.val();
+                const diskusi = kasus.diskusi || [];
+                
+                // Tambahkan pesan baru
+                diskusi.push({
+                    pesan: pesan,
+                    nama: userAktif.nama,
+                    role: userAktif.role,
+                    timestamp: Date.now()
+                });
+                
+                const updates = {
+                    diskusi: diskusi,
+                    lastUpdate: Date.now()
+                };
+                
+                // Jika admin mengirim pesan pertama kali, ubah status menjadi DISCUSSION otomatis
+                if (userAktif.role === 'ADMIN' && kasus.status === 'OPEN') {
+                    updates.status = "DISCUSSION";
+                }
+                
+                await update(ref(db, `kasus/${id}`), updates);
+                
+                input.value = "";
+                input.focus();
+                
+            } catch (error) {
+                console.error("Gagal mengirim pesan:", error);
+                alert("❌ Gagal mengirim pesan. Coba lagi.");
+            }
+        };
+
+        // 6. GURU TANDAI SELESAI
+        window.tandaiSelesai = (id) => {
+            if (confirm("Tandai kasus ini sebagai selesai? Setelah ini, Admin akan menutup kasus.")) {
+                update(ref(db, `kasus/${id}`), {
+                    status: "SOLVED",
+                    lastUpdate: Date.now()
+                }).then(() => {
+                    alert("✅ Kasus ditandai selesai. Menunggu konfirmasi penutupan dari Admin.");
+                }).catch(error => {
+                    alert("❌ Gagal menandai selesai: " + error.message);
+                });
+            }
+        };
+
+        // 7. ADMIN TUTUP KASUS
         window.tutupKasus = (id) => {
-            if(confirm("Tutup kasus ini? Kasus tidak bisa diedit lagi.")) {
-                update(ref(db, `kasus/${id}`), { status: "CLOSED" });
+            if (confirm("Tutup kasus ini? Status akan berubah menjadi CLOSED dan kasus tidak bisa diedit lagi.")) {
+                update(ref(db, `kasus/${id}`), {
+                    status: "CLOSED",
+                    lastUpdate: Date.now()
+                }).then(() => {
+                    alert("✅ Kasus telah ditutup.");
+                }).catch(error => {
+                    alert("❌ Gagal menutup kasus: " + error.message);
+                });
             }
         };
     </script>

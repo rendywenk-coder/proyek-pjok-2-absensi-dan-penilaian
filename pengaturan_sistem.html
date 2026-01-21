@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan Sistem - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .premium-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
+        }
+
+        .premium-header h3 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .premium-header h3 i {
+            color: var(--accent);
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .header-subtitle {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-nav {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-radius: var(--radius-sm);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-link.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent);
+        }
+
+        .settings-card h4 {
+            color: var(--dark);
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card h4 i {
+            color: var(--accent);
+        }
+
+        .jadwal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .jadwal-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        .jadwal-table td {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .jadwal-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            min-width: 160px;
+            background: white;
+        }
+
+        .jadwal-select optgroup {
+            font-weight: bold;
+            font-style: normal;
+            background: #f8fafc;
+        }
+
+        .jadwal-select option {
+            padding: 8px;
+        }
+
+        .developer-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .developer-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .developer-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .developer-details h4 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 18px;
+        }
+
+        .developer-details p {
+            margin: 5px 0;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-group-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info) 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Edit Jam Styles */
+        .jam-edit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .jam-edit-input {
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+            }
+            
+            .developer-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .jadwal-table {
+                font-size: 12px;
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .jadwal-table th,
+            .jadwal-table td {
+                padding: 6px 4px;
+                min-width: 120px;
+            }
+            
+            .jadwal-select {
+                min-width: 120px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .settings-card {
+                padding: 15px;
+            }
+            
+            .premium-header {
+                padding: 15px 20px;
+            }
+            
+            .premium-header h3 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Premium Header -->
+        <div class="premium-header">
+            <h3><i class="fa-solid fa-gear"></i> Pengaturan Sistem</h3>
+            <div class="header-subtitle">
+                <i class="fa-solid fa-school"></i>
+                SDN Rawabuntu 03 - Konfigurasi Sistem Terintegrasi
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="dashboard-nav">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard Utama
+                </a>
+                <a href="rekap_nilai_admin.html" class="nav-link">
+                    <i class="fa-solid fa-file-excel"></i> Rekap Nilai
+                </a>
+                <a href="kelola-siswa.html" class="nav-link">
+                    <i class="fa-solid fa-users"></i> Manajemen Siswa
+                </a>
+                <a href="laporan_admin.html" class="nav-link">
+                    <i class="fa-solid fa-chart-pie"></i> Analisis & Laporan
+                </a>
+                <a href="pengaturan_sistem.html" class="nav-link active">
+                    <i class="fa-solid fa-gear"></i> Pengaturan Sistem
+                </a>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messageBox" class="message"></div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+            <!-- Jadwal Pelajaran Card -->
+            <div class="settings-card">
+                <h4><i class="fa-solid fa-calendar-days"></i> Jadwal Pelajaran</h4>
+                <div class="form-group">
+                    <label>Pilih Kelas</label>
+                    <select id="selectKelas" class="form-control">
+                                                <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option><option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                        <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option><option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option><option value="2E">Kelas 2E</option>
+                        <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option><option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option><option value="3E">Kelas 3E</option>
+                        <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option><option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option><option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                        <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option><option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option><option value="5E">Kelas 5E</option>
+                        <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option><option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option><option value="6E">Kelas 6E</option>
+
+                    </select>
+                </div>
+                
+                <div id="jadwalContainer">
+                    <p style="text-align: center; color: #64748b; padding: 20px;">
+                        Pilih kelas untuk mengatur jadwal pelajaran
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pengaturan Umum Card -->
+            <div class="settings-card">
+                <h4><i class="fa-solid fa-sliders"></i> Pengaturan Umum</h4>
+                <div class="form-group">
+                    <label>Tahun Ajaran</label>
+                    <input type="text" id="tahunAjaran" class="form-control" placeholder="Contoh: 2024/2025">
+                    <small style="color: #64748b; font-size: 12px;">Format: YYYY/YYYY</small>
+                </div>
+                <div class="form-group">
+                    <label>Semester Aktif</label>
+                    <select id="semesterAktif" class="form-control">
+                        <option value="ganjil">Semester Ganjil</option>
+                        <option value="genap">Semester Genap</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jam Masuk Sekolah</label>
+                    <input type="time" id="jamMasuk" class="form-control" value="07:00">
+                    <small style="color: #64748b; font-size: 12px;">Waktu mulai hari sekolah</small>
+                </div>
+                <div class="form-group">
+                    <label>Jam Pulang Sekolah</label>
+                    <input type="time" id="jamPulang" class="form-control" value="13:00">
+                    <small style="color: #64748b; font-size: 12px;">Waktu selesai hari sekolah</small>
+                </div>
+                <button onclick="simpanPengaturan()" class="btn-primary">
+                    <i class="fa-solid fa-save"></i> SIMPAN PENGATURAN UMUM
+                </button>
+            </div>
+
+            <!-- Mata Pelajaran Card -->
+            <div class="settings-card">
+                <h4><i class="fa-solid fa-book-open"></i> Mata Pelajaran</h4>
+                
+                <div class="btn-group-vertical">
+                    <button onclick="tambahMapelStandar()" class="btn-success">
+                        <i class="fa-solid fa-school-flag"></i> TAMBAH SEMUA MAPEL + PILIHAN
+                    </button>
+                    <button onclick="tambahPilihanKhusus()" class="btn-info">
+                        <i class="fa-solid fa-utensils"></i> TAMBAH PILIHAN KHUSUS SAJA
+                    </button>
+                    <small style="color: #64748b; text-align: center; font-size: 11px;">
+                        Pilihan khusus: Istirahat, Upacara, Kebersihan, Sholat, Konseling, Ekstrakurikuler, Kosong
+                    </small>
+                </div>
+                
+                <div style="margin-bottom: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                    <h5 style="color: var(--dark); margin-bottom: 10px; font-size: 14px;">
+                        <i class="fa-solid fa-plus-circle"></i> Tambah Mata Pelajaran Baru (Custom)
+                    </h5>
+                    <div class="form-group">
+                        <label>Nama Mata Pelajaran</label>
+                        <input type="text" id="mapelBaru" class="form-control" placeholder="Contoh: Bahasa Sunda">
+                    </div>
+                    <div class="form-group">
+                        <label>Kode (3 huruf)</label>
+                        <input type="text" id="kodeMapel" class="form-control" placeholder="Contoh: BSU" maxlength="3" style="text-transform: uppercase">
+                        <small style="color: #64748b; font-size: 12px;">Maksimal 3 huruf</small>
+                    </div>
+                    <button onclick="tambahMapel()" class="btn-primary">
+                        <i class="fa-solid fa-plus"></i> TAMBAH MAPEL BARU
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h5 style="color: var(--dark); margin-bottom: 10px; font-size: 14px;">
+                        <i class="fa-solid fa-list"></i> Daftar Mata Pelajaran
+                        <span id="mapelCount" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">0</span>
+                    </h5>
+                    <div id="listMapel" style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
+                        <p style="color: #64748b; text-align: center; padding: 10px;">
+                            Memuat daftar mata pelajaran...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Info -->
+        <div class="developer-card">
+            <div class="developer-info">
+                <div class="developer-avatar">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div class="developer-details">
+                    <h4>Rendi Rahadian, S.Pd.</h4>
+                    <p><i class="fa-solid fa-briefcase"></i> Guru PJOK UPTD SDN Rawabuntu 03</p>
+                    <p><i class="fa-solid fa-code"></i> Pengembang Sistem</p>
+                    <p><i class="fa-solid fa-envelope"></i> rendi.rahadian@sdnrawabuntu03.sch.id</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load JavaScript file -->
+    <script type="module" src="pengaturan_sistem.js"></script>
+    
+    <!-- Inline script untuk inisialisasi -->
+    <script>
+        // Tunggu DOM siap
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Inisialisasi sistem
+            if (typeof initPengaturanSistem === 'function') {
+                initPengaturanSistem();
+            } else {
+                console.error('initPengaturanSistem function not found!');
+                showMessage('Error: Sistem tidak terinisialisasi. Muat ulang halaman.', 'error');
+            }
+            
+            // Tambah event listener untuk enter key di form mapel
+            document.getElementById('kodeMapel')?.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    tambahMapel();
+                }
+            });
+            
+            // Validasi tahun ajaran
+            document.getElementById('tahunAjaran')?.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value && !value.match(/^\d{4}\/\d{4}$/)) {
+                    showMessage('Format tahun ajaran harus seperti: 2024/2025', 'error');
+                }
+            });
+        });
+
+        // Fallback function jika showMessage tidak ada
+        function showMessage(text, type) {
+            const messageBox = document.getElementById('messageBox');
+            if (!messageBox) {
+                alert(text);
+                return;
+            }
+            
+            messageBox.textContent = text;
+            messageBox.className = `message ${type}`;
+            messageBox.style.display = 'block';
+            
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Fallback untuk fungsi yang dipanggil dari HTML
+        async function simpanPengaturan() {
+            if (typeof window.simpanPengaturan === 'function') {
+                await window.simpanPengaturan();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function tambahMapel() {
+            if (typeof window.tambahMapel === 'function') {
+                await window.tambahMapel();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function tambahMapelStandar() {
+            if (typeof window.tambahMapelStandar === 'function') {
+                await window.tambahMapelStandar();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function tambahPilihanKhusus() {
+            if (typeof window.tambahPilihanKhusus === 'function') {
+                await window.tambahPilihanKhusus();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function simpanJadwal(kelas) {
+            if (typeof window.simpanJadwal === 'function') {
+                await window.simpanJadwal(kelas);
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function resetJadwal(kelas) {
+            if (typeof window.resetJadwal === 'function') {
+                await window.resetJadwal(kelas);
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function copyJadwal(kelas) {
+            if (typeof window.copyJadwal === 'function') {
+                await window.copyJadwal(kelas);
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        // Fungsi untuk edit jam pelajaran
+        async function tambahJamPelajaran() {
+            if (typeof window.tambahJamPelajaran === 'function') {
+                window.tambahJamPelajaran();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function hapusJamPelajaran(index) {
+            if (typeof window.hapusJamPelajaran === 'function') {
+                window.hapusJamPelajaran(index);
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function simpanJamPelajaran() {
+            if (typeof window.simpanJamPelajaran === 'function') {
+                await window.simpanJamPelajaran();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+
+        async function resetJamPelajaran() {
+            if (typeof window.resetJamPelajaran === 'function') {
+                window.resetJamPelajaran();
+            } else {
+                showMessage('Error: Fungsi tidak tersedia. Muat ulang halaman.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

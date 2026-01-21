@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Mengajar - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 25px;
+        }
+
+        /* Premium Header */
+        .premium-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(40%, -40%);
+        }
+
+        .premium-header h3 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Navigation */
+        .dashboard-nav {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--light);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-akademik {
+            background: #3b82f6;
+        }
+
+        .legend-pjok {
+            background: #10b981;
+        }
+
+        .legend-pai {
+            background: #8b5cf6;
+        }
+
+        .legend-khusus {
+            background: #f59e0b;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .info-card h4 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-label {
+            flex: 0 0 150px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .info-value {
+            flex: 1;
+            color: #64748b;
+        }
+
+        /* Jadwal Container */
+        #jadwalContainer {
+            min-height: 400px;
+            position: relative;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Jadwal Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .jadwal-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+            background: white;
+        }
+
+        .jadwal-table th {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--dark);
+            border: 1px solid var(--border);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .jadwal-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .jadwal-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .jadwal-table td {
+            padding: 8px;
+            border: 1px solid var(--border);
+            vertical-align: top;
+            min-width: 180px;
+            height: 120px;
+            background: white;
+        }
+
+        .jadwal-table td:first-child {
+            background: #f8fafc;
+            font-weight: 600;
+            color: var(--dark);
+            width: 120px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Mapel Items */
+        .jadwal-mapel {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #3b82f6;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .jadwal-mapel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .jadwal-mapel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Mapel Types */
+        .mapel-akademik {
+            border-left-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .mapel-pjok {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+
+        .mapel-pai {
+            border-left-color: #8b5cf6;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        }
+
+        .mapel-khusus {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .mapel-nama {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mapel-code {
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .kelas-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .jam-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Kosong */
+        .jadwal-kosong {
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+            vertical-align: middle;
+        }
+
+        /* Role Badges */
+        .role-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .role-indicator {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-left: 10px;
+            border: 1px solid var(--border);
+        }
+
+        /* Info Alert */
+        .info-alert {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #bae6fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #0369a1;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .info-alert i {
+            font-size: 24px;
+            margin-top: 2px;
+        }
+
+        .info-alert strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Error Container */
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fef2f2;
+            border-radius: 12px;
+            border: 2px solid #fecaca;
+            margin: 20px 0;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #64748b;
+            font-size: 12px;
+            border-top: 2px solid #f1f5f9;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .footer-note p {
+            margin-bottom: 10px;
+        }
+
+        .footer-note p:last-child {
+            margin-bottom: 0;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .jadwal-table td {
+                min-width: 160px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-links {
+                flex-direction: column;
+            }
+            
+            .jadwal-table td {
+                min-width: 140px;
+                height: 100px;
+            }
+            
+            .jadwal-mapel {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+            
+            .premium-header {
+                padding: 20px;
+            }
+            
+            .premium-header h3 {
+                font-size: 22px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .jadwal-table th,
+            .jadwal-table td {
+                font-size: 12px;
+                padding: 6px;
+            }
+            
+            .jadwal-mapel {
+                font-size: 11px;
+            }
+        }
+
+        /* Jumat Special */
+        .jumat-cell {
+            background: #fffbeb !important;
+        }
+
+        .jumat-mapel {
+            background: #fef3c7 !important;
+            border-left-color: #f59e0b !important;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Premium Header -->
+        <div class="premium-header">
+            <h3><i class="fa-solid fa-calendar-alt"></i> Jadwal Mengajar</h3>
+            <div class="header-subtitle">
+                <i class="fa-solid fa-chalkboard-teacher"></i>
+                SDN Rawabuntu 03 - Lihat Jadwal Mengajar Anda
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="dashboard-nav">
+            <div class="nav-links">
+                <a href="dashboard_guru.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard Utama
+                </a>
+                <a href="absensi.html" class="nav-link">
+                    <i class="fa-solid fa-clipboard-check"></i> Absensi Siswa
+                </a>
+                <a href="penilaian.html" class="nav-link">
+                    <i class="fa-solid fa-file-pen"></i> Input Nilai
+                </a>
+                <a href="jadwal_guru.html" class="nav-link active">
+                    <i class="fa-solid fa-calendar-alt"></i> Jadwal Mengajar
+                </a>
+                <a href="index.html" class="nav-link" style="background: #fee2e2; color: #991b1b;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Info Section -->
+        <div class="filter-section">
+            <div class="form-group">
+                <label>Pilih Kelas</label>
+                <select id="selectKelas" class="form-control">
+                                            <option value="1A">Kelas 1A</option><option value="1B">Kelas 1B</option><option value="1C">Kelas 1C</option><option value="1D">Kelas 1D</option>
+                        <option value="2A">Kelas 2A</option><option value="2B">Kelas 2B</option><option value="2C">Kelas 2C</option><option value="2D">Kelas 2D</option><option value="2E">Kelas 2E</option>
+                        <option value="3A">Kelas 3A</option><option value="3B">Kelas 3B</option><option value="3C">Kelas 3C</option><option value="3D">Kelas 3D</option><option value="3E">Kelas 3E</option>
+                        <option value="4A">Kelas 4A</option><option value="4B">Kelas 4B</option><option value="4C">Kelas 4C</option><option value="4D">Kelas 4D</option><option value="4E">Kelas 4E</option><option value="4F">Kelas 4F</option>
+                        <option value="5A">Kelas 5A</option><option value="5B">Kelas 5B</option><option value="5C">Kelas 5C</option><option value="5D">Kelas 5D</option><option value="5E">Kelas 5E</option>
+                        <option value="6A">Kelas 6A</option><option value="6B">Kelas 6B</option><option value="6C">Kelas 6C</option><option value="6D">Kelas 6D</option><option value="6E">Kelas 6E</option>
+
+                </select>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-akademik"></div>
+                        <span>Mata Pelajaran Akademik</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-pjok"></div>
+                        <span>Pendidikan Jasmani (PJOK)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-pai"></div>
+                        <span>Pendidikan Agama Islam (PAI)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-khusus"></div>
+                        <span>Kegiatan Khusus</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guru Info Card -->
+        <div id="guruInfoCard" class="info-card">
+            <h4><i class="fa-solid fa-user-tie"></i> Informasi Guru</h4>
+            <div class="info-item">
+                <span class="info-label">Nama:</span>
+                <span id="guruNama" class="info-value">Memuat...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Role:</span>
+                <span id="guruRole" class="info-value">Memuat...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span id="guruEmail" class="info-value">Memuat...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Total Jam Mengajar:</span>
+                <span id="totalJam" class="info-value">0 jam/minggu</span>
+            </div>
+        </div>
+
+        <!-- Error Container -->
+        <div id="errorContainer" class="error-container" style="display: none;">
+            <div style="font-size: 48px; color: #f87171; margin-bottom: 20px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 id="errorTitle">Terjadi Kesalahan</h4>
+            <p id="errorMessage">Gagal memuat jadwal mengajar. Silakan coba lagi.</p>
+            <button id="retryButton" class="retry-button">
+                <i class="fa-solid fa-rotate-right"></i> Coba Lagi
+            </button>
+        </div>
+
+        <!-- Jadwal Container -->
+        <div id="jadwalContainer">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Memuat jadwal mengajar...</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-note">
+            <p><i class="fa-solid fa-circle-info"></i> <strong>Catatan:</strong> Jadwal ini dibuat oleh Admin. Untuk perubahan jadwal, hubungi Admin.</p>
+            <p>© 2026 SDN Rawabuntu 03 - Sistem Manajemen Sekolah</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== GLOBAL ERROR HANDLERS =====
+        window.addEventListener('error', function(event) {
+            console.error('Global error:', event.error);
+            showErrorPage('Error JavaScript', event.error?.message || 'Unknown error');
+            event.preventDefault();
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            showErrorPage('Promise Error', event.reason?.message || 'Unknown promise error');
+            event.preventDefault();
+        });
+
+        // ===== UTILITY FUNCTIONS =====
+        function showErrorPage(title, message) {
+            try {
+                const errorContainer = document.getElementById('errorContainer');
+                const errorTitle = document.getElementById('errorTitle');
+                const errorMessage = document.getElementById('errorMessage');
+                const jadwalContainer = document.getElementById('jadwalContainer');
+                
+                if (errorContainer && errorTitle && errorMessage) {
+                    errorTitle.textContent = title || 'Terjadi Kesalahan';
+                    errorMessage.textContent = message || 'Gagal memuat jadwal mengajar. Silakan coba lagi.';
+                    errorContainer.style.display = 'block';
+                    
+                    if (jadwalContainer) {
+                        jadwalContainer.style.display = 'none';
+                    }
+                } else {
+                    console.error('Error container elements not found');
+                }
+            } catch (e) {
+                console.error('Error showing error page:', e);
+            }
+        }
+
+        function hideErrorPage() {
+            try {
+                const errorContainer = document.getElementById('errorContainer');
+                const jadwalContainer = document.getElementById('jadwalContainer');
+                
+                if (errorContainer) {
+                    errorContainer.style.display = 'none';
+                }
+                
+                if (jadwalContainer) {
+                    jadwalContainer.style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Error hiding error page:', e);
+            }
+        }
+
+        // ===== MAIN APPLICATION CODE =====
+        async function initializeApp() {
+            console.log('🚀 Starting app initialization...');
+            
+            try {
+                // Import Firebase modules
+                console.log('📦 Importing Firebase modules...');
+                const { 
+                    auth, 
+                    db, 
+                    ref, 
+                    get, 
+                    onValue,
+                    onAuthStateChanged, 
+                    getUserData 
+                } = await import('./config_firebase.js');
+
+                console.log('✅ Firebase modules imported successfully');
+
+                // Global variables
+                const HARI = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+                let JAM_PELAJARAN_UMUM = [];
+                let JAM_PELAJARAN_JUMAT = [];
+                let MAPEL_DATA = {};
+                let currentUserRole = '';
+                let currentUserEmail = '';
+                let isAdmin = false;
+                let currentUserUid = '';
+                let isInitialized = false;
+                let isLoading = false;
+                let realtimeListeners = [];
+
+                // Function to get DOM element safely
+                function getElement(id) {
+                    const element = document.getElementById(id);
+                    if (!element) {
+                        console.warn(`⚠️ Element with id "${id}" not found`);
+                    }
+                    return element;
+                }
+
+                // Function to safely set text content
+                function setTextContent(elementId, text) {
+                    try {
+                        const element = getElement(elementId);
+                        if (element) {
+                            element.textContent = text || '';
+                        }
+                    } catch (e) {
+                        console.error(`Error setting text for ${elementId}:`, e);
+                    }
+                }
+
+                // Load required data
+                async function loadRequiredData() {
+                    if (isLoading) {
+                        console.log('⏳ Already loading, skipping...');
+                        return;
+                    }
+                    
+                    isLoading = true;
+                    
+                    try {
+                        console.log('📥 Loading required data...');
+                        
+                        const [jamUmumSnapshot, jamJumatSnapshot, mapelSnapshot] = await Promise.all([
+                            get(ref(db, 'pengaturan/jamPelajaran/umum')),
+                            get(ref(db, 'pengaturan/jamPelajaran/jumat')),
+                            get(ref(db, 'pengaturan/mapel'))
+                        ]);
+
+                        console.log('✅ Data snapshots received');
+
+                        // Load jam pelajaran umum
+                        if (jamUmumSnapshot.exists()) {
+                            const jamData = jamUmumSnapshot.val();
+                            if (jamData && typeof jamData === 'object') {
+                                JAM_PELAJARAN_UMUM = Object.values(jamData).sort((a, b) => {
+                                    return a.mulai.localeCompare(b.mulai);
+                                });
+                                console.log(`📅 Jam umum loaded: ${JAM_PELAJARAN_UMUM.length} jam`);
+                            }
+                        } else {
+                            // Default jika belum ada
+                            JAM_PELAJARAN_UMUM = [
+                                { mulai: '07:00', selesai: '07:40', label: '07:00 - 07:40' },
+                                { mulai: '07:40', selesai: '08:20', label: '07:40 - 08:20' },
+                                { mulai: '08:20', selesai: '09:00', label: '08:20 - 09:00' },
+                                { mulai: '09:00', selesai: '09:40', label: '09:00 - 09:40' },
+                                { mulai: '10:00', selesai: '10:40', label: '10:00 - 10:40' },
+                                { mulai: '10:40', selesai: '11:20', label: '10:40 - 11:20' },
+                                { mulai: '11:20', selesai: '12:00', label: '11:20 - 12:00' },
+                                { mulai: '12:00', selesai: '12:40', label: '12:00 - 12:40' }
+                            ];
+                            console.log('📅 Using default jam umum');
+                        }
+
+                        // Load jam pelajaran Jumat
+                        if (jamJumatSnapshot.exists()) {
+                            const jamData = jamJumatSnapshot.val();
+                            if (jamData && typeof jamData === 'object') {
+                                JAM_PELAJARAN_JUMAT = Object.values(jamData).sort((a, b) => {
+                                    return a.mulai.localeCompare(b.mulai);
+                                });
+                                console.log(`📅 Jam jumat loaded: ${JAM_PELAJARAN_JUMAT.length} jam`);
+                            }
+                        } else {
+                            // Default jika belum ada
+                            JAM_PELAJARAN_JUMAT = [
+                                { mulai: '07:00', selesai: '07:40', label: '07:00 - 07:40' },
+                                { mulai: '07:40', selesai: '08:20', label: '07:40 - 08:20' },
+                                { mulai: '08:20', selesai: '09:00', label: '08:20 - 09:00' },
+                                { mulai: '09:00', selesai: '09:40', label: '09:00 - 09:40' },
+                                { mulai: '10:00', selesai: '10:40', label: '10:00 - 10:40' },
+                                { mulai: '10:40', selesai: '11:20', label: '10:40 - 11:20' }
+                            ];
+                            console.log('📅 Using default jam jumat');
+                        }
+
+                        // Load mata pelajaran
+                        if (mapelSnapshot.exists()) {
+                            MAPEL_DATA = mapelSnapshot.val();
+                            console.log(`📚 Mapel data loaded: ${Object.keys(MAPEL_DATA).length} mapel`);
+                        } else {
+                            MAPEL_DATA = {};
+                            console.log('📚 No mapel data found');
+                        }
+
+                        // Load guru data
+                        await loadGuruData();
+
+                        // Setup realtime listeners (hanya sekali)
+                        if (!isInitialized) {
+                            setupRealtimeListeners();
+                            isInitialized = true;
+                        }
+
+                        console.log('✅ All required data loaded successfully');
+
+                    } catch (error) {
+                        console.error('❌ Error loading required data:', error);
+                        showErrorPage('Gagal Memuat Data', `Error: ${error.message}`);
+                        throw error;
+                    } finally {
+                        isLoading = false;
+                    }
+                }
+
+                // Setup realtime listeners
+                function setupRealtimeListeners() {
+                    console.log('🔔 Setting up realtime listeners...');
+                    
+                    try {
+                        // Clear any existing listeners
+                        removeRealtimeListeners();
+                        
+                        // Debounce function
+                        let debounceTimer;
+                        function debounceLoadJadwal() {
+                            clearTimeout(debounceTimer);
+                            debounceTimer = setTimeout(() => {
+                                console.log('🔄 Debounced schedule reload');
+                                loadJadwalGuru();
+                            }, 1000);
+                        }
+                        
+                        // Listen for schedule changes
+                        const kelasToListen = isAdmin ? 
+                            ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'] : 
+                            ['2B'];
+                        
+                        kelasToListen.forEach(kelas => {
+                            try {
+                                const jadwalRef = ref(db, `pengaturan/jadwal/${kelas}`);
+                                const unsubscribe = onValue(jadwalRef, (snapshot) => {
+                                    console.log(`📊 Schedule updated for ${kelas}:`, snapshot.exists() ? 'Exists' : 'Empty');
+                                    debounceLoadJadwal();
+                                }, (error) => {
+                                    console.error(`❌ Error listening to schedule for ${kelas}:`, error);
+                                });
+                                
+                                realtimeListeners.push({ ref: jadwalRef, unsubscribe });
+                            } catch (error) {
+                                console.error(`❌ Failed to setup listener for ${kelas}:`, error);
+                            }
+                        });
+
+                        console.log(`✅ Setup ${realtimeListeners.length} realtime listeners`);
+                        
+                    } catch (error) {
+                        console.error('❌ Error setting up realtime listeners:', error);
+                    }
+                }
+                
+                // Remove existing realtime listeners
+                function removeRealtimeListeners() {
+                    console.log('🗑️ Removing existing listeners...');
+                    realtimeListeners.forEach(listener => {
+                        try {
+                            if (listener.unsubscribe && typeof listener.unsubscribe === 'function') {
+                                listener.unsubscribe();
+                            }
+                        } catch (e) {
+                            console.error('Error removing listener:', e);
+                        }
+                    });
+                    realtimeListeners = [];
+                }
+
+                // Load data guru dengan pengecekan null yang lebih baik
+                async function loadGuruData() {
+                    try {
+                        console.log('👤 Loading guru data...');
+                        
+                        const user = auth.currentUser;
+                        if (!user) {
+                            console.log('❌ No user found, redirecting to login...');
+                            window.location.href = 'index.html';
+                            return;
+                        }
+
+                        currentUserUid = user.uid;
+                        currentUserEmail = user.email;
+                        
+                        console.log(`👤 User found: ${user.email} (UID: ${user.uid})`);
+                        
+                        const userData = await getUserData(user.uid);
+                        if (userData) {
+                            console.log('👤 User data retrieved:', userData);
+                            
+                            // Gunakan fungsi setTextContent yang aman
+                            setTextContent('guruNama', userData.nama || 'Tidak diketahui');
+                            setTextContent('guruRole', userData.role || 'Tidak diketahui');
+                            setTextContent('guruEmail', user.email || 'Tidak diketahui');
+                            
+                            currentUserRole = userData.role || '';
+                            currentUserEmail = user.email || '';
+                            isAdmin = currentUserRole === 'ADMIN';
+                            
+                            console.log('👤 User role set:', {
+                                role: currentUserRole,
+                                isAdmin: isAdmin
+                            });
+                        } else {
+                            console.warn('⚠️ User data not found in database');
+                            setTextContent('guruNama', 'Data tidak ditemukan');
+                            setTextContent('guruRole', 'Tidak diketahui');
+                            setTextContent('guruEmail', user.email || 'Tidak diketahui');
+                        }
+                        
+                        console.log('✅ Guru data loaded successfully');
+                    } catch (error) {
+                        console.error('❌ Error loading guru data:', error);
+                        // Jangan throw error di sini, biarkan app tetap berjalan
+                        setTextContent('guruNama', 'Error memuat data');
+                        setTextContent('guruRole', 'Error');
+                        setTextContent('guruEmail', currentUserEmail || 'Error');
+                    }
+                }
+
+                // Load jadwal berdasarkan kelas yang dipilih
+                async function loadJadwalGuru() {
+                    if (isLoading) {
+                        console.log('⏳ Already loading jadwal, skipping...');
+                        return;
+                    }
+                    
+                    isLoading = true;
+                    
+                    try {
+                        console.log('📋 Loading jadwal guru...');
+                        
+                        const kelas = document.getElementById('selectKelas')?.value || '';
+                        const container = document.getElementById('jadwalContainer');
+
+                        if (!container) {
+                            console.error('❌ Jadwal container not found');
+                            return;
+                        }
+
+                        // Tampilkan loading state
+                        container.innerHTML = `
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Memuat jadwal mengajar...</p>
+                            </div>
+                        `;
+
+                        // Get all kelas data
+                        const kelasList = kelas ? [kelas] : ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', 
+                                                            '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'];
+                        
+                        console.log(`📚 Loading schedules for: ${kelasList.join(', ')}`);
+                        
+                        // Load semua jadwal
+                        const jadwalPromises = kelasList.map(k => get(ref(db, `pengaturan/jadwal/${k}`)));
+                        const snapshots = await Promise.all(jadwalPromises);
+                        
+                        const semuaJadwal = {};
+                        snapshots.forEach((snapshot, index) => {
+                            if (snapshot.exists()) {
+                                semuaJadwal[kelasList[index]] = snapshot.val();
+                            }
+                        });
+
+                        console.log(`✅ Loaded ${Object.keys(semuaJadwal).length} kelas with schedules`);
+
+                        // Render jadwal
+                        renderJadwalGuru(semuaJadwal, kelas);
+
+                    } catch (error) {
+                        console.error('❌ Error loading schedule:', error);
+                        showErrorPage('Gagal Memuat Jadwal', `Terjadi kesalahan saat memuat jadwal: ${error.message}`);
+                    } finally {
+                        isLoading = false;
+                    }
+                }
+
+                // FUNGSI FIXED: GURU_KELAS bisa lihat semua mapel
+                function isMapelForRole(mapelKode, role) {
+                    if (!mapelKode || !role) return false;
+                    
+                    const mapelKodeUpper = mapelKode.toUpperCase();
+                    
+                    // Jika admin, return true untuk semua mapel
+                    if (role === 'ADMIN') return true;
+                    
+                    // PERBAIKAN PENTING: GURU_KELAS bisa melihat SEMUA mata pelajaran di kelasnya
+                    if (role === 'GURU_KELAS') return true;
+                    
+                    // Filter khusus untuk guru spesialis
+                    if (role === 'GURU_PJOK') {
+                        return ['PJK', 'PJOK'].includes(mapelKodeUpper);
+                    }
+                    
+                    if (role === 'GURU_PAI') {
+                        return ['PAI', 'BTQ', 'AGM'].includes(mapelKodeUpper);
+                    }
+                    
+                    // Default untuk role lain (bisa disesuaikan)
+                    return true;
+                }
+
+                // Render jadwal untuk guru - FIXED VERSION
+                function renderJadwalGuru(semuaJadwal, kelasFilter) {
+                    try {
+                        console.log('🎨 Rendering schedule...');
+                        
+                        const container = document.getElementById('jadwalContainer');
+                        if (!container) {
+                            console.error('❌ Container not found for rendering');
+                            return;
+                        }
+                        
+                        let totalJamMengajar = 0;
+                        let jadwalDitemukan = false;
+
+                        // Filter jadwal berdasarkan guru yang login
+                        const jadwalGuru = {};
+                        
+                        // PERBAIKAN: Cari semua jadwal yang sesuai dengan guru ini
+                        Object.entries(semuaJadwal).forEach(([kelas, jadwalKelas]) => {
+                            if (kelasFilter && kelas !== kelasFilter) return;
+                            if (!jadwalKelas) return;
+                            
+                            HARI.forEach(hari => {
+                                if (jadwalKelas[hari]) {
+                                    const jamPelajaran = hari === 'Jumat' ? JAM_PELAJARAN_JUMAT : JAM_PELAJARAN_UMUM;
+                                    
+                                    jamPelajaran.forEach((jam, jamIndex) => {
+                                        const mapelId = jadwalKelas[hari] && jadwalKelas[hari][jamIndex];
+                                        if (mapelId && MAPEL_DATA[mapelId]) {
+                                            const mapel = MAPEL_DATA[mapelId];
+                                            jadwalDitemukan = true;
+                                            
+                                            // PERBAIKAN: GURU_KELAS bisa lihat semua mapel, jadi selalu true
+                                            let isGuruMapel = true;
+                                            
+                                            // Kecuali untuk guru spesialis, filter sesuai mapel
+                                            if (currentUserRole === 'GURU_PJOK') {
+                                                isGuruMapel = ['PJK', 'PJOK'].includes(mapel.kode.toUpperCase());
+                                            } else if (currentUserRole === 'GURU_PAI') {
+                                                isGuruMapel = ['PAI', 'BTQ', 'AGM'].includes(mapel.kode.toUpperCase());
+                                            }
+                                            
+                                            // Tambahkan ke jadwal guru jika sesuai
+                                            if (isGuruMapel) {
+                                                if (!jadwalGuru[hari]) jadwalGuru[hari] = {};
+                                                if (!jadwalGuru[hari][jamIndex]) jadwalGuru[hari][jamIndex] = [];
+                                                
+                                                jadwalGuru[hari][jamIndex].push({
+                                                    kelas: kelas,
+                                                    mapel: mapel,
+                                                    jam: jam.label
+                                                });
+                                                
+                                                totalJamMengajar++;
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                        console.log(`📊 Total jam mengajar ditemukan: ${totalJamMengajar}`);
+
+                        // Update total jam mengajar
+                        setTextContent('totalJam', `${totalJamMengajar} jam/minggu`);
+
+                        // Buat tabel jadwal
+                        let html = `
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: var(--dark); margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-calendar-week"></i> Jadwal Mengajar ${kelasFilter ? `Kelas ${kelasFilter}` : 'Semua Kelas'}
+                                    <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">
+                                        ${totalJamMengajar} jam/minggu
+                                    </span>
+                                    ${isAdmin ? '<span class="role-badge">ADMIN VIEW</span>' : ''}
+                                    <span class="role-indicator">Role: ${currentUserRole}</span>
+                                </h4>
+                                
+                                <div class="table-responsive">
+                                    <table class="jadwal-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 120px;">Jam/Hari</th>
+                                                ${HARI.map(hari => `<th>${hari}</th>`).join('')}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+
+                        // PERBAIKAN: Render untuk hari Senin-Kamis (8 jam) dan Jumat (6 jam)
+                        for (let jamIndex = 0; jamIndex < JAM_PELAJARAN_UMUM.length; jamIndex++) {
+                            const jam = JAM_PELAJARAN_UMUM[jamIndex];
+                            html += `<tr><td style="font-weight: 600; background: #f8fafc; width: 120px; text-align: center;">${jam.label}</td>`;
+                            
+                            HARI.forEach(hari => {
+                                const isJumat = hari === 'Jumat';
+                                const jamPelajaran = isJumat ? JAM_PELAJARAN_JUMAT : JAM_PELAJARAN_UMUM;
+                                
+                                // PERBAIKAN: Untuk Jumat, cek apakah ada jam untuk index ini
+                                if (isJumat && jamIndex >= jamPelajaran.length) {
+                                    html += `<td class="jadwal-kosong jumat-cell">-</td>`;
+                                } else {
+                                    const jadwalHari = jadwalGuru[hari] ? jadwalGuru[hari][jamIndex] : null;
+                                    const jamLabel = isJumat ? jamPelajaran[jamIndex]?.label || jam.label : jam.label;
+                                    
+                                    if (jadwalHari && jadwalHari.length > 0) {
+                                        const cellClass = isJumat ? 'jumat-cell' : '';
+                                        html += `<td class="${cellClass}">`;
+                                        
+                                        jadwalHari.forEach(item => {
+                                            // Tentukan kelas CSS berdasarkan jenis mapel
+                                            let mapelClass = 'mapel-akademik';
+                                            const mapelKode = item.mapel.kode.toUpperCase();
+                                            
+                                            if (mapelKode === 'PJK' || mapelKode === 'PJOK') {
+                                                mapelClass = 'mapel-pjok';
+                                            } else if (mapelKode === 'PAI' || mapelKode === 'BTQ' || mapelKode === 'AGM') {
+                                                mapelClass = 'mapel-pai';
+                                            } else if (mapelKode === 'IST' || mapelKode === 'UPC' || mapelKode === 'KBR' || 
+                                                       mapelKode === 'SHT' || mapelKode === 'KNS' || mapelKode === 'EKS' || 
+                                                       mapelKode === '---' || mapelKode === 'SDH' || mapelKode === 'SLD') {
+                                                mapelClass = 'mapel-khusus';
+                                            }
+                                            
+                                            // Tambahkan class khusus untuk Jumat
+                                            if (isJumat) {
+                                                mapelClass += ' jumat-mapel';
+                                            }
+                                            
+                                            html += `
+                                                <div class="jadwal-mapel ${mapelClass}">
+                                                    <div class="mapel-nama">
+                                                        ${item.mapel.nama}
+                                                        <span class="mapel-code">${item.mapel.kode}</span>
+                                                    </div>
+                                                    <div class="kelas-badge">${item.kelas}</div>
+                                                    <div class="jam-label">${jamLabel}</div>
+                                                </div>
+                                            `;
+                                        });
+                                        
+                                        html += `</td>`;
+                                    } else {
+                                        const cellClass = isJumat ? 'jumat-cell' : '';
+                                        const kosongText = 'Tidak ada jadwal';
+                                        html += `<td class="jadwal-kosong ${cellClass}">${kosongText}</td>`;
+                                    }
+                                }
+                            });
+                            
+                            html += '</tr>';
+                        }
+
+                        html += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                        // Info khusus untuk guru PJOK
+                        if (currentUserRole === 'GURU_PJOK') {
+                            html += `
+                                <div class="info-alert">
+                                    <i class="fa-solid fa-dumbbell"></i>
+                                    <div>
+                                        <strong>Mode Guru PJOK:</strong> Anda hanya melihat jadwal Pendidikan Jasmani (PJK/PJOK).
+                                        <br><small>Jika ada jadwal PJOK di sistem, akan ditampilkan di tabel di atas.</small>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Info khusus untuk guru PAI
+                        if (currentUserRole === 'GURU_PAI') {
+                            html += `
+                                <div class="info-alert">
+                                    <i class="fa-solid fa-book-quran"></i>
+                                    <div>
+                                        <strong>Mode Guru PAI:</strong> Anda hanya melihat jadwal Pendidikan Agama Islam (PAI/BTQ/AGM).
+                                        <br><small>Jika ada jadwal PAI di sistem, akan ditampilkan di tabel di atas.</small>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Info khusus untuk guru kelas
+                        if (currentUserRole === 'GURU_KELAS') {
+                            html += `
+                                <div class="info-alert">
+                                    <i class="fa-solid fa-chalkboard-teacher"></i>
+                                    <div>
+                                        <strong>Mode Guru Kelas:</strong> Anda melihat semua mata pelajaran di kelas yang dipilih.
+                                        <br><small>Sebagai guru kelas, Anda bertanggung jawab atas semua pelajaran di kelas ini.</small>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Info tambahan untuk admin
+                        if (isAdmin) {
+                            html += `
+                                <div class="info-alert">
+                                    <i class="fa-solid fa-info-circle"></i>
+                                    <div>
+                                        <strong>Mode Admin:</strong> Anda melihat semua jadwal yang tersedia di sistem. 
+                                        Untuk mengedit jadwal, gunakan halaman 
+                                        <a href="pengaturan_sistem.html" style="color: var(--accent); font-weight: 600;">Pengaturan Sistem</a>.
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Jika tidak ada jadwal untuk role selain admin
+                        if (totalJamMengajar === 0 && !isAdmin) {
+                            html = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <div style="font-size: 48px; color: #e2e8f0; margin-bottom: 20px;">
+                                        <i class="fa-solid fa-calendar-xmark"></i>
+                                    </div>
+                                    <h4 style="color: var(--dark); margin-bottom: 10px;">Belum Ada Jadwal Mengajar</h4>
+                                    <p style="color: #64748b; max-width: 500px; margin: 0 auto;">
+                                        Admin belum mengatur jadwal mengajar untuk Anda. 
+                                        Silakan hubungi Admin untuk mengatur jadwal mengajar Anda.
+                                    </p>
+                                    <div style="margin-top: 20px; background: #f0f9ff; padding: 15px; border-radius: 8px; display: inline-block;">
+                                        <div style="display: flex; align-items: center; gap: 8px; color: #0369a1;">
+                                            <i class="fa-solid fa-info-circle"></i>
+                                            <span style="font-size: 13px;">Role Anda: <strong>${currentUserRole}</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        container.innerHTML = html;
+                        
+                        console.log('✅ Schedule rendered successfully');
+                        
+                    } catch (error) {
+                        console.error('❌ Error rendering schedule:', error);
+                        showErrorPage('Error Render Jadwal', `Gagal menampilkan jadwal: ${error.message}`);
+                    }
+                }
+
+                // ===== INITIALIZATION =====
+                function initialize() {
+                    console.log('🚀 Initializing app...');
+                    
+                    // Check auth status
+                    onAuthStateChanged(auth, async (user) => {
+                        if (!user) {
+                            console.log('❌ No authenticated user, redirecting...');
+                            window.location.href = 'index.html';
+                            return;
+                        }
+
+                        console.log(`✅ User authenticated: ${user.email}`);
+
+                        try {
+                            // Load data
+                            await loadRequiredData();
+                            
+                            // Add event listener for kelas selection
+                            const selectKelas = document.getElementById('selectKelas');
+                            if (selectKelas) {
+                                selectKelas.addEventListener('change', function() {
+                                    console.log(`📝 Kelas changed to: ${this.value}`);
+                                    loadJadwalGuru();
+                                });
+                                console.log('✅ Kelas selection listener added');
+                            } else {
+                                console.warn('⚠️ selectKelas element not found');
+                            }
+                            
+                            // Load initial jadwal
+                            await loadJadwalGuru();
+                            
+                            console.log('🎉 App initialization complete!');
+                            
+                        } catch (error) {
+                            console.error('❌ Error during initialization:', error);
+                            showErrorPage('Inisialisasi Gagal', `Gagal memulai sistem: ${error.message}`);
+                        }
+                    }, (error) => {
+                        console.error('❌ Auth state change error:', error);
+                        showErrorPage('Autentikasi Gagal', 'Gagal memeriksa status login. Silakan login ulang.');
+                    });
+                }
+
+                // Clean up on page unload
+                window.addEventListener('beforeunload', function() {
+                    console.log('🧹 Cleaning up...');
+                    removeRealtimeListeners();
+                });
+
+                // Start the app
+                initialize();
+
+                // Export fungsi ke window object
+                window.loadJadwalGuru = loadJadwalGuru;
+
+            } catch (error) {
+                console.error('❌ Failed to initialize app:', error);
+                showErrorPage('Error Sistem', `Gagal memuat sistem: ${error.message}`);
+            }
+        }
+
+        // Initialize retry button
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM loaded, initializing app...');
+            
+            try {
+                const retryButton = document.getElementById('retryButton');
+                if (retryButton) {
+                    retryButton.addEventListener('click', function() {
+                        console.log('🔄 Retry button clicked');
+                        hideErrorPage();
+                        location.reload();
+                    });
+                    console.log('✅ Retry button listener added');
+                } else {
+                    console.warn('⚠️ Retry button not found');
+                }
+                
+                // Start the application
+                initializeApp();
+                
+            } catch (e) {
+                console.error('❌ Error initializing app:', e);
+                showErrorPage('Error Inisialisasi', 'Gagal memulai aplikasi. Silakan refresh halaman.');
+            }
+        });
+    </script>
+</body>
+</html>
