@@ -1,4 +1,5 @@
-// config_firebase.js - VERSI FIXED (ROLE BASED) - DIPERBAIKI
+
+// config_firebase.js - VERSI FIXED & OPTIMIZED
 
 // 1. Import library Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -97,42 +98,57 @@ function getCurrentUserEmail() {
     return auth.currentUser ? auth.currentUser.email : null;
 }
 
-// --- BAGIAN YANG DIPERBAIKI (LOGIKA IZIN) ---
+// --- BAGIAN PERMISSION CHECK YANG DIPERBAIKI ---
 
 // Fungsi untuk cek permission absensi
-// Logic Baru: Semua Role Guru & Admin BOLEH masuk
 function checkAbsensiPermission(userRole, userEmail) {
     // Daftar role yang diizinkan
     const allowedRoles = ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'];
     
-    // Debugging (Cek di Console browser jika masih gagal)
-    console.log(`[AUTH] Cek Absensi: Role=${userRole}, Email=${userEmail}`);
+    // Debugging
+    console.log(`[AUTH CHECK] Role: ${userRole}, Email: ${userEmail}`);
     
     if (allowedRoles.includes(userRole)) {
+        console.log(`[AUTH GRANTED] User ${userEmail} (${userRole}) dapat mengakses absensi`);
         return true;
     }
+    
+    console.log(`[AUTH DENIED] User ${userEmail} (${userRole}) tidak dapat mengakses absensi`);
     return false;
 }
 
 // Fungsi untuk cek permission penilaian
-// Logic Baru: Semua Role Guru & Admin BOLEH masuk halaman ini
-// (Filter mata pelajaran nanti ditangani oleh file penilaian.html sendiri)
-function checkPenilaianPermission(userRole, userEmail) {
-    // Daftar role yang diizinkan
+function checkPenilaianPermission(userRole, userEmail, mataPelajaran = null) {
     const allowedRoles = ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'];
     
-    // Debugging
-    console.log(`[AUTH] Cek Penilaian: Role=${userRole}, Email=${userEmail}`);
+    console.log(`[AUTH CHECK PENILAIAN] Role: ${userRole}, Mapel: ${mataPelajaran}`);
     
-    if (allowedRoles.includes(userRole)) {
-        return true;
+    if (!allowedRoles.includes(userRole)) {
+        return false;
     }
-    return false;
+    
+    // Validasi khusus berdasarkan mata pelajaran
+    if (mataPelajaran) {
+        switch(mataPelajaran) {
+            case 'akademik':
+                return userRole === 'ADMIN' || userRole === 'GURU_KELAS';
+            case 'pjok':
+                return userRole === 'ADMIN' || userRole === 'GURU_PJOK';
+            case 'pai':
+                return userRole === 'ADMIN' || userRole === 'GURU_PAI';
+            default:
+                return false;
+        }
+    }
+    
+    return true;
 }
 
 // Fungsi untuk cek permission admin dashboard
 function checkAdminPermission(userRole) {
-    return userRole === 'ADMIN';
+    const isAdmin = userRole === 'ADMIN';
+    console.log(`[ADMIN CHECK] Role: ${userRole}, Is Admin: ${isAdmin}`);
+    return isAdmin;
 }
 
 // Fungsi untuk cek permission berdasarkan halaman
@@ -142,16 +158,71 @@ function checkPagePermission(userRole, pageName) {
         'absensi': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'],
         'penilaian': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'],
         'laporan': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'],
-        'dashboard': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI']
+        'dashboard': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'],
+        'scanner': ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'],
+        'rekap_absen_admin': ['ADMIN'] // Hanya admin
     };
     
     const allowedRoles = permissions[pageName] || [];
-    return allowedRoles.includes(userRole);
+    const hasPermission = allowedRoles.includes(userRole);
+    
+    console.log(`[PAGE CHECK] Page: ${pageName}, Role: ${userRole}, Allowed: ${hasPermission}`);
+    
+    return hasPermission;
+}
+
+// PERBAIKAN: Fungsi untuk validasi delete permission (khusus admin)
+async function checkDeletePermission(userId) {
+    try {
+        const userData = await getUserData(userId);
+        if (!userData) return false;
+        
+        return userData.role === 'ADMIN';
+    } catch (error) {
+        console.error("Error checking delete permission:", error);
+        return false;
+    }
+}
+
+// PERBAIKAN: Fungsi untuk validasi write permission dengan path tertentu
+async function checkWritePermission(userId, path) {
+    try {
+        const userData = await getUserData(userId);
+        if (!userData) return false;
+        
+        const userRole = userData.role;
+        
+        // Logika permission berdasarkan path
+        if (path.includes('absensi/')) {
+            return ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'].includes(userRole);
+        }
+        
+        if (path.includes('nilai/akademik/')) {
+            return userRole === 'ADMIN' || userRole === 'GURU_KELAS';
+        }
+        
+        if (path.includes('nilai/pjok/')) {
+            return userRole === 'ADMIN' || userRole === 'GURU_PJOK';
+        }
+        
+        if (path.includes('nilai/pai/')) {
+            return userRole === 'ADMIN' || userRole === 'GURU_PAI';
+        }
+        
+        if (path.includes('users/')) {
+            return userRole === 'ADMIN';
+        }
+        
+        return false;
+    } catch (error) {
+        console.error("Error checking write permission:", error);
+        return false;
+    }
 }
 
 // ----------------------------------------------
 
-// Fungsi untuk debug write permission (Biarkan saja untuk test)
+// Fungsi untuk debug write permission
 async function testWritePermission(path, testData = { test: true, timestamp: new Date().toISOString() }) {
     try {
         const testRef = ref(db, path);
@@ -170,6 +241,11 @@ async function testWritePermission(path, testData = { test: true, timestamp: new
 // Fungsi untuk membuat user baru (admin only)
 async function createUserAccount(email, password, userData) {
     try {
+        // PERBAIKAN: Validasi role sebelum create
+        if (!checkAdminPermission(userData.role)) {
+            return { success: false, error: "Hanya admin yang bisa membuat user" };
+        }
+        
         // Create user in auth
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const uid = userCredential.user.uid;
@@ -204,6 +280,19 @@ async function resetUserPassword(email) {
 // Fungsi untuk update user data
 async function updateUserData(uid, updates) {
     try {
+        // PERBAIKAN: Validasi permission
+        const currentUserId = getCurrentUserId();
+        const currentUserData = await getUserData(currentUserId);
+        
+        if (!currentUserData) {
+            return { success: false, error: "User tidak ditemukan" };
+        }
+        
+        // Hanya admin atau user itu sendiri yang bisa update
+        if (currentUserData.role !== 'ADMIN' && currentUserId !== uid) {
+            return { success: false, error: "Tidak memiliki izin untuk update user ini" };
+        }
+        
         const updatesWithTimestamp = {
             ...updates,
             updatedAt: serverTimestamp()
@@ -230,14 +319,71 @@ async function checkEmailExists(email) {
     }
 }
 
-// Helper untuk redirect jika tidak authorized
-function redirectIfUnauthorized(userRole, allowedRoles, redirectUrl = 'login.html') {
+// PERBAIKAN: Helper untuk redirect jika tidak authorized dengan logging
+function redirectIfUnauthorized(userRole, allowedRoles, redirectUrl = 'index.html', pageName = 'unknown') {
     if (!allowedRoles.includes(userRole)) {
-        console.warn(`⚠️ Unauthorized access. Redirecting to ${redirectUrl}`);
-        window.location.href = redirectUrl;
+        console.warn(`⚠️ Unauthorized access to ${pageName}. User role: ${userRole}. Redirecting to ${redirectUrl}`);
+        
+        // Tampilkan alert sebelum redirect
+        setTimeout(() => {
+            alert(`Akses ditolak. Anda (${userRole}) tidak memiliki izin untuk mengakses halaman ${pageName}.`);
+        }, 100);
+        
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 500);
+        
         return false;
     }
     return true;
+}
+
+// PERBAIKAN: Fungsi untuk get semester aktif
+async function getSemesterAktif() {
+    try {
+        const snapshot = await get(ref(db, 'pengaturan/umum'));
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            return data.semesterAktif || "1";
+        }
+        return "1"; // Default semester 1
+    } catch (error) {
+        console.error("Error getting semester aktif:", error);
+        return "1";
+    }
+}
+
+// PERBAIKAN: Fungsi untuk get pengaturan jam pelajaran
+async function getJamPelajaran(dayType = 'umum') {
+    try {
+        const snapshot = await get(ref(db, `pengaturan/jamPelajaran/${dayType}`));
+        if (snapshot.exists()) {
+            return snapshot.val();
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting jam pelajaran:", error);
+        return null;
+    }
+}
+
+// PERBAIKAN: Fungsi untuk log aktivitas (admin only)
+async function logActivity(adminName, action, details) {
+    try {
+        const logRef = push(ref(db, 'log_aktivitas'));
+        await set(logRef, {
+            waktu: serverTimestamp(),
+            admin: adminName,
+            aksi: action,
+            detail: details,
+            timestamp: Date.now()
+        });
+        console.log(`✅ Activity logged: ${action}`);
+        return true;
+    } catch (error) {
+        console.error("Error logging activity:", error);
+        return false;
+    }
 }
 
 // 5. EXPORT SEMUA FUNGSI
@@ -273,10 +419,15 @@ export {
     checkPenilaianPermission,
     checkAdminPermission,
     checkPagePermission,
+    checkDeletePermission,
+    checkWritePermission,
     testWritePermission,
     createUserAccount,
     resetUserPassword,
     updateUserData,
     checkEmailExists,
-    redirectIfUnauthorized
+    redirectIfUnauthorized,
+    getSemesterAktif,
+    getJamPelajaran,
+    logActivity
 };

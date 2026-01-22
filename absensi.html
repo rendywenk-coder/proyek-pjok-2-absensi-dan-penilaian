@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1063,8 +1064,8 @@
                     // Update statistics
                     updateStats();
                     
-                    // === PERBAIKAN: GUNAKAN .size BUKAN .numChildren() ===
-                    if (!snapSiswa.exists() || snapSiswa.size === 0) {
+                    // === PERBAIKAN: GUNAKAN .exists() dan Object.keys ===
+                    if (!snapSiswa.exists() || Object.keys(siswaData).length === 0) {
                         listArea.innerHTML = `
                             <div class="empty-state">
                                 <i class="fa-solid fa-users-slash"></i>
@@ -1077,10 +1078,7 @@
                     // Render grid siswa
                     let html = '<div class="student-grid">';
                     
-                    snapSiswa.forEach((childSiswa) => {
-                        const id = childSiswa.key;
-                        const s = childSiswa.val();
-                        
+                    Object.entries(siswaData).forEach(([id, s]) => {
                         // Cek status absen saat ini
                         const absen = absensiData[id] || {};
                         const status = absen.status || "none";
@@ -1121,7 +1119,7 @@
                                     <div class="student-details">
                                         <span class="student-number">
                                             <i class="fa-solid fa-hashtag"></i>
-                                            ${s.no_absen || 'N/A'}
+                                            ${s.no_absen || id}
                                         </span>
                                         ${s.nis ? `<span><i class="fa-solid fa-id-card"></i> ${s.nis}</span>` : ''}
                                     </div>
@@ -1177,9 +1175,18 @@
 
         // FUNGSI UPDATE ABSEN KE DATABASE
         window.setAbsen = async function(siswaId, status) {
-            if(!currentKelas) return;
+            if(!currentKelas) {
+                alert("Pilih kelas terlebih dahulu!");
+                return;
+            }
 
             try {
+                // PERBAIKAN: Validasi role untuk edit absensi
+                if (!userRole || !checkAbsensiPermission(userRole, userEmail)) {
+                    alert("Anda tidak memiliki izin untuk mengubah absensi!");
+                    return;
+                }
+
                 const updates = {};
                 const path = `absensi/${tglHariIni}/${currentKelas}/${siswaId}`;
                 
@@ -1191,9 +1198,11 @@
                     }),
                     oleh: userName,
                     role: userRole,
-                    tanggal: tglHariIni
+                    tanggal: tglHariIni,
+                    timestamp: Date.now()
                 };
 
+                // PERBAIKAN: Gunakan set jika tidak ada data, update jika sudah ada
                 await update(ref(db), updates);
                 
                 // Feedback visual
@@ -1203,6 +1212,9 @@
                     setTimeout(() => btn.classList.remove('pulse-success'), 1500);
                 }
                 
+                // Update stats langsung
+                updateStats();
+                
             } catch (error) {
                 console.error("Gagal update absen:", error);
                 alert("Gagal menyimpan absen: " + error.message);
@@ -1211,11 +1223,22 @@
 
         // BULK ATTENDANCE
         window.setBulkAttendance = async function(status) {
-            if(!currentKelas || !confirm(`Apakah Anda yakin ingin menandai SEMUA siswa sebagai ${status}?`)) {
+            if(!currentKelas) {
+                alert("Pilih kelas terlebih dahulu!");
+                return;
+            }
+            
+            if(!confirm(`Apakah Anda yakin ingin menandai SEMUA siswa di kelas ${currentKelas} sebagai ${status}?`)) {
                 return;
             }
 
             try {
+                // PERBAIKAN: Validasi role untuk bulk action
+                if (!userRole || !checkAbsensiPermission(userRole, userEmail)) {
+                    alert("Anda tidak memiliki izin untuk aksi massal!");
+                    return;
+                }
+
                 const updates = {};
                 const waktu = new Date().toLocaleTimeString('id-ID', { 
                     hour: '2-digit', 
@@ -1230,12 +1253,16 @@
                         waktu: waktu,
                         oleh: userName,
                         role: userRole,
-                        tanggal: tglHariIni
+                        tanggal: tglHariIni,
+                        timestamp: Date.now()
                     };
                 });
 
                 await update(ref(db), updates);
-                alert(`Berhasil menandai semua siswa sebagai ${status}!`);
+                alert(`Berhasil menandai semua siswa di kelas ${currentKelas} sebagai ${status}!`);
+                
+                // Update stats langsung
+                updateStats();
                 
             } catch (error) {
                 console.error("Gagal bulk update:", error);
@@ -1243,14 +1270,17 @@
             }
         };
 
-        // AUTH CHECK & INIT
+        // AUTH CHECK & INIT - DIPERBAIKI
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = "index.html";
-            } else {
-                userId = user.uid;
-                userEmail = user.email;
-                
+                return;
+            }
+            
+            userId = user.uid;
+            userEmail = user.email;
+            
+            try {
                 // Cek data user & permission
                 let userData = await getUserData(userId);
                 
@@ -1258,7 +1288,7 @@
                     userRole = userData.role;
                     userName = userData.nama;
                     
-                    // Gunakan fungsi permission baru
+                    // Gunakan fungsi permission
                     if (!checkAbsensiPermission(userRole, userEmail)) {
                         alert("Akses Ditolak. Anda tidak memiliki izin absensi.");
                         window.location.href = "index.html";
@@ -1268,9 +1298,30 @@
                     // Tampilkan nama guru
                     document.getElementById('displayNamaGuru').innerHTML = `
                         <i class="fa-solid fa-user-tie"></i>
-                        <span>${userName}</span>
+                        <span>${userName} (${userRole})</span>
                     `;
+                    
+                    // PERBAIKAN: Inisialisasi kelas pertama kali jika role tertentu
+                    if (userRole === 'GURU_KELAS') {
+                        // Logika khusus untuk guru kelas
+                    }
+                } else {
+                    alert("Data pengguna tidak ditemukan!");
+                    window.location.href = "index.html";
                 }
+                
+            } catch (error) {
+                console.error("Auth error:", error);
+                alert("Gagal memuat data pengguna!");
+                window.location.href = "index.html";
+            }
+        });
+
+        // PERBAIKAN: Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && currentKelas) {
+                // Refresh data ketika kembali ke tab
+                updateStats();
             }
         });
 

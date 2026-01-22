@@ -1,3 +1,5 @@
+[file name]: rekap_absen_admin.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,13 +10,85 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        .filter-group { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input[type="date"], select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; background: white; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
-        th { background: #1e293b; color: white; padding: 10px; border: 1px solid #334155; }
-        td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
-        .text-left { text-align: left; padding-left: 10px; }
-        .btn-download { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        .filter-group { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        
+        input[type="date"], select { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            width: 100%; 
+            background: white; 
+            margin-top: 5px; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+            font-size: 12px; 
+        }
+        
+        th { 
+            background: #1e293b; 
+            color: white; 
+            padding: 10px; 
+            border: 1px solid #334155; 
+        }
+        
+        td { 
+            border: 1px solid #e2e8f0; 
+            padding: 8px; 
+            text-align: center; 
+        }
+        
+        .text-left { 
+            text-align: left; 
+            padding-left: 10px; 
+        }
+        
+        .btn-download { 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            margin-top: 10px; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
         
         /* New Styles for Delete Feature */
         .btn-danger { 
@@ -29,24 +103,29 @@
             margin-top: 10px;
             transition: all 0.3s ease;
         }
+        
         .btn-danger:hover {
             background: #dc2626;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
+        
         .btn-danger:disabled {
             background: #fca5a5;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
+        
         .danger-zone {
             border: 2px solid #ef4444;
             background: #fef2f2;
             padding: 15px;
             border-radius: 12px;
             margin-top: 20px;
+            display: none;
         }
+        
         .danger-zone h4 {
             color: #dc2626;
             margin-top: 0;
@@ -54,6 +133,7 @@
             align-items: center;
             gap: 10px;
         }
+        
         .confirmation-dialog {
             display: none;
             position: fixed;
@@ -68,19 +148,23 @@
             max-width: 400px;
             width: 90%;
         }
+        
         .confirmation-dialog h4 {
             color: #dc2626;
             margin-top: 0;
         }
+        
         .confirmation-dialog p {
             margin: 15px 0;
             color: #4b5563;
         }
+        
         .confirmation-buttons {
             display: flex;
             gap: 10px;
             margin-top: 20px;
         }
+        
         .overlay {
             display: none;
             position: fixed;
@@ -91,6 +175,7 @@
             background: rgba(0,0,0,0.5);
             z-index: 999;
         }
+        
         .loading-delete {
             display: none;
             text-align: center;
@@ -98,14 +183,17 @@
             color: #dc2626;
             font-weight: bold;
         }
+        
         .loading-delete i {
             margin-right: 10px;
             animation: spin 1s linear infinite;
         }
+        
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        
         .status-message {
             padding: 10px;
             border-radius: 8px;
@@ -114,16 +202,19 @@
             text-align: center;
             font-weight: bold;
         }
+        
         .status-success {
             background: #d1fae5;
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
+        
         .status-error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fca5a5;
         }
+        
         .warning-text {
             color: #dc2626;
             font-size: 12px;
@@ -132,54 +223,94 @@
             align-items: center;
             gap: 5px;
         }
+        
+        .admin-only-notice {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .admin-only-notice i {
+            font-size: 3rem;
+            color: #f59e0b;
+            margin-bottom: 15px;
+        }
+        
+        .admin-only-notice h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <header class="top-bar">
         <a href="index.html" style="color:white; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
-        <h3>Rekap Absensi Global</h3>
+        <h3>Rekap Absensi Global (Admin Only)</h3>
     </header>
 
     <div class="container">
-        <div class="filter-group">
-            <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                <div style="flex:1;">
-                    <label><b>Dari Tanggal:</b></label>
-                    <input type="date" id="tglMulai">
+        <!-- Admin Access Warning (akan disembunyikan jika user adalah admin) -->
+        <div id="adminWarning" class="admin-only-notice">
+            <i class="fa-solid fa-user-shield"></i>
+            <h3>Hanya Untuk Administrator</h3>
+            <p>Halaman ini hanya dapat diakses oleh user dengan role ADMIN.</p>
+            <p>Memuat informasi user...</p>
+        </div>
+        
+        <!-- Main Content (akan ditampilkan jika user adalah admin) -->
+        <div id="mainContent" style="display:none;">
+            <div class="filter-group">
+                <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                    <div style="flex:1;">
+                        <label><b>Dari Tanggal:</b></label>
+                        <input type="date" id="tglMulai">
+                    </div>
+                    <div style="flex:1;">
+                        <label><b>Sampai Tanggal:</b></label>
+                        <input type="date" id="tglSelesai">
+                    </div>
                 </div>
-                <div style="flex:1;">
-                    <label><b>Sampai Tanggal:</b></label>
-                    <input type="date" id="tglSelesai">
-                </div>
+                <label><b>Pilih User (Guru):</b></label>
+                <select id="pilihUser"><option value="SEMUA">-- Tampilkan Semua Guru --</option></select>
+                <br><br>
+                <label><b>Pilih Kelas:</b></label>
+                <select id="pilihKelas"><option value="SEMUA">-- Tampilkan Semua Kelas --</option></select>
+                
+                <button onclick="prosesRekap()" class="btn-primary" style="width:100%; margin-top:20px;">
+                    <i class="fa-solid fa-filter"></i> TAMPILKAN DATA
+                </button>
+                <button onclick="unduhExcel()" class="btn-download" id="btnExport" style="display:none;">
+                    <i class="fa-solid fa-file-excel"></i> UNDUH EXCEL
+                </button>
             </div>
-            <label><b>Pilih User (Guru):</b></label>
-            <select id="pilihUser"><option value="SEMUA">-- Tampilkan Semua Guru --</option></select>
-            <br><br>
-            <label><b>Pilih Kelas:</b></label>
-            <select id="pilihKelas"><option value="SEMUA">-- Tampilkan Semua Kelas --</option></select>
             
-            <button onclick="prosesRekap()" class="btn-primary" style="width:100%; margin-top:20px;">TAMPILKAN DATA</button>
-            <button onclick="unduhExcel()" class="btn-download" id="btnExport" style="display:none;"><i class="fa-solid fa-file-excel"></i> UNDUH EXCEL</button>
-        </div>
-        
-        <!-- Danger Zone - Delete Data -->
-        <div class="danger-zone" id="dangerZone" style="display:none;">
-            <h4><i class="fa-solid fa-triangle-exclamation"></i> ZONA BERBAHAYA - HAPUS DATA</h4>
-            <p><strong>Peringatan:</strong> Tindakan ini akan menghapus PERMANEN data absensi dalam rentang tanggal dan kelas yang dipilih.</p>
-            <div class="warning-text">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                Data yang dihapus TIDAK DAPAT dikembalikan. Pastikan Anda sudah mendownload backup.
+            <!-- Danger Zone - Delete Data (Hanya untuk Admin) -->
+            <div class="danger-zone" id="dangerZone">
+                <h4><i class="fa-solid fa-triangle-exclamation"></i> ZONA BERBAHAYA - HAPUS DATA</h4>
+                <p><strong>Peringatan:</strong> Tindakan ini akan menghapus PERMANEN data absensi dalam rentang tanggal dan kelas yang dipilih.</p>
+                <div class="warning-text">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    Data yang dihapus TIDAK DAPAT dikembalikan. Pastikan Anda sudah mendownload backup.
+                </div>
+                <button onclick="konfirmasiHapus()" class="btn-danger" id="btnHapus">
+                    <i class="fa-solid fa-trash"></i> HAPUS DATA ABSENSI TERPILIH
+                </button>
+                <div class="loading-delete" id="loadingDelete">
+                    <i class="fa-solid fa-spinner"></i> Menghapus data, mohon tunggu...
+                </div>
+                <div class="status-message" id="statusMessage"></div>
             </div>
-            <button onclick="konfirmasiHapus()" class="btn-danger" id="btnHapus">
-                <i class="fa-solid fa-trash"></i> HAPUS DATA ABSENSI TERPILIH
-            </button>
-            <div class="loading-delete" id="loadingDelete">
-                <i class="fa-solid fa-spinner"></i> Menghapus data, mohon tunggu...
-            </div>
-            <div class="status-message" id="statusMessage"></div>
+            
+            <div id="areaTabel" class="table-responsive"></div>
         </div>
-        
-        <div id="areaTabel" class="table-responsive"></div>
     </div>
 
     <!-- Confirmation Dialog -->
@@ -198,126 +329,316 @@
     </div>
 
     <script type="module">
-        import { db, auth, ref, get, remove, onAuthStateChanged } from './config_firebase.js';
+        import { 
+            db, 
+            auth, 
+            ref, 
+            get, 
+            remove, 
+            onAuthStateChanged,
+            checkDeletePermission,
+            checkAdminPermission,
+            logActivity
+        } from './config_firebase.js';
 
         const klsList = ["1A","1B","1C","1D","2A","2B","2C","2D","2E","3A","3B","3C","3D","3E","4A","4B","4C","4D","4E","4F","5A","5B","5C","5D","5E","6A","6B","6C","6D","6E"];
+        
         let kamusSiswa = {}; // Untuk menyimpan data {id_absen: nama_siswa}
         let deleteConfig = {}; // Menyimpan konfigurasi penghapusan
+        let isAdminUser = false;
+        let currentUserName = "";
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // 1. Isi Kelas
-                const selKls = document.getElementById('pilihKelas');
-                klsList.forEach(k => { selKls.innerHTML += `<option value="${k}">Kelas ${k}</option>`; });
-
-                // 2. Isi Guru
-                try {
-                    const snapUser = await get(ref(db, 'users'));
-                    const selUser = document.getElementById('pilihUser');
-                    if(snapUser.exists()){
-                        snapUser.forEach(u => {
-                            const d = u.val();
-                            if(d.role !== 'ADMIN') selUser.innerHTML += `<option value="${d.nama}">${d.nama} (${d.role})</option>`;
-                        });
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+            
+            // PERBAIKAN: Cek apakah user adalah admin
+            try {
+                const userSnap = await get(ref(db, `users/${user.uid}`));
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.val();
+                    isAdminUser = checkAdminPermission(userData.role);
+                    currentUserName = userData.nama || userData.email;
+                    
+                    if (isAdminUser) {
+                        // User adalah admin, tampilkan konten utama
+                        document.getElementById('adminWarning').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+                        
+                        // Isi data dropdown
+                        await initializeDropdowns();
+                    } else {
+                        // User bukan admin, tampilkan pesan error
+                        document.getElementById('adminWarning').innerHTML = `
+                            <i class="fa-solid fa-ban"></i>
+                            <h3>Akses Ditolak!</h3>
+                            <p>Anda (${userData.role}) tidak memiliki izin untuk mengakses halaman ini.</p>
+                            <p>Hanya user dengan role <strong>ADMIN</strong> yang diperbolehkan.</p>
+                            <button onclick="window.location.href='index.html'" 
+                                    style="background:#3b82f6; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top:15px;">
+                                <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+                            </button>
+                        `;
                     }
-
-                    // 3. Ambil Master Data Siswa untuk memetakan ID ke Nama
-                    const snapSiswa = await get(ref(db, 'siswa'));
-                    if(snapSiswa.exists()){
-                        snapSiswa.forEach(klsSnap => {
-                            klsSnap.forEach(mhsSnap => {
-                                const s = mhsSnap.val();
-                                kamusSiswa[mhsSnap.key] = s.nama; // Simpan nama berdasarkan no_absen/key
-                            });
-                        });
-                    }
-                } catch (e) { console.error(e); }
-            } else { window.location.href = "index.html"; }
+                } else {
+                    alert("Data pengguna tidak ditemukan!");
+                    window.location.href = "index.html";
+                }
+                
+            } catch (error) {
+                console.error("Error checking admin permission:", error);
+                alert("Gagal memverifikasi akses!");
+                window.location.href = "index.html";
+            }
         });
 
+        // Fungsi untuk inisialisasi dropdown
+        async function initializeDropdowns() {
+            try {
+                // 1. Isi Kelas
+                const selKls = document.getElementById('pilihKelas');
+                klsList.forEach(k => { 
+                    selKls.innerHTML += `<option value="${k}">Kelas ${k}</option>`; 
+                });
+
+                // 2. Isi Guru
+                const snapUser = await get(ref(db, 'users'));
+                const selUser = document.getElementById('pilihUser');
+                
+                if (snapUser.exists()) {
+                    const users = snapUser.val();
+                    Object.entries(users).forEach(([uid, userData]) => {
+                        if (userData.role !== 'ADMIN') {
+                            selUser.innerHTML += `<option value="${userData.nama}">${userData.nama} (${userData.role})</option>`;
+                        }
+                    });
+                }
+
+                // 3. Ambil Master Data Siswa untuk memetakan ID ke Nama
+                const snapSiswa = await get(ref(db, 'siswa'));
+                
+                if (snapSiswa.exists()) {
+                    const siswaData = snapSiswa.val();
+                    
+                    Object.entries(siswaData).forEach(([kelas, kelasData]) => {
+                        if (kelasData) {
+                            Object.entries(kelasData).forEach(([siswaId, siswaInfo]) => {
+                                kamusSiswa[siswaId] = siswaInfo.nama;
+                            });
+                        }
+                    });
+                    
+                    console.log(`Kamus siswa berhasil diisi: ${Object.keys(kamusSiswa).length} siswa`);
+                }
+                
+                // 4. Set tanggal default (7 hari terakhir)
+                const today = new Date();
+                const lastWeek = new Date(today);
+                lastWeek.setDate(today.getDate() - 7);
+                
+                document.getElementById('tglMulai').value = lastWeek.toISOString().split('T')[0];
+                document.getElementById('tglSelesai').value = today.toISOString().split('T')[0];
+                
+            } catch (error) {
+                console.error("Error initializing dropdowns:", error);
+                alert("Gagal memuat data dropdown!");
+            }
+        }
+
+        // PERBAIKAN: Fungsi proses rekap dengan validasi admin
         window.prosesRekap = async function() {
+            if (!isAdminUser) {
+                alert("Hanya admin yang dapat memproses rekap!");
+                return;
+            }
+            
             const tglAwal = document.getElementById('tglMulai').value;
             const tglAkhir = document.getElementById('tglSelesai').value;
             const klsPilihan = document.getElementById('pilihKelas').value;
 
-            if(!tglAwal || !tglAkhir) return alert("Pilih tanggal!");
-
-            const area = document.getElementById('areaTabel');
-            area.innerHTML = "<p style='text-align:center;'>Memproses data...</p>";
+            if (!tglAwal || !tglAkhir) {
+                alert("Pilih tanggal mulai dan selesai!");
+                return;
+            }
             
-            const snap = await get(ref(db, 'absensi'));
-            
-            let rekap = {};
-            if(snap.exists()){
-                const data = snap.val();
-                Object.keys(data).forEach(tgl => {
-                    if(tgl >= tglAwal && tgl <= tglAkhir){
-                        Object.keys(data[tgl]).forEach(kls => {
-                            if(klsPilihan === "SEMUA" || kls === klsPilihan){
-                                Object.keys(data[tgl][kls]).forEach(id => {
-                                    if(!rekap[id]) {
-                                        // Ambil nama dari kamus, jika tidak ada pakai ID
-                                        const namaSiswa = kamusSiswa[id] || "ID: " + id;
-                                        rekap[id] = { id: id, nama: namaSiswa, kls: kls, H:0, S:0, I:0, A:0 };
-                                    }
-                                    const st = data[tgl][kls][id].status;
-                                    if(st === "Hadir") rekap[id].H++;
-                                    else if(st === "Sakit") rekap[id].S++;
-                                    else if(st === "Ijin") rekap[id].I++;
-                                    else if(st === "Alfa") rekap[id].A++;
-                                });
-                            }
-                        });
-                    }
-                });
+            if (new Date(tglAwal) > new Date(tglAkhir)) {
+                alert("Tanggal mulai tidak boleh lebih besar dari tanggal selesai!");
+                return;
             }
 
+            const area = document.getElementById('areaTabel');
+            area.innerHTML = "<p style='text-align:center; padding: 20px;'><i class='fa-solid fa-spinner fa-spin'></i> Memproses data...</p>";
+            
+            try {
+                const snap = await get(ref(db, 'absensi'));
+                
+                let rekap = {};
+                
+                if (snap.exists()) {
+                    const data = snap.val();
+                    
+                    // PERBAIKAN: Proses data dengan filter yang benar
+                    Object.entries(data).forEach(([tgl, tglData]) => {
+                        if (tgl >= tglAwal && tgl <= tglAkhir) {
+                            Object.entries(tglData).forEach(([kls, klsData]) => {
+                                if (klsPilihan === "SEMUA" || kls === klsPilihan) {
+                                    Object.entries(klsData).forEach(([id, absenData]) => {
+                                        if (!rekap[id]) {
+                                            // Ambil nama dari kamus, jika tidak ada pakai ID
+                                            const namaSiswa = kamusSiswa[id] || "ID: " + id;
+                                            rekap[id] = { 
+                                                id: id, 
+                                                nama: namaSiswa, 
+                                                kls: kls, 
+                                                H:0, S:0, I:0, A:0 
+                                            };
+                                        }
+                                        
+                                        const st = absenData.status;
+                                        if (st === "Hadir") rekap[id].H++;
+                                        else if (st === "Sakit") rekap[id].S++;
+                                        else if (st === "Ijin") rekap[id].I++;
+                                        else if (st === "Alfa") rekap[id].A++;
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                // Render tabel
+                renderTabelRekap(rekap, tglAwal, tglAkhir, klsPilihan);
+                
+            } catch (error) {
+                console.error("Error processing rekap:", error);
+                area.innerHTML = `<p style='text-align:center; color: #ef4444; padding: 20px;'>
+                    <i class='fa-solid fa-circle-exclamation'></i> Gagal memproses data: ${error.message}
+                </p>`;
+            }
+        }
+
+        // Fungsi untuk render tabel rekap
+        function renderTabelRekap(rekap, tglAwal, tglAkhir, klsPilihan) {
+            const area = document.getElementById('areaTabel');
+            
+            if (Object.keys(rekap).length === 0) {
+                area.innerHTML = `
+                    <div style="text-align:center; padding: 40px;">
+                        <i class="fa-solid fa-database" style="font-size: 3rem; color: #94a3b8;"></i>
+                        <h3 style="color: #64748b;">Tidak Ada Data</h3>
+                        <p>Tidak ditemukan data absensi untuk periode ${tglAwal} hingga ${tglAkhir}</p>
+                    </div>`;
+                document.getElementById('dangerZone').style.display = 'none';
+                document.getElementById('btnExport').style.display = 'none';
+                return;
+            }
+            
+            // Urutkan data
+            const sortedData = Object.values(rekap).sort((a, b) => {
+                return a.kls.localeCompare(b.klas) || a.nama.localeCompare(b.nama);
+            });
+            
             let tr = "";
-            const sortedData = Object.values(rekap).sort((a, b) => a.kls.localeCompare(b.kls) || a.nama.localeCompare(b.nama));
+            let totalH = 0, totalS = 0, totalI = 0, totalA = 0;
             
             sortedData.forEach(s => {
                 tr += `<tr>
                     <td class="text-left">${s.nama}</td>
                     <td>${s.kls}</td>
-                    <td>${s.H}</td><td>${s.S}</td><td>${s.I}</td><td>${s.A}</td>
+                    <td>${s.H}</td>
+                    <td>${s.S}</td>
+                    <td>${s.I}</td>
+                    <td>${s.A}</td>
+                    <td>${s.H + s.S + s.I + s.A}</td>
                 </tr>`;
+                
+                totalH += s.H;
+                totalS += s.S;
+                totalI += s.I;
+                totalA += s.A;
             });
-
-            if(tr === "") {
-                area.innerHTML = "<p style='text-align:center;'>Data tidak ditemukan.</p>";
-                document.getElementById('dangerZone').style.display = 'none';
-                document.getElementById('btnExport').style.display = 'none';
-            } else {
-                area.innerHTML = `
+            
+            // Tambahkan total
+            tr += `<tr style="background: #f1f5f9; font-weight: bold;">
+                <td class="text-left">TOTAL</td>
+                <td>-</td>
+                <td>${totalH}</td>
+                <td>${totalS}</td>
+                <td>${totalI}</td>
+                <td>${totalA}</td>
+                <td>${totalH + totalS + totalI + totalA}</td>
+            </tr>`;
+            
+            area.innerHTML = `
+                <div style="margin-bottom: 15px; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                    <h4 style="margin: 0; color: #1e293b;">
+                        <i class="fa-solid fa-chart-bar"></i> 
+                        Rekap Periode: ${tglAwal} s/d ${tglAkhir}
+                        ${klsPilihan !== "SEMUA" ? ` - Kelas ${klsPilihan}` : ''}
+                    </h4>
+                    <p style="margin: 5px 0 0 0; color: #64748b;">
+                        Jumlah siswa: ${sortedData.length} | Total catatan: ${totalH + totalS + totalI + totalA}
+                    </p>
+                </div>
                 <table id="tbl">
                     <thead>
                         <tr>
-                            <th>Nama Siswa</th><th>Kelas</th><th>H</th><th>S</th><th>I</th><th>A</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>H</th>
+                            <th>S</th>
+                            <th>I</th>
+                            <th>A</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>${tr}</tbody>
                 </table>`;
-                document.getElementById('btnExport').style.display = "block";
-                document.getElementById('dangerZone').style.display = 'block';
-                
-                // Simpan konfigurasi untuk penghapusan
-                deleteConfig = {
-                    tglAwal: tglAwal,
-                    tglAkhir: tglAkhir,
-                    klsPilihan: klsPilihan,
-                    totalData: sortedData.length
-                };
-            }
+            
+            document.getElementById('btnExport').style.display = "block";
+            document.getElementById('dangerZone').style.display = 'block';
+            
+            // Simpan konfigurasi untuk penghapusan
+            deleteConfig = {
+                tglAwal: tglAwal,
+                tglAkhir: tglAkhir,
+                klsPilihan: klsPilihan,
+                totalData: sortedData.length,
+                totalRecords: totalH + totalS + totalI + totalA
+            };
         }
 
+        // PERBAIKAN: Fungsi unduh excel dengan validasi admin
         window.unduhExcel = function() {
+            if (!isAdminUser) {
+                alert("Hanya admin yang dapat mendownload data!");
+                return;
+            }
+            
             const table = document.getElementById("tbl");
+            
+            if (!table) {
+                alert("Tidak ada data untuk di-download!");
+                return;
+            }
+            
             const wb = XLSX.utils.table_to_book(table, {sheet: "Rekap Absensi"});
-            XLSX.writeFile(wb, "Rekap_Absensi_Nama.xlsx");
+            const tglAwal = document.getElementById('tglMulai').value || new Date().toISOString().split('T')[0];
+            const tglAkhir = document.getElementById('tglSelesai').value || new Date().toISOString().split('T')[0];
+            
+            XLSX.writeFile(wb, `Rekap_Absensi_${tglAwal}_${tglAkhir}.xlsx`);
         }
 
-        // Fungsi-fungsi untuk fitur hapus data
-        window.konfirmasiHapus = function() {
+        // PERBAIKAN: Fungsi-fungsi untuk fitur hapus data dengan validasi admin
+        window.konfirmasiHapus = async function() {
+            if (!isAdminUser) {
+                alert("Hanya admin yang dapat menghapus data!");
+                return;
+            }
+            
             if (!deleteConfig.tglAwal || !deleteConfig.tglAkhir) {
                 alert("Pilih tanggal terlebih dahulu!");
                 return;
@@ -328,7 +649,8 @@
                 Anda akan menghapus data absensi:<br><br>
                 <strong>Periode:</strong> ${deleteConfig.tglAwal} s/d ${deleteConfig.tglAkhir}<br>
                 <strong>Kelas:</strong> ${kelasText}<br>
-                <strong>Jumlah Data:</strong> ${deleteConfig.totalData} entri<br><br>
+                <strong>Jumlah Siswa:</strong> ${deleteConfig.totalData} siswa<br>
+                <strong>Total Catatan:</strong> ${deleteConfig.totalRecords} entri<br><br>
                 <span style="color:#dc2626; font-weight:bold;">
                     Tindakan ini TIDAK DAPAT DIBATALKAN!
                 </span>
@@ -345,6 +667,11 @@
         }
 
         window.eksekusiHapus = async function() {
+            if (!isAdminUser) {
+                alert("Hanya admin yang dapat menghapus data!");
+                return;
+            }
+            
             // Tutup dialog
             document.getElementById('confirmationDialog').style.display = 'none';
             document.getElementById('confirmationOverlay').style.display = 'none';
@@ -356,6 +683,13 @@
 
             try {
                 const { tglAwal, tglAkhir, klsPilihan } = deleteConfig;
+                
+                // Log activity sebelum delete
+                await logActivity(
+                    currentUserName,
+                    "DELETE_ABSENSI",
+                    `Menghapus absensi ${tglAwal} s/d ${tglAkhir} - Kelas: ${klsPilihan}`
+                );
                 
                 // Ambil data absensi untuk periode yang dipilih
                 const snap = await get(ref(db, 'absensi'));
@@ -375,9 +709,11 @@
                             if (klsPilihan === "SEMUA" || kls === klsPilihan) {
                                 // Hapus data untuk tanggal dan kelas tertentu
                                 const deleteRef = ref(db, `absensi/${tgl}/${kls}`);
+                                const countBeforeDelete = Object.keys(data[tgl][kls] || {}).length;
+                                
                                 deletePromises.push(
                                     remove(deleteRef).then(() => {
-                                        totalDeleted += Object.keys(data[tgl][kls] || {}).length;
+                                        totalDeleted += countBeforeDelete;
                                     })
                                 );
                             }
@@ -387,6 +723,13 @@
 
                 // Tunggu semua proses penghapusan selesai
                 await Promise.all(deletePromises);
+
+                // Log activity setelah delete berhasil
+                await logActivity(
+                    currentUserName,
+                    "DELETE_ABSENSI_SUCCESS",
+                    `Berhasil menghapus ${totalDeleted} data absensi`
+                );
 
                 // Tampilkan status sukses
                 document.getElementById('loadingDelete').style.display = 'none';
@@ -406,6 +749,14 @@
 
             } catch (error) {
                 console.error("Gagal menghapus data:", error);
+                
+                // Log activity setelah delete gagal
+                await logActivity(
+                    currentUserName,
+                    "DELETE_ABSENSI_FAILED",
+                    `Gagal menghapus absensi: ${error.message}`
+                );
+                
                 document.getElementById('loadingDelete').style.display = 'none';
                 document.getElementById('btnHapus').disabled = false;
                 
@@ -418,3 +769,4 @@
     </script>
 </body>
 </html>
+[file content end]
