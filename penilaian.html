@@ -6,1252 +6,1055 @@
     <title>Penilaian Premium - SDN Rawabuntu 03</title>
     <link rel="stylesheet" href="style_main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* === PERBAIKAN HEADER & LAYOUT PREMIUM === */
+        /* === STYLE PREMIUM === */
+        :root {
+            --primary: #1e40af; 
+            --secondary: #1e3a8a; 
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+        
+        body { 
+            background: #f0f2f5; 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            padding: 0;
+            min-height: 100vh;
+        }
         
         /* Navbar Premium */
         .navbar {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            display: flex;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white; 
+            padding: 15px 25px; 
+            display: flex; 
             justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(26, 35, 126, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); 
             border-bottom: 3px solid var(--accent);
-            min-height: 60px;
         }
-
-        .nav-brand {
+        
+        .nav-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
         }
-
-        .nav-brand i {
-            font-size: 1.5rem;
-            color: #bae6fd;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px;
+        
+        .nav-left i {
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px;
             border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        #displayNamaGuru {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
-        }
-
-        /* Container Premium */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            width: 100%;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header Premium */
-        .grading-header {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-            color: white;
-            padding: 1.75rem;
-            border-radius: var(--radius);
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .grading-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 30px 30px;
-            opacity: 0.2;
-            z-index: 1;
-        }
-
-        .grading-header h3 {
-            position: relative;
-            z-index: 2;
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .grading-header h3 i {
-            font-size: 1.8rem;
-            color: #bae6fd;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 10px;
-            border-radius: 12px;
-        }
-
-        .grading-header p {
-            position: relative;
-            z-index: 2;
+        
+        .nav-center {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
             font-size: 1.1rem;
-            margin-bottom: 1rem;
-            opacity: 0.95;
         }
-
-        /* Subject Badge Premium */
-        #subjectDisplay {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            margin-left: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-
-        /* Tombol Sync Premium */
-        .btn-sync {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+        
+        .user-info {
+            display: flex;
             align-items: center;
             gap: 10px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-            font-size: 0.95rem;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
         }
-
-        .btn-sync:hover {
-            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-        }
-
-        .btn-sync:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Note Premium */
-        .grading-header > div:last-child {
-            position: relative;
-            z-index: 2;
-            font-size: 0.85rem;
-            margin-top: 12px;
-            opacity: 0.9;
-            font-style: italic;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
-            max-width: fit-content;
-        }
-
-        .grading-header > div:last-child i {
-            color: #fbbf24;
-        }
-
-        /* Filter Grid Premium */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 1.75rem;
-            border-radius: var(--radius);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-grid .form-group {
-            margin-bottom: 0;
-        }
-
-        .filter-grid label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-
-        .filter-grid label i {
-            color: var(--accent);
-            font-size: 1rem;
-        }
-
-        .form-input {
-            border: 2px solid #e2e8f0;
-            border-radius: var(--radius-sm);
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            transition: var(--transition);
-            background: white;
-            color: var(--dark);
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(74, 109, 229, 0.2);
-            outline: none;
-        }
-
-        /* Empty State Premium */
-        #tabelSiswa:empty + .empty-state {
-            display: block;
-        }
-
-        .empty-state {
-            display: none;
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #94a3b8;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* === PERBAIKAN UTAMA: TABEL LEBIH KOMPAK & INPUT LEBIH BESAR === */
         
-        /* Table Container Premium */
-        .table-container {
-            overflow-x: auto;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            min-height: 300px;
-            border: 1px solid #e2e8f0;
-            margin-top: 1.5rem;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
+        .btn-dashboard {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
+        
+        .btn-dashboard:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Container Premium */
+        .container-fluid { 
+            padding: 25px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        .card-premium {
+            background: white; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 25px; 
+            margin-bottom: 25px; 
+            border: 1px solid rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .filter-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        
+        select, input { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 2px solid #cbd5e1; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+        
+        button { 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-weight: 600; 
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn-search { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-search:hover { 
+            background: linear-gradient(135deg, var(--secondary) 0%, #1e2f6e 100%);
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+        
+        /* Tabel Premium */
+        .table-container { 
+            overflow-x: auto; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            background: white;
+            margin-top: 20px;
+            position: relative;
+        }
+        
         table { 
             width: 100%; 
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 700px; /* LEBIH KOMPAK DARI SEBELUMNYA */
-            table-layout: fixed; /* FIXED LAYOUT UNTUK KONSISTEN */
+            border-collapse: collapse; 
+            min-width: 1400px;
         }
-
+        
         th { 
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            color: #475569; 
-            padding: 10px 4px; /* PADDING DIKECILKAN */
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #334155; 
+            padding: 15px 10px; 
             text-align: center; 
             border-bottom: 2px solid #e2e8f0; 
-            font-size: 0.75rem; /* FONT LEBIH KECIL */
-            font-weight: 700;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        td { 
-            padding: 6px 4px; /* PADDING DIKECILKAN */
-            border-bottom: 1px solid #f1f5f9; 
-            vertical-align: middle; 
-            text-align: center;
-            transition: background-color 0.2s ease;
-            height: 50px; /* TINGGI KONSISTEN */
-        }
-
-        tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        /* PERBAIKAN RADIKAL: LEBAR KOLOM YANG LEBIH OPTIMAL */
-        /* No: 40px, Nama: 120px, Nilai: 65px, Absen: 50px, NA: 70px */
-        
-        /* Kolom No - SANGAT SEMPIT */
-        td:nth-child(1),
-        th:nth-child(1) { 
-            width: 40px !important;
-            min-width: 40px !important;
-            max-width: 40px !important;
-            padding-left: 2px !important;
-            padding-right: 2px !important;
-            font-weight: 600; 
-        }
-        
-        /* Kolom Nama - DIPERKECIL */
-        td:nth-child(2),
-        th:nth-child(2) { 
-            width: 120px !important;
-            min-width: 120px !important;
-            max-width: 120px !important;
-            text-align: left;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-            overflow: hidden;
-        }
-        
-        td:nth-child(2) div:first-child {
+            font-size: 12px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
             font-weight: 600;
-            color: #000;
-            font-size: 0.8rem !important; /* LEBIH KECIL */
-            line-height: 1.1;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 2px;
+            white-space: nowrap;
         }
         
-        td:nth-child(2) div:last-child {
-            font-size: 0.65rem !important; /* LEBIH KECIL */
-            color: #64748b;
+        td { 
+            padding: 12px 8px; 
+            border-bottom: 1px solid #f1f5f9; 
+            text-align: center; 
+            vertical-align: middle; 
+            color: #475569; 
+            font-size: 13px;
         }
         
-        /* Kolom Nilai (S1-S4, STS) - DIPERBESAR */
-        td:nth-child(3),
-        td:nth-child(4),
-        td:nth-child(5),
-        td:nth-child(6),
-        td:nth-child(7),
-        th:nth-child(3),
-        th:nth-child(4),
-        th:nth-child(5),
-        th:nth-child(6),
-        th:nth-child(7) { 
-            width: 65px !important;
-            min-width: 65px !important;
-            max-width: 65px !important;
+        tr:hover { 
+            background-color: #f8fafc; 
         }
         
-        /* Kolom Absen (Sakit, Ijin, Alfa) - SEDANG */
-        td:nth-child(8),
-        td:nth-child(9),
-        td:nth-child(10),
-        th:nth-child(8),
-        th:nth-child(9),
-        th:nth-child(10) { 
-            width: 50px !important;
-            min-width: 50px !important;
-            max-width: 50px !important;
+        /* Input Nilai */
+        .input-nilai {
+            width: 60px;
+            height: 40px;
+            padding: 6px 4px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'Poppins', monospace;
+            transition: all 0.2s ease;
+            background: white;
+            color: #334155;
+            margin: 2px;
         }
         
-        /* Kolom NA - DIPERBESAR */
-        td:nth-child(11),
-        th:nth-child(11) { 
-            width: 70px !important;
-            min-width: 70px !important;
-            max-width: 70px !important;
+        .input-nilai:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #eff6ff;
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
-
-        /* PERBAIKAN BESAR: INPUT NILAI YANG LEBIH LEBAR & JELAS */
-        .input-score, .input-absen,
-        #tabelSiswa input[type="number"],
-        #tabelSiswa input[type="text"] {
-            color: #000000 !important;
-            -webkit-text-fill-color: #000000 !important;
-            font-weight: 800 !important;
-            font-size: 1rem !important; /* LEBIH BESAR */
-            background-color: #ffffff !important;
-            border: 2px solid #94a3b8 !important;
-            border-radius: 6px !important;
-            height: 40px !important; /* LEBIH TINGGI */
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 8px 4px !important; /* PADDING HORIZONTAL CUKUP */
-            text-align: center !important;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-            box-sizing: border-box !important;
-            transition: all 0.2s ease !important;
-            display: block !important;
-            margin: 0 auto !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-            -webkit-appearance: none !important;
-            appearance: none !important;
+        
+        .input-nilai::-webkit-inner-spin-button,
+        .input-nilai::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-
-        /* INPUT NILAI UTAMA (S1-S4, STS) - EXTRA WIDE */
-        #tabelSiswa input[data-field="s1"],
-        #tabelSiswa input[data-field="s2"],
-        #tabelSiswa input[data-field="s3"],
-        #tabelSiswa input[data-field="s4"],
-        #tabelSiswa input[data-field="sts"] {
-            color: #000000 !important;
-            font-weight: 900 !important; /* SANGAT TEBAL */
-            font-size: 1.1rem !important; /* LEBIH BESAR LAGI */
-            height: 42px !important; /* LEBIH TINGGI */
-            padding: 8px 2px !important;
-            background-color: #f8fafc !important;
-            border-width: 2.5px !important;
+        
+        .input-nilai[type="number"] {
+            -moz-appearance: textfield;
         }
-
-        #tabelSiswa input[data-field="s1"] {
-            border-color: #3b82f6 !important;
-            background-color: #eff6ff !important;
-        }
-
-        #tabelSiswa input[data-field="s2"] {
-            border-color: #10b981 !important;
-            background-color: #ecfdf5 !important;
-        }
-
-        #tabelSiswa input[data-field="s3"] {
-            border-color: #f59e0b !important;
-            background-color: #fffbeb !important;
-        }
-
-        #tabelSiswa input[data-field="s4"] {
-            border-color: #8b5cf6 !important;
-            background-color: #f5f3ff !important;
-        }
-
-        #tabelSiswa input[data-field="sts"] {
-            color: #166534 !important;
-            font-weight: 900 !important;
-            font-size: 1.1rem !important;
-            background-color: #f0fdf4 !important;
-            border-color: #10b981 !important;
-            border-width: 2.5px !important;
-        }
-
-        /* INPUT ABSENSI */
-        #tabelSiswa input[data-field="sakit"],
-        #tabelSiswa input[data-field="ijin"],
-        #tabelSiswa input[data-field="alfa"] {
-            font-size: 0.95rem !important;
-            height: 38px !important;
-            padding: 6px 2px !important;
-            font-weight: 700 !important;
-        }
-
-        #tabelSiswa input[data-field="sakit"] {
-            color: #1e40af !important;
-            background-color: #dbeafe !important;
-            border-color: #60a5fa !important;
-        }
-
-        #tabelSiswa input[data-field="ijin"] {
-            color: #92400e !important;
-            background-color: #fef3c7 !important;
-            border-color: #fbbf24 !important;
-        }
-
-        #tabelSiswa input[data-field="alfa"] {
-            color: #991b1b !important;
-            font-weight: 800 !important;
-            background-color: #fee2e2 !important;
-            border-color: #f87171 !important;
-        }
-
-        /* INPUT NA */
-        #tabelSiswa .score-na {
-            color: #000000 !important;
-            font-weight: 900 !important;
-            font-size: 1.15rem !important; /* PALING BESAR */
-            background-color: #f1f5f9 !important;
-            border-color: #475569 !important;
-            border-width: 3px !important;
-            cursor: not-allowed !important;
-            height: 44px !important; /* PALING TINGGI */
-            padding: 8px 4px !important;
-        }
-
-        /* Focus state lebih jelas */
-        #tabelSiswa input[type="number"]:focus,
-        #tabelSiswa input[type="text"]:focus {
-            border-color: #000000 !important;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2) !important;
-            outline: none !important;
-            z-index: 1 !important;
-            position: relative !important;
-            transform: scale(1.02) !important;
-        }
-
-        /* Floating Save Button Premium */
-        .floating-save { 
-            position: fixed; 
-            bottom: 30px; 
-            right: 30px; 
-            z-index: 999; 
-            animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideInRight {
-            from { 
-                opacity: 0; 
-                transform: translateX(100px) scale(0.8); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateX(0) scale(1); 
-            }
-        }
-
-        #saveIndicator button {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 50px;
+        
+        /* Kolom Absensi Otomatis */
+        .auto-filled {
+            background-color: #f0f9ff;
+            color: #0284c7;
+            border-color: #bae6fd;
+            cursor: default;
             font-weight: 700;
-            color: white;
+            font-size: 12px;
+        }
+        
+        .auto-filled:focus {
+            outline: none;
+            border-color: #bae6fd;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .badge-info { 
+            background: #eff6ff; 
+            color: #1d4ed8; 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            font-size: 11px; 
+            display: inline-block; 
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
+        /* Kolom Nilai Akhir */
+        .nilai-akhir-cell {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-weight: 700;
+            border-left: 3px solid #0369a1;
+            border-right: 3px solid #0369a1;
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        
+        .grade-A { background: #dcfce7; color: #166534; }
+        .grade-B { background: #dbeafe; color: #1e40af; }
+        .grade-C { background: #fef3c7; color: #92400e; }
+        .grade-D { background: #fee2e2; color: #991b1b; }
+        .grade-E { background: #f3f4f6; color: #6b7280; }
+        
+        /* Loading Animation */
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Status Sync */
+        #syncStatus {
+            font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            gap: 8px;
+        }
+        
+        .status-success {
+            color: #10b981;
+        }
+        
+        .status-warning {
+            color: #f59e0b;
+        }
+        
+        .status-error {
+            color: #ef4444;
+        }
+        
+        /* Action Button */
+        .btn-save {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 180px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            gap: 6px;
+            min-width: 80px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
         }
-
-        #saveIndicator button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.5);
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
         }
-
-        #saveIndicator button.saving {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        
+        .btn-save:active {
+            transform: translateY(0);
         }
-
-        /* PERBAIKAN RESPONSIVE */
+        
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #92400e;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        /* System Info Box */
+        .system-info {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0369a1;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #0369a1;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .formula-box {
+            background: white;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #0c4a6e;
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .container-fluid {
+                padding: 15px;
+            }
+            
             .navbar {
-                padding: 0.75rem 1rem;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .nav-brand {
-                font-size: 1rem;
-            }
-            
-            .nav-menu {
-                gap: 10px;
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .nav-item {
-                padding: 6px 12px;
-                font-size: 0.9rem;
-            }
-            
-            #displayNamaGuru {
-                font-size: 0.8rem;
-                padding: 4px 8px;
-            }
-            
-            .container {
-                padding: 1rem;
-            }
-            
-            .grading-header {
-                padding: 1.25rem;
-            }
-            
-            .grading-header h3 {
-                font-size: 1.2rem;
+                padding: 12px 15px;
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+                gap: 10px;
             }
             
-            .btn-sync {
+            .nav-left, .nav-center, .nav-right {
                 width: 100%;
                 justify-content: center;
-                padding: 10px 16px;
+            }
+            
+            .nav-center {
+                order: -1;
+                margin-bottom: 10px;
             }
             
             .filter-grid {
                 grid-template-columns: 1fr;
-                padding: 1.25rem;
-                gap: 1rem;
+                gap: 12px;
             }
             
-            .table-container {
-                border-radius: 10px;
-                margin-left: -1rem;
-                margin-right: -1rem;
-                width: calc(100% + 2rem);
-                overflow-x: scroll;
+            .card-premium {
+                padding: 20px;
             }
             
-            table {
-                min-width: 680px;
+            th, td {
+                padding: 10px 6px;
+                font-size: 11px;
             }
             
-            /* INPUT LEBIH BESAR DI MOBILE */
-            .input-score, .input-absen,
-            #tabelSiswa input[type="number"],
-            #tabelSiswa input[type="text"] {
-                height: 44px !important;
-                font-size: 1.1rem !important;
-                padding: 10px 4px !important;
+            .input-nilai {
+                width: 50px;
+                height: 35px;
+                font-size: 12px;
+                padding: 4px 2px;
             }
             
-            #tabelSiswa input[data-field="s1"],
-            #tabelSiswa input[data-field="s2"],
-            #tabelSiswa input[data-field="s3"],
-            #tabelSiswa input[data-field="s4"],
-            #tabelSiswa input[data-field="sts"] {
-                height: 46px !important;
-                font-size: 1.2rem !important;
-            }
-            
-            #tabelSiswa .score-na {
-                height: 48px !important;
-                font-size: 1.25rem !important;
-            }
-            
-            /* KOLOM NAMA LEBIH KOMPAK DI MOBILE */
-            td:nth-child(2),
-            th:nth-child(2) { 
-                width: 110px !important;
-                min-width: 110px !important;
-                max-width: 110px !important;
-            }
-            
-            td:nth-child(2) div:first-child {
-                font-size: 0.75rem !important;
-                -webkit-line-clamp: 2;
-            }
-            
-            td:nth-child(2) div:last-child {
-                font-size: 0.6rem !important;
-            }
-            
-            #saveIndicator {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            #saveIndicator button {
-                padding: 12px 20px;
-                min-width: 150px;
-                font-size: 0.9rem;
+            .btn-save {
+                min-width: 70px;
+                padding: 6px 12px;
+                font-size: 11px;
             }
         }
-
+        
         @media (max-width: 480px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+            .container-fluid {
+                padding: 10px;
             }
             
-            .nav-menu {
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
+            .input-nilai {
+                width: 45px;
+                height: 32px;
+                font-size: 11px;
             }
             
-            .nav-item {
-                width: 100%;
-                justify-content: center;
+            .auto-filled {
+                font-size: 11px;
             }
             
-            #displayNamaGuru {
-                width: 100%;
-                text-align: center;
+            th {
+                font-size: 10px;
+                padding: 8px 4px;
             }
             
-            .grading-header > div:last-child {
-                max-width: 100%;
-                font-size: 0.8rem;
+            td {
+                padding: 8px 4px;
+                font-size: 10px;
             }
             
-            .table-container {
-                margin-left: -1rem;
-                margin-right: -1rem;
-                width: calc(100% + 2rem);
-                border-radius: 0;
+            .btn-save {
+                min-width: 60px;
+                padding: 5px 10px;
+                font-size: 10px;
             }
-            
-            /* KOLOM LEBIH KOMPAK DI LAYAR SANGAT KECIL */
-            td:nth-child(2),
-            th:nth-child(2) { 
-                width: 100px !important;
-                min-width: 100px !important;
-                max-width: 100px !important;
-            }
-            
-            /* KOLOM NILAI SEDIKIT LEBIH BESAR */
-            td:nth-child(3),
-            td:nth-child(4),
-            td:nth-child(5),
-            td:nth-child(6),
-            td:nth-child(7),
-            th:nth-child(3),
-            th:nth-child(4),
-            th:nth-child(5),
-            th:nth-child(6),
-            th:nth-child(7) { 
-                width: 68px !important;
-                min-width: 68px !important;
-                max-width: 68px !important;
-            }
-        }
-
-        /* Animasi */
-        @keyframes highlightChange {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); background-color: #dbeafe; }
-            100% { transform: scale(1); }
-        }
-        
-        .value-changed {
-            animation: highlightChange 0.6s ease;
-        }
-
-        /* Hidden class */
-        .hidden {
-            display: none !important;
-        }
-        
-        /* Scrollbar styling */
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        .table-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 4px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
         }
     </style>
 </head>
 <body>
-    <!-- NAVBAR PREMIUM -->
+
     <nav class="navbar">
-        <div class="nav-brand">
+        <div class="nav-left">
             <i class="fa-solid fa-graduation-cap"></i>
-            <div>
-                <div style="font-size: 1.1rem; line-height: 1.2;">SDN RAWABUNTU 03</div>
-                <div style="font-size: 0.75rem; opacity: 0.9;">Sistem Penilaian Digital</div>
-            </div>
+            <span style="font-weight: 600;">E-Rapor & Absensi</span>
         </div>
-        <div class="nav-menu">
-            <span id="displayNamaGuru">
-                <i class="fa-solid fa-user-tie"></i> 
-                <span>Memuat...</span>
-            </span>
-            <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-arrow-left"></i>
-                <span>Kembali ke Dashboard</span>
-            </a>
+        <div class="nav-center">
+            SDN Rawabuntu 03 - Sistem Penilaian
+        </div>
+        <div class="nav-right">
+            <div class="user-info">
+                <i class="fa-solid fa-user-tie"></i>
+                <span id="displayNamaGuru">Guru</span>
+            </div>
+            <button onclick="window.location.href='index.html'" class="btn-dashboard">
+                <i class="fa-solid fa-home"></i> Dashboard
+            </button>
         </div>
     </nav>
 
-    <div class="container">
-        <!-- HEADER PREMIUM -->
-        <div class="grading-header">
-            <h3>
-                <i class="fa-solid fa-book-open"></i>
-                <div>
-                    <div>Input Penilaian</div>
-                    <div style="font-size: 1rem; font-weight: 500; opacity: 0.9;">SDN Rawabuntu 03</div>
-                </div>
+    <div class="container-fluid">
+        <div class="card-premium">
+            <h3 style="color: var(--primary); margin:0 0 15px 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <span><i class="fa-solid fa-filter"></i> Filter Penilaian</span>
+                <span id="syncStatus" style="font-weight:normal;">
+                    <i class="fa-solid fa-clock"></i> Menunggu input...
+                </span>
             </h3>
-            <p>
-                <i class="fa-solid fa-chalkboard-teacher"></i>
-                Mata Pelajaran: <span id="subjectDisplay">...</span>
-            </p>
             
-            <button onclick="tarikDataAbsensi()" class="btn-sync" id="btnTarikAbsen">
-                <i class="fa-solid fa-rotate"></i> 
-                <span>Hitung & Tarik Data Absensi</span>
-            </button>
-            <div>
-                <i class="fa-solid fa-lightbulb"></i>
-                Klik tombol di atas untuk mengisi kolom S/I/A otomatis dari data absensi harian.
-            </div>
-        </div>
-
-        <!-- FILTER PREMIUM -->
-        <div class="filter-grid">
-            <div class="form-group">
-                <label>
-                    <i class="fa-solid fa-users"></i>
-                    Pilih Kelas
-                </label>
-                <select id="pilihKelas" class="form-input">
-                    <option value="">-- Pilih Kelas --</option>
-                    <optgroup label="Kelas 1">
+            <div class="filter-grid">
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: #64748b;">Mata Pelajaran</label>
+                    <select id="pilihMapel">
+                        <option value="akademik">Akademik (Guru Kelas)</option>
+                        <option value="pjok">PJOK (Penjas)</option>
+                        <option value="pai">PAI (Agama)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: #64748b;">Kelas</label>
+                    <select id="pilihKelas">
+                        <option value="">-- Pilih Kelas --</option>
                         <option value="1A">Kelas 1A</option>
                         <option value="1B">Kelas 1B</option>
                         <option value="1C">Kelas 1C</option>
                         <option value="1D">Kelas 1D</option>
-                    </optgroup>
-                    <optgroup label="Kelas 2">
                         <option value="2A">Kelas 2A</option>
                         <option value="2B">Kelas 2B</option>
                         <option value="2C">Kelas 2C</option>
                         <option value="2D">Kelas 2D</option>
                         <option value="2E">Kelas 2E</option>
-                    </optgroup>
-                    <optgroup label="Kelas 3">
                         <option value="3A">Kelas 3A</option>
                         <option value="3B">Kelas 3B</option>
                         <option value="3C">Kelas 3C</option>
                         <option value="3D">Kelas 3D</option>
                         <option value="3E">Kelas 3E</option>
-                    </optgroup>
-                    <optgroup label="Kelas 4">
                         <option value="4A">Kelas 4A</option>
                         <option value="4B">Kelas 4B</option>
                         <option value="4C">Kelas 4C</option>
                         <option value="4D">Kelas 4D</option>
                         <option value="4E">Kelas 4E</option>
                         <option value="4F">Kelas 4F</option>
-                    </optgroup>
-                    <optgroup label="Kelas 5">
                         <option value="5A">Kelas 5A</option>
                         <option value="5B">Kelas 5B</option>
                         <option value="5C">Kelas 5C</option>
                         <option value="5D">Kelas 5D</option>
                         <option value="5E">Kelas 5E</option>
-                    </optgroup>
-                    <optgroup label="Kelas 6">
                         <option value="6A">Kelas 6A</option>
                         <option value="6B">Kelas 6B</option>
                         <option value="6C">Kelas 6C</option>
                         <option value="6D">Kelas 6D</option>
                         <option value="6E">Kelas 6E</option>
-                    </optgroup>
-                </select>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: #64748b;">Semester</label>
+                    <select id="pilihSemester">
+                        <option value="ganjil">Semester Ganjil (Juli - Des)</option>
+                        <option value="genap">Semester Genap (Jan - Jun)</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button onclick="loadDataSiswa()" class="btn-search">
+                        <i class="fa-solid fa-magnifying-glass"></i> Tampilkan Data
+                    </button>
+                </div>
             </div>
-            <div class="form-group">
-                <label>
-                    <i class="fa-solid fa-calendar-alt"></i>
-                    Semester
-                </label>
-                <select id="pilihSemester" class="form-input">
-                    <option value="ganjil">Ganjil</option>
-                    <option value="genap">Genap</option>
-                </select>
+            
+            <div class="system-info">
+                <i class="fa-solid fa-calculator"></i>
+                <div>
+                    <strong>Sistem Penilaian Otomatis:</strong>
+                    <div class="formula-box">
+                        Nilai Akhir = (65% Rata-rata N1-N4) + (35% STS/SAS) - Penalti Kehadiran<br>
+                        Penalti: Alfa = 0.5/alfa (maks 5%) | Ijin/Sakit >10 = 2%
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- LOADING -->
-        <div id="loadingArea" class="hidden" style="text-align: center; padding: 3rem;">
-            <i class="fa-solid fa-circle-notch fa-spin fa-3x" style="color:#0ea5e9;"></i>
-            <p style="margin-top:1rem; font-size: 1.1rem; color: #475569;">Mengambil data...</p>
+        <div id="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px; color: #64748b; font-weight: 500;">
+                Sedang menghitung nilai akhir...
+            </p>
+            <p style="color: #94a3b8; font-size: 12px; margin-top: 5px;">
+                Sistem sedang memproses perhitungan sesuai blueprint penilaian
+            </p>
         </div>
 
-        <!-- TABLE CONTAINER -->
         <div class="table-container">
-            <table>
+            <table id="tabelNilai">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th style="text-align:left;">Nama Siswa</th>
-                        <th>S1</th>
-                        <th>S2</th>
-                        <th>S3</th>
-                        <th>S4</th>
-                        <th style="background:#f0fdf4; color:#166534;">STS</th>
-                        <th style="background:#eff6ff; color:#1e3a8a;">Sakit</th>
-                        <th style="background:#fffbeb; color:#78350f;">Ijin</th>
-                        <th style="background:#fef2f2; color:#991b1b;">Alfa</th>
-                        <th style="background:#f1f5f9; color:#000000; font-weight:800;">NA</th>
+                        <th rowspan="2" style="width: 40px;">No</th>
+                        <th rowspan="2" style="text-align: left; min-width: 200px; padding-left: 15px;">Nama Siswa</th>
+                        <th colspan="5" style="background: #eff6ff; color: var(--primary);">Nilai Pengetahuan</th>
+                        <th colspan="3" style="background: #fff7ed; color: #ea580c;">Kehadiran (Otomatis)</th>
+                        <th colspan="3" style="background: #f0f9ff; color: #0369a1;">Nilai Akhir (Otomatis)</th>
+                        <th rowspan="2" style="width: 90px;">Simpan</th>
+                    </tr>
+                    <tr>
+                        <!-- Nilai Pengetahuan -->
+                        <th style="background: #eff6ff; font-size: 11px;">N1</th>
+                        <th style="background: #eff6ff; font-size: 11px;">N2</th>
+                        <th style="background: #eff6ff; font-size: 11px;">N3</th>
+                        <th style="background: #eff6ff; font-size: 11px;">N4</th>
+                        <th style="background: #eff6ff; font-size: 11px;">
+                            <span id="stsLabel">STS</span>
+                        </th>
+                        
+                        <!-- Kehadiran -->
+                        <th style="background: #fff7ed; color: #d97706; font-size: 11px;">S</th>
+                        <th style="background: #fff7ed; color: #2563eb; font-size: 11px;">I</th>
+                        <th style="background: #fff7ed; color: #dc2626; font-size: 11px;">A</th>
+                        
+                        <!-- Nilai Akhir -->
+                        <th style="background: #f0f9ff; color: #0369a1; font-size: 11px;">Nilai</th>
+                        <th style="background: #f0f9ff; color: #0369a1; font-size: 11px;">Huruf</th>
+                        <th style="background: #f0f9ff; color: #0369a1; font-size: 11px;">Keterangan</th>
                     </tr>
                 </thead>
-                <tbody id="tabelSiswa">
-                    <!-- Data akan diisi oleh JavaScript -->
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="14" style="padding: 40px; color: #94a3b8; text-align: center;">
+                            <i class="fa-solid fa-table" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px; display: block;"></i>
+                            <p style="font-weight: 500; margin: 0;">Silakan pilih Kelas dan Semester</p>
+                            <p style="font-size: 14px; color: #64748b; margin-top: 5px;">Klik "Tampilkan Data" untuk memulai</p>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <!-- Empty State -->
-            <div class="empty-state">
-                <i class="fa-solid fa-table"></i>
-                <p>Silakan pilih Kelas terlebih dahulu</p>
-                <small style="color: #94a3b8;">Data siswa akan ditampilkan di sini</small>
-            </div>
         </div>
-    </div>
-
-    <!-- SAVE INDICATOR -->
-    <div id="saveIndicator" class="floating-save hidden">
-        <button class="btn-primary">
-            <i class="fa-solid fa-check"></i> Tersimpan
-        </button>
     </div>
 
     <script type="module">
-        // SCRIPT TIDAK DIUBAH - SAMA PERSIS DENGAN SEBELUMNYA
-        import { db, auth, ref, get, update, onValue, getUserRole, checkPenilaianPermission, onAuthStateChanged, child } from './config_firebase.js';
-        import { hitungNilaiDariSubtest } from './core_grading.js';
+        import { 
+            db, auth, onAuthStateChanged, ref, get, update, 
+            syncNilaiToAdmin, getUserData, hitungRekapAbsensi,
+            hitungNilaiAkhir  // Import fungsi hitung nilai akhir REVISI
+        } from './config_firebase.js';
 
-        let currentKelas = "";
-        let currentSemester = "ganjil";
-        let folder = "akademik"; 
-        let userEmail = "";
-        let userId = "";
-        let debounceTimer;
-
-        const selKelas = document.getElementById('pilihKelas');
-        const selSemester = document.getElementById('pilihSemester');
-        const tbody = document.getElementById('tabelSiswa');
-        const loading = document.getElementById('loadingArea');
-        const btnTarik = document.getElementById('btnTarikAbsen');
-
-        // EVENT LISTENER GANTI KELAS
-        selKelas.addEventListener('change', (e) => {
-            currentKelas = e.target.value;
-            if(currentKelas) initTable();
-        });
-
-        selSemester.addEventListener('change', (e) => {
-            currentSemester = e.target.value;
-            if(currentKelas) initTable();
-        });
-
-        // ==========================================
-        // FITUR: TARIK DATA ABSENSI OTOMATIS
-        // ==========================================
-        window.tarikDataAbsensi = async function() {
-            if(!currentKelas) return alert("Pilih kelas dulu!");
-            
-            const btn = document.getElementById('btnTarikAbsen');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sedang Menghitung...';
-            btn.disabled = true;
-
-            try {
-                // 1. Ambil SEMUA data absensi
-                const snapshot = await get(ref(db, 'absensi'));
-                
-                if(!snapshot.exists()) {
-                    alert("Belum ada data absensi sama sekali.");
-                    btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Hitung & Tarik Data Absensi';
-                    btn.disabled = false;
-                    return;
-                }
-
-                // 2. Siapkan wadah hitungan
-                let hitungan = {}; // Format: { "idSiswa": { s:0, i:0, a:0 } }
-
-                // 3. Loop Tanggal -> Kelas -> Siswa
-                snapshot.forEach(tglSnap => {
-                    const kelasData = tglSnap.child(currentKelas);
-                    if(kelasData.exists()) {
-                        kelasData.forEach(siswaSnap => {
-                            const id = siswaSnap.key;
-                            const status = siswaSnap.val().status; // Hadir, Sakit, Ijin, Alfa
-                            
-                            if(!hitungan[id]) hitungan[id] = { s:0, i:0, a:0 };
-
-                            if(status === 'Sakit') hitungan[id].s++;
-                            if(status === 'Ijin') hitungan[id].i++;
-                            if(status === 'Alfa') hitungan[id].a++;
-                        });
-                    }
-                });
-
-                // 4. Simpan Hasil Hitungan ke Database NILAI
-                const updates = {};
-                for (const [id, counts] of Object.entries(hitungan)) {
-                    const path = `nilai/${folder}/${currentKelas}/${id}/${currentSemester}`;
-                    updates[`${path}/sakit`] = counts.s;
-                    updates[`${path}/ijin`] = counts.i;
-                    updates[`${path}/alfa`] = counts.a;
-                    
-                    // Update tampilan input di layar langsung
-                    const elS = document.getElementById(`sakit_${id}`);
-                    const elI = document.getElementById(`ijin_${id}`);
-                    const elA = document.getElementById(`alfa_${id}`);
-                    if(elS) {
-                        elS.value = counts.s;
-                        elS.classList.add('value-changed');
-                        setTimeout(() => elS.classList.remove('value-changed'), 1000);
-                    }
-                    if(elI) {
-                        elI.value = counts.i;
-                        elI.classList.add('value-changed');
-                        setTimeout(() => elI.classList.remove('value-changed'), 1000);
-                    }
-                    if(elA) {
-                        elA.value = counts.a;
-                        elA.classList.add('value-changed');
-                        setTimeout(() => elA.classList.remove('value-changed'), 1000);
-                    }
-                    
-                    // Recalc NA di layar
-                    recalcRowNA(id);
-                }
-
-                if(Object.keys(updates).length > 0) {
-                    await update(ref(db), updates);
-                    alert(`Berhasil menarik data absensi untuk ${Object.keys(hitungan).length} siswa!`);
-                } else {
-                    alert("Tidak ada data Absensi Sakit/Ijin/Alfa yang ditemukan untuk kelas ini.");
-                }
-
-            } catch (e) {
-                console.error(e);
-                alert("Gagal menarik data: " + e.message);
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Hitung & Tarik Data Absensi';
-                btn.disabled = false;
-            }
-        };
-
-        // ==========================================
-        // RENDERING TABEL
-        // ==========================================
-        async function initTable() {
-            loading.classList.remove('hidden');
-            tbody.innerHTML = "";
-            
-            // Set Folder (Akademik/PJOK/PAI)
-            if (userEmail.includes("pjok")) folder = "pjok";
-            else if (userEmail.includes("pai")) folder = "pai";
-            else folder = "akademik";
-            
-            document.getElementById('subjectDisplay').innerText = folder.toUpperCase();
-
-            // Ambil Data Siswa
-            const snapSiswa = await get(ref(db, `siswa/${currentKelas}`));
-            loading.classList.add('hidden');
-
-            if (!snapSiswa.exists() || snapSiswa.size === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="text-center" style="padding:2rem; color:#64748b;">
-                    <i class="fa-solid fa-user-slash" style="margin-right:8px;"></i>
-                    Data siswa tidak ditemukan untuk kelas ${currentKelas}
-                </td></tr>`;
-                return;
-            }
-
-            let html = "";
-            let no = 1;
-            
-            snapSiswa.forEach(child => {
-                const s = child.val();
-                const id = child.key;
-                
-                html += `
-                <tr>
-                    <td class="text-center" style="color:#000; font-weight:600;">${no++}</td>
-                    <td>
-                        <div style="font-weight:600; color:#000; font-size:0.9rem; line-height:1.2;">${s.nama}</div>
-                        <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${s.nis||''}</div>
-                    </td>
-                    <td><input type="number" id="s1_${id}" data-id="${id}" data-field="s1" class="input-score" placeholder="-" min="0" max="100" step="0.1"></td>
-                    <td><input type="number" id="s2_${id}" data-id="${id}" data-field="s2" class="input-score" placeholder="-" min="0" max="100" step="0.1"></td>
-                    <td><input type="number" id="s3_${id}" data-id="${id}" data-field="s3" class="input-score" placeholder="-" min="0" max="100" step="0.1"></td>
-                    <td><input type="number" id="s4_${id}" data-id="${id}" data-field="s4" class="input-score" placeholder="-" min="0" max="100" step="0.1"></td>
-                    <td><input type="number" id="sts_${id}" data-id="${id}" data-field="sts" class="input-score" placeholder="-" min="0" max="100" step="0.1"></td>
-                    
-                    <td><input type="number" id="sakit_${id}" data-id="${id}" data-field="sakit" class="input-absen" placeholder="0" min="0"></td>
-                    <td><input type="number" id="ijin_${id}" data-id="${id}" data-field="ijin" class="input-absen" placeholder="0" min="0"></td>
-                    <td><input type="number" id="alfa_${id}" data-id="${id}" data-field="alfa" class="input-absen" placeholder="0" min="0"></td>
-                    
-                    <td><input type="text" id="na_${id}" class="input-score score-na" readonly value="0"></td>
-                </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-
-            // Pasang Listener
-            document.querySelectorAll('.input-score, .input-absen').forEach(el => {
-                if(!el.readOnly) el.addEventListener('input', handleInput);
-            });
-
-            startLiveSync();
+        // 1. Auto Set Semester berdasarkan Bulan Ini
+        const today = new Date();
+        const curMonth = today.getMonth() + 1;
+        const semesterSelect = document.getElementById('pilihSemester');
+        
+        if (curMonth >= 1 && curMonth <= 6) {
+            semesterSelect.value = 'genap';
+        } else {
+            semesterSelect.value = 'ganjil';
         }
 
-        // Live Sync Data Nilai
-        function startLiveSync() {
-            const nilaiRef = ref(db, `nilai/${folder}/${currentKelas}`);
-            onValue(nilaiRef, (snap) => {
-                const data = snap.val() || {};
-                
-                document.querySelectorAll('.input-score, .input-absen').forEach(input => {
-                    if (document.activeElement === input) return;
-                    if (input.readOnly) return; 
-
-                    const id = input.dataset.id;
-                    const field = input.dataset.field;
-                    
-                    let valDB = "";
-                    if (data[id] && data[id][currentSemester] && data[id][currentSemester][field] !== undefined) {
-                        valDB = data[id][currentSemester][field];
-                    }
-                    input.value = valDB;
-                });
-                recalcAllNA();
-            });
-        }
-
-        // Simpan Data
-        function handleInput(e) {
-            const input = e.target;
-            const id = input.dataset.id;
-            
-            // Highlight input yang diubah
-            input.classList.add('value-changed');
-            setTimeout(() => input.classList.remove('value-changed'), 1000);
-            
-            recalcRowNA(id);
-
-            // Indikator UI
-            const saveInd = document.getElementById('saveIndicator');
-            saveInd.classList.remove('hidden');
-            const btn = saveInd.querySelector('button');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
-            btn.style.background = '#3b82f6'; 
-            btn.classList.add('saving');
-
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                saveData(id, input.dataset.field, input.value);
-            }, 800);
-        }
-
-        async function saveData(id, field, val) {
-            const path = `nilai/${folder}/${currentKelas}/${id}/${currentSemester}`;
-            const numVal = val === "" ? null : parseFloat(val); 
-            
-            try {
-                await update(ref(db, path), { [field]: numVal });
-                
-                const saveInd = document.getElementById('saveIndicator');
-                const btn = saveInd.querySelector('button');
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersimpan';
-                btn.style.background = '#10b981'; 
-                btn.classList.remove('saving');
-                setTimeout(() => saveInd.classList.add('hidden'), 2000);
-            } catch (err) {
-                console.error(err);
-                alert("Gagal menyimpan!");
+        // 2. Update label STS/SAS berdasarkan semester
+        function updateStsLabel() {
+            const semester = semesterSelect.value;
+            const stsLabel = document.getElementById('stsLabel');
+            if (semester === 'ganjil') {
+                stsLabel.textContent = 'STS';
+                stsLabel.title = 'Sumatif Tengah Semester (Semester Ganjil)';
+            } else {
+                stsLabel.textContent = 'SAS';
+                stsLabel.title = 'Sumatif Akhir Semester (Semester Genap)';
             }
         }
+        
+        semesterSelect.addEventListener('change', updateStsLabel);
+        updateStsLabel(); // Initial call
 
-        function recalcAllNA() {
-            document.querySelectorAll('tr').forEach(row => {
-                const naInput = row.querySelector('.score-na');
-                if(naInput) recalcRowNA(naInput.id.replace('na_', ''));
-            });
-        }
-
-        function recalcRowNA(id) {
-            const getVal = (field) => {
-                const el = document.getElementById(`${field}_${id}`);
-                return el && el.value ? parseFloat(el.value) : 0;
-            };
-            
-            const res = hitungNilaiDariSubtest(
-                getVal('s1'), getVal('s2'), getVal('s3'), getVal('s4'),
-                getVal('sts'), getVal('sakit'), getVal('ijin'), getVal('alfa')
-            );
-            
-            const elNA = document.getElementById(`na_${id}`);
-            if(elNA) {
-                elNA.value = res.nilai;
-                // Update style berdasarkan nilai
-                if (res.nilai >= 85) {
-                    elNA.style.color = '#166534 !important';
-                    elNA.style.background = '#dcfce7 !important';
-                } else if (res.nilai >= 70) {
-                    elNA.style.color = '#92400e !important';
-                    elNA.style.background = '#fef3c7 !important';
-                } else {
-                    elNA.style.color = '#991b1b !important';
-                    elNA.style.background = '#fee2e2 !important';
-                }
-            }
-        }
-
-        // Auth
+        // 3. Cek Login & Ambil Data User
+        let currentUserRole = null;
+        let currentUserMapel = null;
+        let currentUserEmail = null;
+        
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                userEmail = user.email.toLowerCase();
-                userId = user.uid;
-                const role = await getUserRole(userId);
-                if(checkPenilaianPermission(role, userEmail)) {
-                    document.getElementById('displayNamaGuru').innerHTML = `
-                        <i class="fa-solid fa-user-tie"></i>
-                        <span>Guru: ${user.displayName || "Aktif"}</span>
-                    `;
-                } else {
-                    window.location.href = 'index.html';
+                currentUserEmail = user.email;
+                const displayName = user.displayName || user.email || 'Guru';
+                document.getElementById('displayNamaGuru').textContent = displayName.split('@')[0];
+                
+                try {
+                    const userData = await getUserData(user.uid);
+                    if (userData) {
+                        currentUserRole = userData.role;
+                        
+                        const mapelSelect = document.getElementById('pilihMapel');
+                        
+                        if (currentUserRole.includes('PJOK')) {
+                            mapelSelect.value = 'pjok';
+                            currentUserMapel = 'pjok';
+                        } else if (currentUserRole.includes('PAI')) {
+                            mapelSelect.value = 'pai';
+                            currentUserMapel = 'pai';
+                        } else {
+                            mapelSelect.value = 'akademik';
+                            currentUserMapel = 'akademik';
+                        }
+                        
+                        if (currentUserRole !== 'ADMIN') {
+                            mapelSelect.disabled = true;
+                            mapelSelect.title = "Mata pelajaran ditentukan berdasarkan role Anda";
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error getting user data:", error);
                 }
             } else {
                 window.location.href = 'index.html';
             }
         });
+
+        // 4. Global Functions
+        window.loadDataSiswa = loadDataSiswa;
+        window.simpanNilai = simpanNilai;
+        window.hitungNilaiOtomatis = hitungNilaiOtomatis;
+
+        // 5. Fungsi untuk hitung nilai otomatis saat input berubah
+        function hitungNilaiOtomatis(safeId) {
+            const mapel = document.getElementById('pilihMapel').value;
+            const semester = document.getElementById('pilihSemester').value;
+            
+            // Ambil nilai dari input
+            const s1 = parseInt(document.getElementById(`s1-${safeId}`).value) || 0;
+            const s2 = parseInt(document.getElementById(`s2-${safeId}`).value) || 0;
+            const s3 = parseInt(document.getElementById(`s3-${safeId}`).value) || 0;
+            const s4 = parseInt(document.getElementById(`s4-${safeId}`).value) || 0;
+            const sts = parseInt(document.getElementById(`sts-${safeId}`).value) || 0;
+            const sakit = parseInt(document.getElementById(`sakit-${safeId}`).value) || 0;
+            const ijin = parseInt(document.getElementById(`ijin-${safeId}`).value) || 0;
+            const alfa = parseInt(document.getElementById(`alfa-${safeId}`).value) || 0;
+            
+            // Hitung nilai akhir menggunakan fungsi dari config_firebase
+            const hasil = hitungNilaiAkhir(s1, s2, s3, s4, sts, sakit, ijin, alfa, semester);
+            
+            // Update tampilan nilai akhir
+            document.getElementById(`nilai-akhir-${safeId}`).textContent = hasil.nilai.toFixed(2);
+            document.getElementById(`huruf-${safeId}`).innerHTML = `<span class="grade-badge grade-${hasil.huruf}">${hasil.huruf}</span>`;
+            document.getElementById(`keterangan-${safeId}`).textContent = hasil.keterangan;
+            
+            // Update warna berdasarkan nilai
+            const nilaiCell = document.getElementById(`nilai-akhir-${safeId}`).parentElement;
+            nilaiCell.style.color = getColorFromGrade(hasil.huruf);
+            
+            return hasil;
+        }
+
+        // 6. Helper function untuk warna berdasarkan grade
+        function getColorFromGrade(grade) {
+            const colors = {
+                'A': '#166534',
+                'B': '#1e40af',
+                'C': '#92400e',
+                'D': '#991b1b',
+                'E': '#6b7280'
+            };
+            return colors[grade] || '#6b7280';
+        }
+
+        // 7. Validasi Input Nilai
+        function validateNilaiInput(input) {
+            const value = parseInt(input.value);
+            if (isNaN(value)) {
+                input.value = '';
+                return;
+            }
+            
+            if (value < 0) {
+                input.value = 0;
+            } else if (value > 100) {
+                input.value = 100;
+            }
+            
+            if (value >= 0 && value <= 9) {
+                input.value = '0' + value;
+            }
+            
+            // Trigger hitung nilai otomatis jika input berubah
+            const idParts = input.id.split('-');
+            if (idParts.length >= 2) {
+                const safeId = idParts.slice(1).join('-').replace(/s1-|s2-|s3-|s4-|sts-/g, '');
+                if (safeId) {
+                    hitungNilaiOtomatis(safeId);
+                }
+            }
+        }
+
+        // 8. Main Function to Load Data
+        async function loadDataSiswa() {
+            const mapel = document.getElementById('pilihMapel').value;
+            const kelas = document.getElementById('pilihKelas').value;
+            const semester = document.getElementById('pilihSemester').value;
+            const statusEl = document.getElementById('syncStatus');
+
+            if (!kelas) {
+                alert("Harap pilih kelas terlebih dahulu!");
+                return;
+            }
+
+            if (currentUserRole !== 'ADMIN') {
+                if (currentUserMapel && mapel !== currentUserMapel) {
+                    alert(`Anda tidak memiliki akses ke mata pelajaran ini. Akses Anda: ${currentUserMapel}`);
+                    document.getElementById('pilihMapel').value = currentUserMapel;
+                    return;
+                }
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            statusEl.innerHTML = '<i class="fa-solid fa-sync fa-spin"></i> Memuat data...';
+            statusEl.className = 'status-warning';
+
+            try {
+                const siswaSnap = await get(ref(db, `siswa/${kelas}`));
+                if (!siswaSnap.exists()) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="14" style="padding: 40px; text-align: center; color: #94a3b8;">
+                                <i class="fa-solid fa-users-slash" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p style="font-weight: 500;">Data siswa tidak ditemukan untuk kelas ${kelas}</p>
+                            </td>
+                        </tr>
+                    `;
+                    document.getElementById('loading').style.display = 'none';
+                    statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Data siswa kosong';
+                    statusEl.className = 'status-error';
+                    return;
+                }
+
+                const nilaiSnap = await get(ref(db, `nilai/${mapel}/${kelas}`));
+                const dataNilai = nilaiSnap.exists() ? nilaiSnap.val() : {};
+
+                const rekapAbsen = await hitungRekapAbsensi(kelas, semester, mapel);
+                statusEl.innerHTML = `<i class="fa-solid fa-check-circle"></i> Data absensi ${semester} tersinkron`;
+                statusEl.className = 'status-success';
+
+                const siswaList = Object.values(siswaSnap.val()).sort((a,b) => a.nama.localeCompare(b.nama));
+                let no = 1;
+
+                siswaList.forEach(siswa => {
+                    const safeId = siswa.nama.replace(/[.#$/[\]]/g, '_');
+                    
+                    const n = (dataNilai[safeId] && dataNilai[safeId][semester]) ? dataNilai[safeId][semester] : {};
+                    const abs = rekapAbsen[safeId] || { s: 0, i: 0, a: 0 };
+                    
+                    // Hitung nilai awal
+                    const s1 = n.s1 || 0;
+                    const s2 = n.s2 || 0;
+                    const s3 = n.s3 || 0;
+                    const s4 = n.s4 || 0;
+                    const sts = n.sts || 0;
+                    const sakit = abs.s || 0;
+                    const ijin = abs.i || 0;
+                    const alfa = abs.a || 0;
+                    
+                    const hasilNilaiAkhir = hitungNilaiAkhir(s1, s2, s3, s4, sts, sakit, ijin, alfa, semester);
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${no++}</td>
+                        <td style="text-align: left; padding-left: 15px;">
+                            <div style="font-weight: 600; color:#334155; margin-bottom: 3px; font-size: 13px;">${siswa.nama}</div>
+                            ${(abs.s > 0 || abs.i > 0 || abs.a > 0) ? 
+                                '<span class="badge-info"><i class="fa-solid fa-check-circle"></i> Data absen tersedia</span>' : 
+                                '<span class="badge-info" style="background: #f1f5f9; color: #64748b;"><i class="fa-solid fa-clock"></i> Menunggu absen</span>'}
+                        </td>
+                        
+                        <!-- Nilai Pengetahuan -->
+                        <td>
+                            <input type="number" min="0" max="100" class="input-nilai" 
+                                   id="s1-${safeId}" value="${n.s1 || ''}" 
+                                   placeholder="0-100" 
+                                   onchange="validateNilaiInput(this)"
+                                   oninput="validateNilaiInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" class="input-nilai" 
+                                   id="s2-${safeId}" value="${n.s2 || ''}" 
+                                   placeholder="0-100"
+                                   onchange="validateNilaiInput(this)"
+                                   oninput="validateNilaiInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" class="input-nilai" 
+                                   id="s3-${safeId}" value="${n.s3 || ''}" 
+                                   placeholder="0-100"
+                                   onchange="validateNilaiInput(this)"
+                                   oninput="validateNilaiInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" class="input-nilai" 
+                                   id="s4-${safeId}" value="${n.s4 || ''}" 
+                                   placeholder="0-100"
+                                   onchange="validateNilaiInput(this)"
+                                   oninput="validateNilaiInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" class="input-nilai" 
+                                   id="sts-${safeId}" value="${n.sts || ''}" 
+                                   placeholder="0-100" 
+                                   style="background:#f8fafc;"
+                                   onchange="validateNilaiInput(this)"
+                                   oninput="validateNilaiInput(this)">
+                        </td>
+                        
+                        <!-- Kehadiran Otomatis -->
+                        <td><input type="number" class="input-nilai auto-filled" id="sakit-${safeId}" value="${abs.s}" readonly></td>
+                        <td><input type="number" class="input-nilai auto-filled" id="ijin-${safeId}" value="${abs.i}" readonly></td>
+                        <td><input type="number" class="input-nilai auto-filled" id="alfa-${safeId}" value="${abs.a}" readonly></td>
+                        
+                        <!-- Nilai Akhir Otomatis -->
+                        <td class="nilai-akhir-cell" id="nilai-akhir-${safeId}" style="font-weight: 700; font-size: 15px; color: ${getColorFromGrade(hasilNilaiAkhir.huruf)};">
+                            ${hasilNilaiAkhir.nilai.toFixed(2)}
+                        </td>
+                        <td class="nilai-akhir-cell" id="huruf-${safeId}">
+                            <span class="grade-badge grade-${hasilNilaiAkhir.huruf}">${hasilNilaiAkhir.huruf}</span>
+                        </td>
+                        <td class="nilai-akhir-cell" id="keterangan-${safeId}" style="font-size: 12px; color: #64748b;">
+                            ${hasilNilaiAkhir.keterangan}
+                        </td>
+                        
+                        <!-- Tombol Simpan -->
+                        <td>
+                            <button onclick="simpanNilai('${safeId}')" class="btn-save" title="Simpan nilai untuk ${siswa.nama}">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error: ${error.message}`;
+                statusEl.className = 'status-error';
+                alert("Terjadi kesalahan: " + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // 9. Function to Save Score - DENGAN SINKRONISASI OTOMATIS (FIXED)
+        async function simpanNilai(siswaId) {
+            const mapel = document.getElementById('pilihMapel').value;
+            const kelas = document.getElementById('pilihKelas').value;
+            const semester = document.getElementById('pilihSemester').value;
+            
+            // Fix: Get statusEl di awal fungsi
+            const statusEl = document.getElementById('syncStatus');
+
+            const inputs = ['s1', 's2', 's3', 's4', 'sts'];
+            for (const input of inputs) {
+                const value = document.getElementById(`${input}-${siswaId}`).value;
+                if (value && (parseInt(value) < 0 || parseInt(value) > 100)) {
+                    alert(`Nilai ${input} harus antara 0-100`);
+                    document.getElementById(`${input}-${siswaId}`).focus();
+                    return;
+                }
+            }
+
+            let namaSiswa = '';
+            try {
+                const siswaSnap = await get(ref(db, `siswa/${kelas}`));
+                if (siswaSnap.exists()) {
+                    const siswaList = Object.values(siswaSnap.val());
+                    const siswa = siswaList.find(s => s.nama.replace(/[.#$/[\]]/g, '_') === siswaId);
+                    if (siswa) {
+                        namaSiswa = siswa.nama;
+                    }
+                }
+            } catch (error) {
+                console.error("Error getting student name:", error);
+            }
+
+            const dataToSave = {
+                s1: document.getElementById(`s1-${siswaId}`).value ? parseInt(document.getElementById(`s1-${siswaId}`).value) : null,
+                s2: document.getElementById(`s2-${siswaId}`).value ? parseInt(document.getElementById(`s2-${siswaId}`).value) : null,
+                s3: document.getElementById(`s3-${siswaId}`).value ? parseInt(document.getElementById(`s3-${siswaId}`).value) : null,
+                s4: document.getElementById(`s4-${siswaId}`).value ? parseInt(document.getElementById(`s4-${siswaId}`).value) : null,
+                sts: document.getElementById(`sts-${siswaId}`).value ? parseInt(document.getElementById(`sts-${siswaId}`).value) : null,
+                
+                sakit: parseInt(document.getElementById(`sakit-${siswaId}`).value) || 0,
+                ijin: parseInt(document.getElementById(`ijin-${siswaId}`).value) || 0,
+                alfa: parseInt(document.getElementById(`alfa-${siswaId}`).value) || 0,
+                
+                nama_siswa: namaSiswa,
+                kelas: kelas,
+                mata_pelajaran: mapel,
+                semester: semester,
+                guru_pencatat: currentUserEmail || 'unknown',
+                last_updated: new Date().toISOString(),
+                updated_by: currentUserEmail || 'unknown'
+            };
+
+            const targetRef = ref(db, `nilai/${mapel}/${kelas}/${siswaId}/${semester}`);
+            
+            try {
+                await update(targetRef, dataToSave);
+                
+                // SINKRONISASI KE ADMIN - menggunakan fungsi dari config_firebase
+                const syncResult = await syncNilaiToAdmin(dataToSave, siswaId, mapel, kelas, semester);
+                
+                const btn = document.querySelector(`button[onclick="simpanNilai('${siswaId}')"]`);
+                const originalHTML = btn.innerHTML;
+                
+                if (syncResult.success) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersinkron!';
+                    statusEl.innerHTML = `<i class="fa-solid fa-check-circle"></i> Data tersimpan & tersinkron`;
+                    statusEl.className = 'status-success';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Tersimpan!';
+                    statusEl.innerHTML = `<i class="fa-solid fa-check-circle"></i> Data tersimpan (sinkron gagal)`;
+                    statusEl.className = 'status-warning';
+                }
+                
+                btn.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    btn.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                alert("Gagal menyimpan data: " + error.message);
+                statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Gagal menyimpan`;
+                statusEl.className = 'status-error';
+            }
+        }
     </script>
 </body>
 </html>

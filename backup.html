@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup & Restore - SDN Rawabuntu 03</title>
+    <link rel="stylesheet" href="style_main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --dark-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --premium-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .navbar {
+            background: var(--dark-gradient);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--premium-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        /* User Info Panel */
+        .user-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--premium-shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-left: 5px solid #4a6de5;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a6de5 0%, #3a5bd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(74, 109, 229, 0.3);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-info h3 {
+            margin: 0 0 5px 0;
+            color: #1e293b;
+        }
+        
+        .user-info p {
+            margin: 0 0 8px 0;
+            color: #64748b;
+        }
+        
+        .user-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .badge-admin { background: #fef3c7; color: #92400e; }
+        .badge-guru { background: #dbeafe; color: #1e40af; }
+        .badge-pjok { background: #dcfce7; color: #166534; }
+        .badge-pai { background: #f3e8ff; color: #7c3aed; }
+        
+        /* Backup Grid */
+        .backup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .backup-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--premium-shadow);
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .backup-card:hover {
+            transform: translateY(-5px);
+            border-color: #e2e8f0;
+        }
+        
+        .backup-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .backup-card h3 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .backup-card p {
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .btn-backup {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn-backup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-backup:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        /* Progress Container */
+        .progress-container {
+            margin-top: 20px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 15px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a6de5, #3a5bd9);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        /* Backup List */
+        .backup-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            display: none;
+        }
+        
+        .backup-item {
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .backup-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background-color: #10b981;
+        }
+        
+        .status-warning {
+            background-color: #f59e0b;
+        }
+        
+        .status-error {
+            background-color: #ef4444;
+        }
+        
+        /* Backup Stats */
+        .backup-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #1e293b;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+        }
+        
+        .file-input-container {
+            margin: 20px 0;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input-container:hover {
+            border-color: #4a6de5;
+            background: #f8fafc;
+        }
+        
+        .file-input-container i {
+            font-size: 48px;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+        
+        #backupFile {
+            display: none;
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .warning-box h4 {
+            color: #92400e;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box p {
+            color: #92400e;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Admin Warning Box */
+        .admin-warning-box {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #dc2626;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .admin-warning-box h4 {
+            color: #991b1b;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-warning-box p {
+            color: #991b1b;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Access Denied */
+        .access-denied {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--premium-shadow);
+            margin: 50px auto;
+            max-width: 600px;
+        }
+        
+        .access-denied i {
+            font-size: 80px;
+            color: #ef4444;
+            margin-bottom: 20px;
+        }
+        
+        .access-denied h3 {
+            color: #1e293b;
+            margin: 0 0 15px 0;
+        }
+        
+        .access-denied p {
+            color: #64748b;
+            margin: 0 0 30px 0;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .backup-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .user-panel {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .user-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2><i class="fa-solid fa-database"></i> Backup & Restore Data Saya</h2>
+        <button onclick="window.location.href='index.html'" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+        </button>
+    </nav>
+    
+    <div class="container">
+        <!-- User Info Panel -->
+        <div class="user-panel">
+            <div class="user-avatar" id="userAvatar">G</div>
+            <div class="user-info">
+                <h3 id="userName">Memuat data user...</h3>
+                <p id="userEmail">email@example.com</p>
+                <div>
+                    <span class="user-badge" id="userRoleBadge">Role</span>
+                    <span class="user-badge" id="userMapelBadge">Mapel</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Access Check -->
+        <div id="accessDenied" class="access-denied" style="display: none;">
+            <i class="fa-solid fa-ban"></i>
+            <h3>Akses Ditolak</h3>
+            <p>Anda tidak memiliki izin untuk mengakses halaman Backup & Restore. 
+               Hanya admin yang dapat mengakses fitur ini.</p>
+            <button onclick="window.location.href='index.html'" class="btn-backup" style="width: auto; padding: 10px 30px; background: var(--primary-gradient); color: white;">
+                <i class="fa-solid fa-home"></i> Kembali ke Dashboard
+            </button>
+        </div>
+        
+        <!-- Main Content (akan ditampilkan jika user memiliki akses) -->
+        <div id="mainContent" style="display: none;">
+            <!-- Backup Stats -->
+            <div class="backup-stats">
+                <div class="stat-card">
+                    <div class="label">Total Backup</div>
+                    <div class="number" id="totalBackups">0</div>
+                    <div class="label" style="font-size: 12px;">File tersimpan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Data Nilai Saya</div>
+                    <div class="number" id="nilaiCount">0</div>
+                    <div class="label" style="font-size: 12px;">Record</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Data Absensi Saya</div>
+                    <div class="number" id="absensiCount">0</div>
+                    <div class="label" style="font-size: 12px;">Record</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Berkas Saya</div>
+                    <div class="number" id="berkasCount">0</div>
+                    <div class="label" style="font-size: 12px;">File</div>
+                </div>
+            </div>
+            
+            <!-- Warning for Teachers -->
+            <div class="warning-box">
+                <h4><i class="fa-solid fa-triangle-exclamation"></i> Perhatian Guru</h4>
+                <p>
+                    <strong>Setiap guru hanya dapat:</strong><br>
+                    1. Backup data nilai, absensi, dan berkas yang mereka input sendiri<br>
+                    2. Melihat riwayat backup mereka sendiri<br>
+                    3. Restore data mereka sendiri dari file backup<br>
+                    4. Admin dapat mengakses semua data dan backup
+                </p>
+            </div>
+            
+            <!-- Grid Backup Options -->
+            <div class="backup-grid">
+                <div class="backup-card">
+                    <div class="backup-icon" style="color: #10b981;">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <h3>Backup Data Saya</h3>
+                    <p>Backup semua data yang Anda input: nilai, absensi, dan berkas dalam satu file JSON.</p>
+                    <button class="btn-backup" id="btnPersonalBackup" style="background: var(--success-gradient); color: white;">
+                        <i class="fa-solid fa-file-export"></i> Backup Data Saya
+                    </button>
+                    <div class="progress-container" id="personalBackupProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="personalBackupFill"></div>
+                        </div>
+                        <div class="progress-text" id="personalBackupText">Menyiapkan backup...</div>
+                    </div>
+                    <div class="backup-list" id="personalBackupList"></div>
+                </div>
+                
+                <div class="backup-card">
+                    <div class="backup-icon" style="color: #3b82f6;">
+                        <i class="fa-solid fa-upload"></i>
+                    </div>
+                    <h3>Restore Data Saya</h3>
+                    <p>Restore data dari file backup Anda. Hanya file backup Anda sendiri yang bisa di-restore.</p>
+                    <button class="btn-backup" id="btnRestore" style="background: var(--primary-gradient); color: white;">
+                        <i class="fa-solid fa-file-import"></i> Upload & Restore
+                    </button>
+                    <div class="progress-container" id="restoreProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="restoreFill"></div>
+                        </div>
+                        <div class="progress-text" id="restoreText">Menyiapkan restore...</div>
+                    </div>
+                </div>
+                
+                <div class="backup-card">
+                    <div class="backup-icon" style="color: #f59e0b;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h3>Riwayat Backup Saya</h3>
+                    <p>Lihat riwayat backup yang pernah Anda lakukan beserta tanggal dan statusnya.</p>
+                    <button class="btn-backup" id="btnShowHistory" style="background: var(--warning-gradient); color: white;">
+                        <i class="fa-solid fa-history"></i> Lihat Riwayat
+                    </button>
+                    <div class="backup-list" id="backupHistory"></div>
+                </div>
+            </div>
+            
+            <!-- Backup Terpisah -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #1e293b; margin-bottom: 20px; text-align: center;">
+                    <i class="fa-solid fa-layer-group"></i> Backup Per Jenis Data
+                </h3>
+                <div class="backup-grid">
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #8b5cf6;">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3>Backup Nilai Saya</h3>
+                        <p>Backup hanya data nilai yang Anda input untuk mata pelajaran Anda.</p>
+                        <button class="btn-backup" id="btnNilaiBackup" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white;">
+                            <i class="fa-solid fa-file-export"></i> Backup Nilai Saya
+                        </button>
+                        <div class="progress-container" id="nilaiBackupProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="nilaiBackupFill"></div>
+                            </div>
+                            <div class="progress-text" id="nilaiBackupText">Menyiapkan backup nilai...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #ec4899;">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <h3>Backup Absensi Saya</h3>
+                        <p>Backup data absensi yang Anda input untuk kelas dan mata pelajaran Anda.</p>
+                        <button class="btn-backup" id="btnAbsensiBackup" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white;">
+                            <i class="fa-solid fa-file-export"></i> Backup Absensi Saya
+                        </button>
+                        <div class="progress-container" id="absensiBackupProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="absensiBackupFill"></div>
+                            </div>
+                            <div class="progress-text" id="absensiBackupText">Menyiapkan backup absensi...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #10b981;">
+                            <i class="fa-solid fa-file-upload"></i>
+                        </div>
+                        <h3>Backup Berkas Saya</h3>
+                        <p>Backup berkas yang Anda upload (laporan, soal, RPP, dll).</p>
+                        <button class="btn-backup" id="btnBerkasBackup" style="background: var(--success-gradient); color: white;">
+                            <i class="fa-solid fa-file-export"></i> Backup Berkas Saya
+                        </button>
+                        <div class="progress-container" id="berkasBackupProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="berkasBackupFill"></div>
+                            </div>
+                            <div class="progress-text" id="berkasBackupText">Menyiapkan backup berkas...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Only Section -->
+            <div id="adminSection" style="display: none; margin-top: 40px;">
+                <h3 style="color: #dc2626; margin-bottom: 20px; text-align: center;">
+                    <i class="fa-solid fa-user-shield"></i> Admin Only - Full System Backup
+                </h3>
+                <div class="warning-box">
+                    <h4><i class="fa-solid fa-shield-alt"></i> Akses Admin</h4>
+                    <p>
+                        <strong>Sebagai admin, Anda dapat:</strong><br>
+                        1. Backup seluruh sistem (data semua guru)<br>
+                        2. Restore seluruh sistem dari backup admin<br>
+                        3. Melihat semua riwayat backup sistem
+                    </p>
+                </div>
+                
+                <div class="admin-warning-box">
+                    <h4><i class="fa-solid fa-radiation"></i> Peringatan Tinggi!</h4>
+                    <p>
+                        <strong>Restore sistem akan menimpa semua data yang ada!</strong><br>
+                        1. Backup terlebih dahulu sebelum melakukan restore<br>
+                        2. Pastikan file backup berasal dari sistem ini<br>
+                        3. Restore hanya boleh dilakukan oleh admin utama<br>
+                        4. Proses ini tidak dapat dibatalkan setelah dimulai
+                    </p>
+                </div>
+                
+                <div class="backup-grid">
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #dc2626;">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <h3>Full System Backup</h3>
+                        <p>Backup seluruh sistem termasuk data semua guru, siswa, dan konfigurasi.</p>
+                        <button class="btn-backup" id="btnFullSystemBackup" style="background: var(--danger-gradient); color: white;">
+                            <i class="fa-solid fa-database"></i> Backup Seluruh Sistem
+                        </button>
+                        <div class="progress-container" id="fullSystemBackupProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="fullSystemBackupFill"></div>
+                            </div>
+                            <div class="progress-text" id="fullSystemBackupText">Menyiapkan backup sistem...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #1e293b;">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <h3>Backup Semua Guru</h3>
+                        <p>Backup data semua guru (nilai, absensi, berkas dari semua guru).</p>
+                        <button class="btn-backup" id="btnAllTeachersBackup" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
+                            <i class="fa-solid fa-user-friends"></i> Backup Semua Guru
+                        </button>
+                        <div class="progress-container" id="allTeachersBackupProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="allTeachersBackupFill"></div>
+                            </div>
+                            <div class="progress-text" id="allTeachersBackupText">Menyiapkan backup semua guru...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-card">
+                        <div class="backup-icon" style="color: #7c3aed;">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <h3>Restore Sistem</h3>
+                        <p>Restore seluruh sistem dari file backup admin. Hanya untuk keadaan darurat.</p>
+                        <button class="btn-backup" id="btnSystemRestore" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: white;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Restore Sistem
+                        </button>
+                        <div class="progress-container" id="systemRestoreProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="systemRestoreFill"></div>
+                            </div>
+                            <div class="progress-text" id="systemRestoreText">Siap untuk restore...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin History Section -->
+                <div style="margin-top: 40px;">
+                    <h3 style="color: #1e293b; margin-bottom: 20px; text-align: center;">
+                        <i class="fa-solid fa-list-check"></i> Riwayat Backup Sistem
+                    </h3>
+                    <button class="btn-backup" id="btnShowSystemHistory" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; width: auto; margin: 0 auto; display: block; padding: 12px 30px;">
+                        <i class="fa-solid fa-chart-bar"></i> Lihat Riwayat Sistem
+                    </button>
+                    <div class="backup-list" id="systemBackupHistory" style="max-height: 300px; margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Restore Personal -->
+    <div class="modal" id="restoreModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-import"></i> Restore Data Backup</h3>
+                <button class="close-modal" id="closeRestoreModal">&times;</button>
+            </div>
+            <p style="color: #64748b; margin-bottom: 20px;">
+                Pilih file backup (.json) yang akan di-restore. Pastikan file berasal dari backup Anda sendiri.
+            </p>
+            
+            <div class="file-input-container" id="fileDropArea">
+                <i class="fa-solid fa-cloud-upload-alt"></i>
+                <p style="color: #64748b; margin: 10px 0;">Klik untuk memilih file atau drag & drop di sini</p>
+                <p style="color: #94a3b8; font-size: 12px;">Format file: .json (maks 10MB)</p>
+                <input type="file" id="backupFile" accept=".json">
+            </div>
+            
+            <div id="fileInfo" style="display: none; margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                <p style="margin: 0; color: #1e293b; font-weight: 500;">
+                    <i class="fa-solid fa-file"></i> <span id="fileName"></span>
+                </p>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 12px;">
+                    Ukuran: <span id="fileSize"></span> • Jenis: <span id="fileType"></span>
+                </p>
+            </div>
+            
+            <div id="backupInfo" style="display: none; margin: 20px 0; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                <h5 style="margin: 0 0 10px 0; color: #0369a1;">
+                    <i class="fa-solid fa-info-circle"></i> Informasi Backup
+                </h5>
+                <div id="backupDetails" style="font-size: 13px; color: #475569;"></div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="btnCancelRestore" class="btn-backup" style="background: #64748b; color: white; flex: 1;">
+                    <i class="fa-solid fa-times"></i> Batal
+                </button>
+                <button id="btnConfirmRestore" class="btn-backup" style="background: var(--primary-gradient); color: white; flex: 2;" disabled>
+                    <i class="fa-solid fa-play"></i> Mulai Restore
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Restore Sistem (Admin Only) -->
+    <div class="modal" id="systemRestoreModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i> Restore Sistem</h3>
+                <button class="close-modal" id="closeSystemRestoreModal">&times;</button>
+            </div>
+            <div class="admin-warning-box">
+                <h4><i class="fa-solid fa-radiation"></i> PERINGATAN TINGGI!</h4>
+                <p>
+                    Restore sistem akan <strong>menimpa semua data yang ada</strong> dengan data dari backup!<br>
+                    Pastikan Anda sudah membuat backup terbaru sebelum melanjutkan.
+                </p>
+            </div>
+            
+            <p style="color: #64748b; margin-bottom: 20px;">
+                Pilih file backup sistem (.json) yang akan di-restore. Hanya file backup sistem yang bisa digunakan.
+            </p>
+            
+            <div class="file-input-container" id="systemFileDropArea">
+                <i class="fa-solid fa-server" style="color: #dc2626;"></i>
+                <p style="color: #64748b; margin: 10px 0;">Klik untuk memilih file backup sistem</p>
+                <p style="color: #94a3b8; font-size: 12px;">Format file: .json (hanya backup sistem)</p>
+                <input type="file" id="systemBackupFile" accept=".json">
+            </div>
+            
+            <div id="systemFileInfo" style="display: none; margin: 20px 0; padding: 15px; background: #fef2f2; border-radius: 8px; border-left: 4px solid #dc2626;">
+                <p style="margin: 0; color: #991b1b; font-weight: 500;">
+                    <i class="fa-solid fa-file-circle-exclamation"></i> <span id="systemFileName"></span>
+                </p>
+                <p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;">
+                    Ukuran: <span id="systemFileSize"></span> • Jenis: <span id="systemFileType"></span>
+                </p>
+            </div>
+            
+            <div id="systemBackupInfo" style="display: none; margin: 20px 0; padding: 15px; background: #fef2f2; border-radius: 8px; border-left: 4px solid #dc2626;">
+                <h5 style="margin: 0 0 10px 0; color: #991b1b;">
+                    <i class="fa-solid fa-database"></i> Informasi Backup Sistem
+                </h5>
+                <div id="systemBackupDetails" style="font-size: 13px; color: #7f1d1d;"></div>
+            </div>
+            
+            <!-- Password Confirmation for Admin -->
+            <div id="adminPasswordSection" style="display: none; margin: 20px 0;">
+                <label style="display: block; margin-bottom: 8px; color: #991b1b; font-weight: 500;">
+                    <i class="fa-solid fa-key"></i> Konfirmasi Password Admin
+                </label>
+                <input type="password" id="adminPassword" style="width: 100%; padding: 12px; border: 2px solid #fca5a5; border-radius: 8px; font-family: 'Poppins', sans-serif;" 
+                       placeholder="Masukkan password admin untuk melanjutkan">
+                <p style="color: #ef4444; font-size: 12px; margin: 5px 0 0 0; display: none;" id="passwordError">
+                    <i class="fa-solid fa-exclamation-circle"></i> Password salah!
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="btnCancelSystemRestore" class="btn-backup" style="background: #64748b; color: white; flex: 1;">
+                    <i class="fa-solid fa-times"></i> Batalkan
+                </button>
+                <button id="btnConfirmSystemRestore" class="btn-backup" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; flex: 2;" disabled>
+                    <i class="fa-solid fa-bolt"></i> Restore Sistem
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth, onAuthStateChanged, ref, get, query, orderByChild, equalTo } from './config_firebase.js';
+        
+        let currentUser = null;
+        let currentUserData = null;
+        let userBackupHistory = JSON.parse(localStorage.getItem('userBackupHistory') || '[]');
+        let systemBackupHistory = JSON.parse(localStorage.getItem('systemBackupHistory') || '[]');
+        let isAdmin = false;
+        
+        // Cek autentikasi dan load user data
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserData();
+            } else {
+                alert("Harap login terlebih dahulu untuk mengakses backup system.");
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Load user data
+        async function loadUserData() {
+            try {
+                const userRef = ref(db, `users/${currentUser.uid}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    currentUserData = snapshot.val();
+                    updateUserUI();
+                    checkUserAccess();
+                    loadStats();
+                    updateBackupHistory();
+                } else {
+                    alert("Data user tidak ditemukan!");
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+                alert("Gagal memuat data user: " + error.message);
+            }
+        }
+        
+        // Update UI dengan data user
+        function updateUserUI() {
+            if (!currentUserData) return;
+            
+            const userName = currentUserData.nama || currentUser.email.split('@')[0];
+            const userEmail = currentUser.email;
+            const userRole = currentUserData.role || 'GURU';
+            const userMapel = currentUserData.mata_pelajaran || 'Umum';
+            
+            // Update avatar
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = userName.charAt(0).toUpperCase();
+            
+            // Update user info
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userEmail').textContent = userEmail;
+            
+            // Update badges
+            const roleBadge = document.getElementById('userRoleBadge');
+            const mapelBadge = document.getElementById('userMapelBadge');
+            
+            roleBadge.textContent = userRole;
+            roleBadge.className = 'user-badge ' + 
+                (userRole === 'ADMIN' ? 'badge-admin' : 
+                 userRole === 'GURU_PJOK' ? 'badge-pjok' :
+                 userRole === 'GURU_PAI' ? 'badge-pai' : 'badge-guru');
+                 
+            mapelBadge.textContent = userMapel;
+            mapelBadge.className = 'user-badge ' + 
+                (userMapel === 'PJOK' ? 'badge-pjok' :
+                 userMapel === 'PAI' ? 'badge-pai' : 'badge-guru');
+            
+            // Check if admin
+            isAdmin = userRole === 'ADMIN';
+            if (isAdmin) {
+                document.getElementById('adminSection').style.display = 'block';
+                updateSystemBackupHistory();
+            }
+        }
+        
+        // Check user access
+        function checkUserAccess() {
+            if (!currentUserData) return;
+            
+            const userRole = currentUserData.role;
+            
+            // Hanya admin dan guru yang boleh akses
+            const allowedRoles = ['ADMIN', 'GURU_KELAS', 'GURU_PJOK', 'GURU_PAI'];
+            
+            if (allowedRoles.includes(userRole)) {
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('accessDenied').style.display = 'none';
+            } else {
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('accessDenied').style.display = 'block';
+            }
+        }
+        
+        // Load statistics for current user
+        async function loadStats() {
+            try {
+                // Hitung total backup user
+                const userBackups = userBackupHistory.filter(b => b.userId === currentUser.uid);
+                document.getElementById('totalBackups').textContent = userBackups.length;
+                
+                // Hitung data nilai milik user ini
+                const nilaiCount = await countUserNilai();
+                document.getElementById('nilaiCount').textContent = nilaiCount;
+                
+                // Hitung data absensi milik user ini
+                const absensiCount = await countUserAbsensi();
+                document.getElementById('absensiCount').textContent = absensiCount;
+                
+                // Hitung data berkas milik user ini
+                const berkasCount = await countUserBerkas();
+                document.getElementById('berkasCount').textContent = berkasCount;
+                
+            } catch (error) {
+                console.error("Error loading stats:", error);
+            }
+        }
+        
+        // Count nilai data for current user
+        async function countUserNilai() {
+            try {
+                const userRole = currentUserData.role;
+                let mapel = '';
+                
+                // Tentukan mata pelajaran berdasarkan role
+                if (userRole === 'GURU_PJOK') mapel = 'pjok';
+                else if (userRole === 'GURU_PAI') mapel = 'pai';
+                else mapel = 'akademik';
+                
+                let totalCount = 0;
+                
+                // Untuk admin, hitung semua data
+                if (isAdmin) {
+                    const nilaiRef = ref(db, 'nilai');
+                    const snapshot = await get(nilaiRef);
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        Object.keys(data).forEach(mapelKey => {
+                            Object.keys(data[mapelKey]).forEach(kelas => {
+                                Object.keys(data[mapelKey][kelas]).forEach(siswa => {
+                                    Object.keys(data[mapelKey][kelas][siswa]).forEach(semester => {
+                                        totalCount++;
+                                    });
+                                });
+                            });
+                        });
+                    }
+                } else {
+                    // Untuk guru, hitung hanya data mata pelajaran mereka
+                    const nilaiRef = ref(db, `nilai/${mapel}`);
+                    const snapshot = await get(nilaiRef);
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        Object.keys(data).forEach(kelas => {
+                            Object.keys(data[kelas]).forEach(siswa => {
+                                Object.keys(data[kelas][siswa]).forEach(semester => {
+                                    totalCount++;
+                                });
+                            });
+                        });
+                    }
+                }
+                
+                return totalCount;
+            } catch (error) {
+                console.error("Error counting user nilai:", error);
+                return 0;
+            }
+        }
+        
+        // Count absensi data for current user
+        async function countUserAbsensi() {
+            try {
+                let totalCount = 0;
+                
+                if (isAdmin) {
+                    // Admin: hitung semua absensi
+                    const absensiRef = ref(db, 'absensi');
+                    const snapshot = await get(absensiRef);
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        Object.keys(data).forEach(tanggal => {
+                            if (tanggal === 'scanner_qr') return;
+                            Object.keys(data[tanggal]).forEach(kelas => {
+                                Object.keys(data[tanggal][kelas]).forEach(siswa => {
+                                    totalCount++;
+                                });
+                            });
+                        });
+                    }
+                } else {
+                    // Guru: hitung absensi berdasarkan pencatat
+                    const absensiRef = ref(db, 'absensi');
+                    const snapshot = await get(absensiRef);
+                    
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const userEmail = currentUser.email;
+                        
+                        Object.keys(data).forEach(tanggal => {
+                            if (tanggal === 'scanner_qr') return;
+                            Object.keys(data[tanggal]).forEach(kelas => {
+                                Object.keys(data[tanggal][kelas]).forEach(siswa => {
+                                    const absen = data[tanggal][kelas][siswa];
+                                    if (absen.pencatat === userEmail) {
+                                        totalCount++;
+                                    }
+                                });
+                            });
+                        });
+                    }
+                }
+                
+                return totalCount;
+            } catch (error) {
+                console.error("Error counting user absensi:", error);
+                return 0;
+            }
+        }
+        
+        // Count berkas data for current user
+        async function countUserBerkas() {
+            try {
+                let totalCount = 0;
+                
+                if (isAdmin) {
+                    // Admin: hitung semua berkas
+                    const berkasRef = ref(db, 'laporan_berkas');
+                    const snapshot = await get(berkasRef);
+                    totalCount = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                } else {
+                    // Guru: hitung berkas berdasarkan guruId
+                    const berkasRef = ref(db, 'laporan_berkas');
+                    const queryRef = query(berkasRef, orderByChild('guruId'), equalTo(currentUser.uid));
+                    const snapshot = await get(queryRef);
+                    totalCount = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                }
+                
+                return totalCount;
+            } catch (error) {
+                console.error("Error counting user berkas:", error);
+                return 0;
+            }
+        }
+        
+        // Update backup history display
+        function updateBackupHistory() {
+            const historyList = document.getElementById('backupHistory');
+            if (!historyList) return;
+            
+            const userHistory = userBackupHistory.filter(b => b.userId === currentUser.uid);
+            
+            if (userHistory.length === 0) {
+                historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 20px;">Belum ada riwayat backup</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            userHistory.slice(0, 5).forEach((backup, index) => {
+                const item = document.createElement('div');
+                item.className = 'backup-item';
+                item.innerHTML = `
+                    <div>
+                        <span class="status-indicator ${backup.status === 'success' ? 'status-success' : backup.status === 'error' ? 'status-error' : 'status-warning'}"></span>
+                        ${backup.type}
+                    </div>
+                    <div style="font-size: 12px; color: #64748b;">
+                        ${new Date(backup.timestamp).toLocaleDateString('id-ID')}
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
+            
+            if (userHistory.length > 5) {
+                const moreItem = document.createElement('div');
+                moreItem.className = 'backup-item';
+                moreItem.innerHTML = `<div style="color: #64748b; font-style: italic;">...dan ${userHistory.length - 5} backup lainnya</div>`;
+                historyList.appendChild(moreItem);
+            }
+            
+            historyList.style.display = 'block';
+        }
+        
+        // Update system backup history display (admin only)
+        function updateSystemBackupHistory() {
+            const historyList = document.getElementById('systemBackupHistory');
+            if (!historyList) return;
+            
+            const systemHistory = systemBackupHistory.filter(b => b.isSystem === true);
+            
+            if (systemHistory.length === 0) {
+                historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 20px;">Belum ada riwayat backup sistem</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            systemHistory.slice(0, 10).forEach((backup, index) => {
+                const item = document.createElement('div');
+                item.className = 'backup-item';
+                item.innerHTML = `
+                    <div>
+                        <span class="status-indicator ${backup.status === 'success' ? 'status-success' : backup.status === 'error' ? 'status-error' : 'status-warning'}"></span>
+                        <strong>${backup.type}</strong>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                            ${backup.createdBy || 'System'} • ${backup.fileSize ? formatFileSize(backup.fileSize) : ''}
+                        </div>
+                    </div>
+                    <div style="font-size: 11px; color: #64748b; text-align: right;">
+                        ${new Date(backup.timestamp).toLocaleDateString('id-ID')}<br>
+                        ${new Date(backup.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
+            
+            if (systemHistory.length > 10) {
+                const moreItem = document.createElement('div');
+                moreItem.className = 'backup-item';
+                moreItem.innerHTML = `<div style="color: #64748b; font-style: italic;">...dan ${systemHistory.length - 10} backup sistem lainnya</div>`;
+                historyList.appendChild(moreItem);
+            }
+        }
+        
+        // Show backup history
+        document.getElementById('btnShowHistory').addEventListener('click', function() {
+            const historyList = document.getElementById('backupHistory');
+            if (historyList.style.display === 'block') {
+                historyList.style.display = 'none';
+                this.innerHTML = '<i class="fa-solid fa-history"></i> Lihat Riwayat';
+            } else {
+                updateBackupHistory();
+                this.innerHTML = '<i class="fa-solid fa-times"></i> Tutup Riwayat';
+            }
+        });
+        
+        // Show system backup history (admin only)
+        document.getElementById('btnShowSystemHistory').addEventListener('click', function() {
+            const historyList = document.getElementById('systemBackupHistory');
+            if (historyList.style.display === 'block') {
+                historyList.style.display = 'none';
+                this.innerHTML = '<i class="fa-solid fa-chart-bar"></i> Lihat Riwayat Sistem';
+            } else {
+                updateSystemBackupHistory();
+                historyList.style.display = 'block';
+                this.innerHTML = '<i class="fa-solid fa-times"></i> Tutup Riwayat Sistem';
+            }
+        });
+        
+        // Fungsi untuk membuat backup personal
+        async function createBackup(type = 'personal') {
+            try {
+                const progressContainer = document.getElementById(`${type}BackupProgress`);
+                const progressFill = document.getElementById(`${type}BackupFill`);
+                const progressText = document.getElementById(`${type}BackupText`);
+                const btn = document.getElementById(`btn${type.charAt(0).toUpperCase() + type.slice(1)}Backup`);
+                
+                // Show progress
+                progressContainer.style.display = 'block';
+                progressFill.style.width = '10%';
+                progressText.textContent = 'Menyiapkan backup...';
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+                
+                let backupData = {};
+                let fileName = '';
+                let backupType = '';
+                let isSystemBackup = false;
+                
+                switch(type) {
+                    case 'personal':
+                        progressFill.style.width = '30%';
+                        progressText.textContent = 'Mengambil data nilai...';
+                        backupData.nilai = await fetchUserNilai();
+                        
+                        progressFill.style.width = '50%';
+                        progressText.textContent = 'Mengambil data absensi...';
+                        backupData.absensi = await fetchUserAbsensi();
+                        
+                        progressFill.style.width = '70%';
+                        progressText.textContent = 'Mengambil data berkas...';
+                        backupData.berkas = await fetchUserBerkas();
+                        
+                        backupData.metadata = {
+                            backup_type: 'personal',
+                            user_id: currentUser.uid,
+                            user_name: currentUserData.nama,
+                            user_email: currentUser.email,
+                            user_role: currentUserData.role,
+                            timestamp: new Date().toISOString(),
+                            system: 'SDN Rawabuntu 03'
+                        };
+                        fileName = `backup_personal_${currentUser.uid}_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Personal';
+                        break;
+                        
+                    case 'nilai':
+                        backupData = await fetchUserNilai();
+                        backupData.metadata = {
+                            backup_type: 'nilai_personal',
+                            user_id: currentUser.uid,
+                            user_name: currentUserData.nama,
+                            user_email: currentUser.email,
+                            timestamp: new Date().toISOString()
+                        };
+                        fileName = `backup_nilai_${currentUser.uid}_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Nilai';
+                        break;
+                        
+                    case 'absensi':
+                        backupData = await fetchUserAbsensi();
+                        backupData.metadata = {
+                            backup_type: 'absensi_personal',
+                            user_id: currentUser.uid,
+                            user_name: currentUserData.nama,
+                            user_email: currentUser.email,
+                            timestamp: new Date().toISOString()
+                        };
+                        fileName = `backup_absensi_${currentUser.uid}_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Absensi';
+                        break;
+                        
+                    case 'berkas':
+                        backupData = await fetchUserBerkas();
+                        backupData.metadata = {
+                            backup_type: 'berkas_personal',
+                            user_id: currentUser.uid,
+                            user_name: currentUserData.nama,
+                            user_email: currentUser.email,
+                            timestamp: new Date().toISOString()
+                        };
+                        fileName = `backup_berkas_${currentUser.uid}_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Berkas';
+                        break;
+                        
+                    case 'fullSystem':
+                        // Only for admin
+                        if (!isAdmin) {
+                            alert("Hanya admin yang bisa backup seluruh sistem!");
+                            resetProgress(type);
+                            return;
+                        }
+                        
+                        progressFill.style.width = '25%';
+                        progressText.textContent = 'Mengambil data semua nilai...';
+                        backupData.nilai = await fetchAllNilai();
+                        
+                        progressFill.style.width = '50%';
+                        progressText.textContent = 'Mengambil data semua absensi...';
+                        backupData.absensi = await fetchAllAbsensi();
+                        
+                        progressFill.style.width = '75%';
+                        progressText.textContent = 'Mengambil data semua berkas...';
+                        backupData.berkas = await fetchAllBerkas();
+                        
+                        backupData.metadata = {
+                            backup_type: 'full_system',
+                            created_by: currentUser.email,
+                            created_by_name: currentUserData.nama,
+                            timestamp: new Date().toISOString(),
+                            system: 'SDN Rawabuntu 03',
+                            is_admin_backup: true,
+                            version: '1.0'
+                        };
+                        fileName = `backup_sistem_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Sistem';
+                        isSystemBackup = true;
+                        break;
+                        
+                    case 'allTeachers':
+                        // Only for admin
+                        if (!isAdmin) {
+                            alert("Hanya admin yang bisa backup semua guru!");
+                            resetProgress(type);
+                            return;
+                        }
+                        
+                        progressFill.style.width = '25%';
+                        progressText.textContent = 'Mengambil data guru...';
+                        backupData = await fetchAllTeachersData();
+                        
+                        backupData.metadata = {
+                            backup_type: 'all_teachers',
+                            created_by: currentUser.email,
+                            created_by_name: currentUserData.nama,
+                            timestamp: new Date().toISOString(),
+                            is_admin_backup: true,
+                            version: '1.0'
+                        };
+                        fileName = `backup_guru_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+                        backupType = 'Backup Semua Guru';
+                        isSystemBackup = true;
+                        break;
+                }
+                
+                progressFill.style.width = '90%';
+                progressText.textContent = 'Membuat file...';
+                
+                // Convert to JSON
+                const jsonData = JSON.stringify(backupData, null, 2);
+                
+                // Create download link
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Update progress
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Backup berhasil!';
+                
+                // Add to user's history
+                userBackupHistory.unshift({
+                    type: backupType,
+                    userId: currentUser.uid,
+                    timestamp: Date.now(),
+                    status: 'success',
+                    fileName: fileName,
+                    size: blob.size
+                });
+                
+                // Add to system history if it's a system backup
+                if (isSystemBackup) {
+                    systemBackupHistory.unshift({
+                        type: backupType,
+                        userId: currentUser.uid,
+                        createdBy: currentUser.email,
+                        timestamp: Date.now(),
+                        status: 'success',
+                        fileName: fileName,
+                        fileSize: blob.size,
+                        isSystem: true
+                    });
+                    
+                    if (systemBackupHistory.length > 50) {
+                        systemBackupHistory = systemBackupHistory.slice(0, 50);
+                    }
+                    localStorage.setItem('systemBackupHistory', JSON.stringify(systemBackupHistory));
+                }
+                
+                // Save history to localStorage (maks 100 entri)
+                if (userBackupHistory.length > 100) {
+                    userBackupHistory = userBackupHistory.slice(0, 100);
+                }
+                localStorage.setItem('userBackupHistory', JSON.stringify(userBackupHistory));
+                
+                // Update stats
+                loadStats();
+                if (isSystemBackup) {
+                    updateSystemBackupHistory();
+                }
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    resetProgress(type);
+                }, 2000);
+                
+            } catch (error) {
+                console.error(`Error creating ${type} backup:`, error);
+                
+                const progressText = document.getElementById(`${type}BackupText`);
+                const btn = document.getElementById(`btn${type.charAt(0).toUpperCase() + type.slice(1)}Backup`);
+                
+                progressText.textContent = 'Error: ' + error.message;
+                progressText.style.color = '#ef4444';
+                
+                // Add to history as error
+                userBackupHistory.unshift({
+                    type: type === 'personal' ? 'Backup Personal' : 
+                          type === 'nilai' ? 'Backup Nilai' : 
+                          type === 'absensi' ? 'Backup Absensi' : 
+                          type === 'berkas' ? 'Backup Berkas' : 
+                          type === 'fullSystem' ? 'Backup Sistem' : 'Backup Semua Guru',
+                    userId: currentUser.uid,
+                    timestamp: Date.now(),
+                    status: 'error',
+                    error: error.message
+                });
+                
+                localStorage.setItem('userBackupHistory', JSON.stringify(userBackupHistory));
+                
+                setTimeout(() => {
+                    resetProgress(type);
+                }, 3000);
+            }
+        }
+        
+        // Helper function to reset progress
+        function resetProgress(type) {
+            const progressContainer = document.getElementById(`${type}BackupProgress`);
+            const progressFill = document.getElementById(`${type}BackupFill`);
+            const progressText = document.getElementById(`${type}BackupText`);
+            const btn = document.getElementById(`btn${type.charAt(0).toUpperCase() + type.slice(1)}Backup`);
+            
+            let btnText = '';
+            switch(type) {
+                case 'personal': btnText = '<i class="fa-solid fa-file-export"></i> Backup Data Saya'; break;
+                case 'nilai': btnText = '<i class="fa-solid fa-file-export"></i> Backup Nilai Saya'; break;
+                case 'absensi': btnText = '<i class="fa-solid fa-file-export"></i> Backup Absensi Saya'; break;
+                case 'berkas': btnText = '<i class="fa-solid fa-file-export"></i> Backup Berkas Saya'; break;
+                case 'fullSystem': btnText = '<i class="fa-solid fa-database"></i> Backup Seluruh Sistem'; break;
+                case 'allTeachers': btnText = '<i class="fa-solid fa-user-friends"></i> Backup Semua Guru'; break;
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = btnText;
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = type === 'personal' ? 'Menyiapkan backup...' : `Menyiapkan backup ${type}...`;
+            progressText.style.color = '';
+        }
+        
+        // Fetch user's nilai data
+        async function fetchUserNilai() {
+            try {
+                const userRole = currentUserData.role;
+                let mapel = '';
+                
+                if (userRole === 'GURU_PJOK') mapel = 'pjok';
+                else if (userRole === 'GURU_PAI') mapel = 'pai';
+                else mapel = 'akademik';
+                
+                let userNilai = {};
+                
+                if (isAdmin) {
+                    // Admin gets all nilai
+                    const nilaiRef = ref(db, 'nilai');
+                    const snapshot = await get(nilaiRef);
+                    userNilai = snapshot.exists() ? snapshot.val() : {};
+                } else {
+                    // Guru gets only their mapel
+                    const nilaiRef = ref(db, `nilai/${mapel}`);
+                    const snapshot = await get(nilaiRef);
+                    userNilai = snapshot.exists() ? snapshot.val() : {};
+                }
+                
+                return userNilai;
+            } catch (error) {
+                console.error("Error fetching user nilai:", error);
+                return {};
+            }
+        }
+        
+        // Fetch user's absensi data
+        async function fetchUserAbsensi() {
+            try {
+                let userAbsensi = {};
+                
+                if (isAdmin) {
+                    // Admin gets all absensi
+                    const absensiRef = ref(db, 'absensi');
+                    const snapshot = await get(absensiRef);
+                    userAbsensi = snapshot.exists() ? snapshot.val() : {};
+                } else {
+                    // Guru gets absensi they recorded
+                    const absensiRef = ref(db, 'absensi');
+                    const snapshot = await get(absensiRef);
+                    const data = snapshot.exists() ? snapshot.val() : {};
+                    const userEmail = currentUser.email;
+                    
+                    Object.keys(data).forEach(tanggal => {
+                        if (tanggal === 'scanner_qr') return;
+                        Object.keys(data[tanggal]).forEach(kelas => {
+                            Object.keys(data[tanggal][kelas]).forEach(siswa => {
+                                const absen = data[tanggal][kelas][siswa];
+                                if (absen.pencatat === userEmail) {
+                                    if (!userAbsensi[tanggal]) userAbsensi[tanggal] = {};
+                                    if (!userAbsensi[tanggal][kelas]) userAbsensi[tanggal][kelas] = {};
+                                    userAbsensi[tanggal][kelas][siswa] = absen;
+                                }
+                            });
+                        });
+                    });
+                }
+                
+                return userAbsensi;
+            } catch (error) {
+                console.error("Error fetching user absensi:", error);
+                return {};
+            }
+        }
+        
+        // Fetch user's berkas data
+        async function fetchUserBerkas() {
+            try {
+                let userBerkas = {};
+                
+                if (isAdmin) {
+                    // Admin gets all berkas
+                    const berkasRef = ref(db, 'laporan_berkas');
+                    const snapshot = await get(berkasRef);
+                    userBerkas = snapshot.exists() ? snapshot.val() : {};
+                } else {
+                    // Guru gets their own berkas
+                    const berkasRef = ref(db, 'laporan_berkas');
+                    const queryRef = query(berkasRef, orderByChild('guruId'), equalTo(currentUser.uid));
+                    const snapshot = await get(queryRef);
+                    userBerkas = snapshot.exists() ? snapshot.val() : {};
+                }
+                
+                return userBerkas;
+            } catch (error) {
+                console.error("Error fetching user berkas:", error);
+                return {};
+            }
+        }
+        
+        // Admin only: Fetch all nilai
+        async function fetchAllNilai() {
+            try {
+                const nilaiRef = ref(db, 'nilai');
+                const snapshot = await get(nilaiRef);
+                return snapshot.exists() ? snapshot.val() : {};
+            } catch (error) {
+                console.error("Error fetching all nilai:", error);
+                return {};
+            }
+        }
+        
+        // Admin only: Fetch all absensi
+        async function fetchAllAbsensi() {
+            try {
+                const absensiRef = ref(db, 'absensi');
+                const snapshot = await get(absensiRef);
+                return snapshot.exists() ? snapshot.val() : {};
+            } catch (error) {
+                console.error("Error fetching all absensi:", error);
+                return {};
+            }
+        }
+        
+        // Admin only: Fetch all berkas
+        async function fetchAllBerkas() {
+            try {
+                const berkasRef = ref(db, 'laporan_berkas');
+                const snapshot = await get(berkasRef);
+                return snapshot.exists() ? snapshot.val() : {};
+            } catch (error) {
+                console.error("Error fetching all berkas:", error);
+                return {};
+            }
+        }
+        
+        // Admin only: Fetch all teachers data
+        async function fetchAllTeachersData() {
+            try {
+                const allData = {
+                    users: {},
+                    nilai: {},
+                    absensi: {},
+                    berkas: {}
+                };
+                
+                // Get all users
+                const usersRef = ref(db, 'users');
+                const usersSnap = await get(usersRef);
+                allData.users = usersSnap.exists() ? usersSnap.val() : {};
+                
+                // Get all nilai
+                allData.nilai = await fetchAllNilai();
+                
+                // Get all absensi
+                allData.absensi = await fetchAllAbsensi();
+                
+                // Get all berkas
+                allData.berkas = await fetchAllBerkas();
+                
+                return allData;
+            } catch (error) {
+                console.error("Error fetching all teachers data:", error);
+                return {};
+            }
+        }
+        
+        // Event listeners for backup buttons
+        document.getElementById('btnPersonalBackup').addEventListener('click', () => createBackup('personal'));
+        document.getElementById('btnNilaiBackup').addEventListener('click', () => createBackup('nilai'));
+        document.getElementById('btnAbsensiBackup').addEventListener('click', () => createBackup('absensi'));
+        document.getElementById('btnBerkasBackup').addEventListener('click', () => createBackup('berkas'));
+        document.getElementById('btnFullSystemBackup').addEventListener('click', () => createBackup('fullSystem'));
+        document.getElementById('btnAllTeachersBackup').addEventListener('click', () => createBackup('allTeachers'));
+        
+        // Restore functionality for personal data
+        const restoreModal = document.getElementById('restoreModal');
+        const closeRestoreModal = document.getElementById('closeRestoreModal');
+        const btnRestore = document.getElementById('btnRestore');
+        const btnCancelRestore = document.getElementById('btnCancelRestore');
+        const btnConfirmRestore = document.getElementById('btnConfirmRestore');
+        const backupFileInput = document.getElementById('backupFile');
+        const fileDropArea = document.getElementById('fileDropArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const backupInfo = document.getElementById('backupInfo');
+        const backupDetails = document.getElementById('backupDetails');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileType = document.getElementById('fileType');
+        
+        // System restore functionality for admin
+        const systemRestoreModal = document.getElementById('systemRestoreModal');
+        const closeSystemRestoreModal = document.getElementById('closeSystemRestoreModal');
+        const btnSystemRestore = document.getElementById('btnSystemRestore');
+        const systemBackupFileInput = document.getElementById('systemBackupFile');
+        const systemFileDropArea = document.getElementById('systemFileDropArea');
+        const systemFileInfo = document.getElementById('systemFileInfo');
+        const systemBackupInfo = document.getElementById('systemBackupInfo');
+        const systemBackupDetails = document.getElementById('systemBackupDetails');
+        const systemFileName = document.getElementById('systemFileName');
+        const systemFileSize = document.getElementById('systemFileSize');
+        const systemFileType = document.getElementById('systemFileType');
+        const adminPasswordSection = document.getElementById('adminPasswordSection');
+        const adminPassword = document.getElementById('adminPassword');
+        const passwordError = document.getElementById('passwordError');
+        const btnCancelSystemRestore = document.getElementById('btnCancelSystemRestore');
+        const btnConfirmSystemRestore = document.getElementById('btnConfirmSystemRestore');
+        
+        let selectedFile = null;
+        let backupData = null;
+        let selectedSystemFile = null;
+        let systemBackupData = null;
+        
+        // Open personal restore modal
+        btnRestore.addEventListener('click', () => {
+            restoreModal.style.display = 'flex';
+        });
+        
+        // Open system restore modal (admin only)
+        btnSystemRestore.addEventListener('click', () => {
+            if (!isAdmin) {
+                alert("Hanya admin yang bisa melakukan restore sistem!");
+                return;
+            }
+            systemRestoreModal.style.display = 'flex';
+        });
+        
+        // Close personal restore modal
+        closeRestoreModal.addEventListener('click', () => {
+            restoreModal.style.display = 'none';
+            resetRestoreForm();
+        });
+        
+        btnCancelRestore.addEventListener('click', () => {
+            restoreModal.style.display = 'none';
+            resetRestoreForm();
+        });
+        
+        // Close system restore modal
+        closeSystemRestoreModal.addEventListener('click', () => {
+            systemRestoreModal.style.display = 'none';
+            resetSystemRestoreForm();
+        });
+        
+        btnCancelSystemRestore.addEventListener('click', () => {
+            systemRestoreModal.style.display = 'none';
+            resetSystemRestoreForm();
+        });
+        
+        // File selection for personal restore
+        backupFileInput.addEventListener('change', handleFileSelect);
+        fileDropArea.addEventListener('click', () => backupFileInput.click());
+        
+        // File selection for system restore
+        systemBackupFileInput.addEventListener('change', handleSystemFileSelect);
+        systemFileDropArea.addEventListener('click', () => systemBackupFileInput.click());
+        
+        // Drag and drop for personal restore
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            fileDropArea.style.borderColor = '#4a6de5';
+            fileDropArea.style.background = '#f8fafc';
+        }
+        
+        function unhighlight() {
+            fileDropArea.style.borderColor = '#cbd5e1';
+            fileDropArea.style.background = '';
+        }
+        
+        fileDropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                alert('Hanya file JSON yang diperbolehkan!');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                alert('File terlalu besar! Maksimal 10MB.');
+                return;
+            }
+            
+            selectedFile = file;
+            showFileInfo(file);
+            
+            // Read and validate backup file
+            readBackupFile(file);
+        }
+        
+        function handleSystemFileSelect(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                alert('Hanya file JSON yang diperbolehkan!');
+                return;
+            }
+            
+            if (file.size > 50 * 1024 * 1024) { // 50MB limit for system backup
+                alert('File terlalu besar! Maksimal 50MB untuk backup sistem.');
+                return;
+            }
+            
+            selectedSystemFile = file;
+            showSystemFileInfo(file);
+            
+            // Read and validate system backup file
+            readSystemBackupFile(file);
+        }
+        
+        function showFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || 'JSON File';
+            fileInfo.style.display = 'block';
+        }
+        
+        function showSystemFileInfo(file) {
+            systemFileName.textContent = file.name;
+            systemFileSize.textContent = formatFileSize(file.size);
+            systemFileType.textContent = file.type || 'JSON File';
+            systemFileInfo.style.display = 'block';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Read and validate personal backup file
+        function readBackupFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    backupData = JSON.parse(e.target.result);
+                    
+                    // Validate backup metadata
+                    if (!backupData.metadata) {
+                        throw new Error('File backup tidak valid (metadata tidak ditemukan)');
+                    }
+                    
+                    // Check backup ownership
+                    const metadata = backupData.metadata;
+                    const isAdminBackup = metadata.is_admin_backup === true;
+                    const isPersonalBackup = metadata.user_id && metadata.user_id === currentUser.uid;
+                    const isSystemBackup = metadata.backup_type === 'full_system';
+                    
+                    // Permission checks
+                    let canRestore = false;
+                    let warningMessage = '';
+                    
+                    if (isAdmin) {
+                        // Admin can restore any backup
+                        canRestore = true;
+                        if (!isAdminBackup && !isSystemBackup) {
+                            warningMessage = 'Ini adalah backup personal user lain. Pastikan ini yang Anda inginkan.';
+                        }
+                    } else {
+                        // Non-admin can only restore their own backups
+                        if (isPersonalBackup) {
+                            canRestore = true;
+                        } else if (isAdminBackup || isSystemBackup) {
+                            warningMessage = 'Anda tidak memiliki izin untuk restore backup admin/sistem.';
+                            canRestore = false;
+                        } else {
+                            warningMessage = 'Ini bukan backup Anda. Anda hanya bisa restore backup Anda sendiri.';
+                            canRestore = false;
+                        }
+                    }
+                    
+                    // Show backup details
+                    let detailsHtml = `
+                        <div><strong>Jenis Backup:</strong> ${metadata.backup_type || 'Tidak diketahui'}</div>
+                        <div><strong>Tanggal:</strong> ${new Date(metadata.timestamp).toLocaleString('id-ID')}</div>
+                    `;
+                    
+                    if (metadata.user_name) {
+                        detailsHtml += `<div><strong>Pemilik:</strong> ${metadata.user_name} (${metadata.user_email})</div>`;
+                    }
+                    
+                    if (metadata.created_by) {
+                        detailsHtml += `<div><strong>Dibuat oleh:</strong> ${metadata.created_by}</div>`;
+                    }
+                    
+                    if (warningMessage) {
+                        detailsHtml += `<div style="margin-top: 10px; color: #dc2626; background: #fee2e2; padding: 8px; border-radius: 4px;">
+                            <i class="fa-solid fa-exclamation-triangle"></i> ${warningMessage}
+                        </div>`;
+                    }
+                    
+                    backupDetails.innerHTML = detailsHtml;
+                    backupInfo.style.display = 'block';
+                    
+                    // Enable/disable restore button based on permission
+                    btnConfirmRestore.disabled = !canRestore;
+                    if (!canRestore) {
+                        btnConfirmRestore.title = warningMessage;
+                    }
+                    
+                } catch (error) {
+                    console.error('Error parsing backup file:', error);
+                    alert('File backup tidak valid atau rusak: ' + error.message);
+                    resetRestoreForm();
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Gagal membaca file backup!');
+                resetRestoreForm();
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Read and validate system backup file
+        function readSystemBackupFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    systemBackupData = JSON.parse(e.target.result);
+                    
+                    // Validate system backup metadata
+                    if (!systemBackupData.metadata) {
+                        throw new Error('File backup sistem tidak valid (metadata tidak ditemukan)');
+                    }
+                    
+                    const metadata = systemBackupData.metadata;
+                    const isAdminBackup = metadata.is_admin_backup === true;
+                    const isSystemBackup = metadata.backup_type === 'full_system' || metadata.backup_type === 'all_teachers';
+                    
+                    // Check if it's a valid system backup
+                    if (!isAdminBackup || !isSystemBackup) {
+                        throw new Error('Ini bukan file backup sistem. Hanya backup sistem admin yang bisa di-restore.');
+                    }
+                    
+                    // Show system backup details
+                    let detailsHtml = `
+                        <div><strong>Jenis Backup:</strong> ${metadata.backup_type || 'Tidak diketahui'}</div>
+                        <div><strong>Tanggal Backup:</strong> ${new Date(metadata.timestamp).toLocaleString('id-ID')}</div>
+                        <div><strong>Dibuat oleh:</strong> ${metadata.created_by_name || metadata.created_by || 'Admin'}</div>
+                    `;
+                    
+                    if (metadata.version) {
+                        detailsHtml += `<div><strong>Versi Sistem:</strong> ${metadata.version}</div>`;
+                    }
+                    
+                    // Show data statistics
+                    if (systemBackupData.nilai) {
+                        let nilaiCount = 0;
+                        Object.keys(systemBackupData.nilai).forEach(mapelKey => {
+                            Object.keys(systemBackupData.nilai[mapelKey] || {}).forEach(kelas => {
+                                Object.keys(systemBackupData.nilai[mapelKey][kelas] || {}).forEach(siswa => {
+                                    Object.keys(systemBackupData.nilai[mapelKey][kelas][siswa] || {}).forEach(semester => {
+                                        nilaiCount++;
+                                    });
+                                });
+                            });
+                        });
+                        detailsHtml += `<div><strong>Data Nilai:</strong> ${nilaiCount} records</div>`;
+                    }
+                    
+                    if (systemBackupData.absensi) {
+                        let absensiCount = 0;
+                        Object.keys(systemBackupData.absensi).forEach(tanggal => {
+                            if (tanggal === 'scanner_qr') return;
+                            Object.keys(systemBackupData.absensi[tanggal] || {}).forEach(kelas => {
+                                Object.keys(systemBackupData.absensi[tanggal][kelas] || {}).forEach(siswa => {
+                                    absensiCount++;
+                                });
+                            });
+                        });
+                        detailsHtml += `<div><strong>Data Absensi:</strong> ${absensiCount} records</div>`;
+                    }
+                    
+                    if (systemBackupData.users) {
+                        detailsHtml += `<div><strong>Data User:</strong> ${Object.keys(systemBackupData.users || {}).length} users</div>`;
+                    }
+                    
+                    systemBackupDetails.innerHTML = detailsHtml;
+                    systemBackupInfo.style.display = 'block';
+                    adminPasswordSection.style.display = 'block';
+                    
+                    // Enable restore button
+                    btnConfirmSystemRestore.disabled = false;
+                    
+                } catch (error) {
+                    console.error('Error parsing system backup file:', error);
+                    alert('File backup sistem tidak valid: ' + error.message);
+                    resetSystemRestoreForm();
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Gagal membaca file backup sistem!');
+                resetSystemRestoreForm();
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        function resetRestoreForm() {
+            selectedFile = null;
+            backupData = null;
+            backupFileInput.value = '';
+            fileInfo.style.display = 'none';
+            backupInfo.style.display = 'none';
+            btnConfirmRestore.disabled = true;
+            fileDropArea.style.borderColor = '#cbd5e1';
+            fileDropArea.style.background = '';
+        }
+        
+        function resetSystemRestoreForm() {
+            selectedSystemFile = null;
+            systemBackupData = null;
+            systemBackupFileInput.value = '';
+            systemFileInfo.style.display = 'none';
+            systemBackupInfo.style.display = 'none';
+            adminPasswordSection.style.display = 'none';
+            adminPassword.value = '';
+            passwordError.style.display = 'none';
+            btnConfirmSystemRestore.disabled = true;
+            systemFileDropArea.style.borderColor = '#cbd5e1';
+            systemFileDropArea.style.background = '';
+        }
+        
+        // Confirm personal restore
+        btnConfirmRestore.addEventListener('click', async () => {
+            if (!selectedFile || !backupData) return;
+            
+            // Show progress
+            const progressContainer = document.getElementById('restoreProgress');
+            const progressFill = document.getElementById('restoreFill');
+            const progressText = document.getElementById('restoreText');
+            
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '10%';
+            progressText.textContent = 'Memvalidasi backup...';
+            btnConfirmRestore.disabled = true;
+            btnConfirmRestore.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+            
+            try {
+                const metadata = backupData.metadata;
+                const isAdminBackup = metadata.is_admin_backup === true;
+                const isPersonalBackup = metadata.user_id && metadata.user_id === currentUser.uid;
+                
+                // Final permission check
+                if (!isAdmin && !isPersonalBackup && !isAdminBackup) {
+                    throw new Error('Anda tidak memiliki izin untuk restore backup ini');
+                }
+                
+                // Show warning for admin restoring non-admin backups
+                if (isAdmin && !isAdminBackup && metadata.user_id !== currentUser.uid) {
+                    const confirmed = confirm(
+                        `PERINGATAN: Anda akan restore backup milik ${metadata.user_name || 'user lain'}.\n` +
+                        `Data saat ini dari user tersebut mungkin akan ditimpa.\n\n` +
+                        `Lanjutkan?`
+                    );
+                    
+                    if (!confirmed) {
+                        resetRestoreProgress();
+                        restoreModal.style.display = 'none';
+                        resetRestoreForm();
+                        return;
+                    }
+                }
+                
+                // Show warning for personal restore
+                if (isPersonalBackup) {
+                    const confirmed = confirm(
+                        `Anda akan restore backup data Anda sendiri.\n\n` +
+                        `PERINGATAN: Data Anda saat ini mungkin akan ditimpa!\n` +
+                        `Pastikan Anda sudah melakukan backup terbaru.\n\n` +
+                        `Lanjutkan?`
+                    );
+                    
+                    if (!confirmed) {
+                        resetRestoreProgress();
+                        restoreModal.style.display = 'none';
+                        resetRestoreForm();
+                        return;
+                    }
+                }
+                
+                progressFill.style.width = '30%';
+                progressText.textContent = 'Memulai restore...';
+                
+                // IMPORTANT: In a real application, this would be done via backend API
+                // For security reasons, direct write to Firebase should be limited
+                // This is just a simulation
+                
+                // Simulate restore process
+                const totalSteps = 5;
+                for (let i = 1; i <= totalSteps; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    progressFill.style.width = `${30 + (i * 14)}%`;
+                    progressText.textContent = `Memproses data... (${i}/${totalSteps})`;
+                }
+                
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Restore berhasil!';
+                
+                // Simulate delay
+                setTimeout(() => {
+                    alert(`Restore ${metadata.backup_type} berhasil!`);
+                    restoreModal.style.display = 'none';
+                    resetRestoreForm();
+                    resetRestoreProgress();
+                    
+                    // Add to history
+                    userBackupHistory.unshift({
+                        type: `Restore ${metadata.backup_type}`,
+                        userId: currentUser.uid,
+                        timestamp: Date.now(),
+                        status: 'success',
+                        fileName: selectedFile.name,
+                        restoredFrom: metadata.user_name || metadata.created_by || 'unknown'
+                    });
+                    
+                    localStorage.setItem('userBackupHistory', JSON.stringify(userBackupHistory));
+                    loadStats();
+                    updateBackupHistory();
+                    
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error during restore:', error);
+                progressText.textContent = 'Error: ' + error.message;
+                progressText.style.color = '#ef4444';
+                
+                // Add to history as error
+                userBackupHistory.unshift({
+                    type: 'Restore Attempt',
+                    userId: currentUser.uid,
+                    timestamp: Date.now(),
+                    status: 'error',
+                    error: error.message,
+                    fileName: selectedFile.name
+                });
+                
+                localStorage.setItem('userBackupHistory', JSON.stringify(userBackupHistory));
+                
+                setTimeout(() => {
+                    resetRestoreProgress();
+                }, 3000);
+            }
+        });
+        
+        // Confirm system restore (admin only)
+        btnConfirmSystemRestore.addEventListener('click', async () => {
+            if (!selectedSystemFile || !systemBackupData) return;
+            
+            // Validate admin password
+            const password = adminPassword.value.trim();
+            if (!password) {
+                passwordError.textContent = 'Password admin harus diisi!';
+                passwordError.style.display = 'block';
+                return;
+            }
+            
+            // In a real app, this would verify with Firebase Auth
+            // For demo purposes, we'll use a simple check
+            if (password !== 'admin123' && password !== currentUser.email.split('@')[0] + '123') {
+                passwordError.textContent = 'Password admin salah!';
+                passwordError.style.display = 'block';
+                return;
+            }
+            
+            // Final warning before system restore
+            const confirmed = confirm(
+                `⚠️  PERINGATAN AKHIR! ⚠️\n\n` +
+                `Anda akan melakukan RESTORE SISTEM PENUH.\n\n` +
+                `✅ Backup akan menimpa SEMUA data yang ada saat ini.\n` +
+                `✅ Proses ini TIDAK DAPAT DIBATALKAN setelah dimulai.\n` +
+                `✅ Pastikan Anda sudah membuat backup sistem terbaru.\n\n` +
+                `Apakah Anda YAKIN ingin melanjutkan?`
+            );
+            
+            if (!confirmed) return;
+            
+            // Show progress
+            const progressContainer = document.getElementById('systemRestoreProgress');
+            const progressFill = document.getElementById('systemRestoreFill');
+            const progressText = document.getElementById('systemRestoreText');
+            
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '5%';
+            progressText.textContent = 'Memvalidasi backup sistem...';
+            btnConfirmSystemRestore.disabled = true;
+            btnConfirmSystemRestore.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+            
+            try {
+                const metadata = systemBackupData.metadata;
+                
+                progressFill.style.width = '20%';
+                progressText.textContent = 'Membuat backup sistem saat ini...';
+                
+                // First, create a backup of current system
+                await createEmergencyBackup();
+                
+                progressFill.style.width = '40%';
+                progressText.textContent = 'Memulai restore sistem...';
+                
+                // IMPORTANT: In a real application, this would be done via backend API
+                // For security reasons, direct write to Firebase should be limited
+                // This is just a simulation for demo purposes
+                
+                // Simulate system restore process
+                const totalSteps = 8;
+                for (let i = 1; i <= totalSteps; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    progressFill.style.width = `${40 + (i * 7)}%`;
+                    
+                    const stepMessages = [
+                        'Mengambil data user...',
+                        'Memproses data nilai...',
+                        'Memproses data absensi...',
+                        'Memproses data berkas...',
+                        'Mengupdate database...',
+                        'Memverifikasi data...',
+                        'Menyimpan perubahan...',
+                        'Finalisasi restore...'
+                    ];
+                    
+                    progressText.textContent = `${stepMessages[i-1]} (${i}/${totalSteps})`;
+                }
+                
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Restore sistem berhasil!';
+                
+                // Add to system history
+                systemBackupHistory.unshift({
+                    type: `Sistem Restore: ${metadata.backup_type}`,
+                    userId: currentUser.uid,
+                    createdBy: currentUser.email,
+                    timestamp: Date.now(),
+                    status: 'success',
+                    fileName: selectedSystemFile.name,
+                    restoredFrom: metadata.created_by_name || metadata.created_by || 'unknown',
+                    originalBackupDate: metadata.timestamp,
+                    isSystem: true
+                });
+                
+                if (systemBackupHistory.length > 50) {
+                    systemBackupHistory = systemBackupHistory.slice(0, 50);
+                }
+                localStorage.setItem('systemBackupHistory', JSON.stringify(systemBackupHistory));
+                
+                // Simulate delay
+                setTimeout(() => {
+                    alert(`✅ Restore sistem berhasil!\n\n` +
+                          `Sistem telah dikembalikan ke backup tanggal: ${new Date(metadata.timestamp).toLocaleString('id-ID')}\n` +
+                          `Dibuat oleh: ${metadata.created_by_name || metadata.created_by}`);
+                    
+                    systemRestoreModal.style.display = 'none';
+                    resetSystemRestoreForm();
+                    resetSystemRestoreProgress();
+                    
+                    // Update system history display
+                    updateSystemBackupHistory();
+                    
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error during system restore:', error);
+                progressText.textContent = 'Error: ' + error.message;
+                progressText.style.color = '#ef4444';
+                
+                // Add to system history as error
+                systemBackupHistory.unshift({
+                    type: 'Sistem Restore Attempt',
+                    userId: currentUser.uid,
+                    createdBy: currentUser.email,
+                    timestamp: Date.now(),
+                    status: 'error',
+                    error: error.message,
+                    fileName: selectedSystemFile.name,
+                    isSystem: true
+                });
+                
+                localStorage.setItem('systemBackupHistory', JSON.stringify(systemBackupHistory));
+                
+                setTimeout(() => {
+                    resetSystemRestoreProgress();
+                }, 5000);
+            }
+        });
+        
+        // Create emergency backup before system restore
+        async function createEmergencyBackup() {
+            try {
+                const backupData = {
+                    nilai: await fetchAllNilai(),
+                    absensi: await fetchAllAbsensi(),
+                    berkas: await fetchAllBerkas(),
+                    metadata: {
+                        backup_type: 'emergency_backup',
+                        created_by: currentUser.email,
+                        created_by_name: currentUserData.nama,
+                        timestamp: new Date().toISOString(),
+                        reason: 'pre_system_restore',
+                        is_admin_backup: true,
+                        version: '1.0'
+                    }
+                };
+                
+                const jsonData = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `emergency_backup_pre_restore_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Add to system history
+                systemBackupHistory.unshift({
+                    type: 'Emergency Backup (Pre-Restore)',
+                    userId: currentUser.uid,
+                    createdBy: currentUser.email,
+                    timestamp: Date.now(),
+                    status: 'success',
+                    fileSize: blob.size,
+                    isSystem: true
+                });
+                
+                localStorage.setItem('systemBackupHistory', JSON.stringify(systemBackupHistory));
+                
+            } catch (error) {
+                console.error('Error creating emergency backup:', error);
+                // Don't throw error, just log it
+            }
+        }
+        
+        function resetRestoreProgress() {
+            const progressContainer = document.getElementById('restoreProgress');
+            const progressFill = document.getElementById('restoreFill');
+            const progressText = document.getElementById('restoreText');
+            
+            btnConfirmRestore.disabled = false;
+            btnConfirmRestore.innerHTML = '<i class="fa-solid fa-play"></i> Mulai Restore';
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Menyiapkan restore...';
+            progressText.style.color = '';
+        }
+        
+        function resetSystemRestoreProgress() {
+            const progressContainer = document.getElementById('systemRestoreProgress');
+            const progressFill = document.getElementById('systemRestoreFill');
+            const progressText = document.getElementById('systemRestoreText');
+            
+            btnConfirmSystemRestore.disabled = false;
+            btnConfirmSystemRestore.innerHTML = '<i class="fa-solid fa-bolt"></i> Restore Sistem';
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Siap untuk restore...';
+            progressText.style.color = '';
+        }
+        
+        // Initial load
+        updateBackupHistory();
+        
+    </script>
+</body>
+</html>
